@@ -1,4 +1,4 @@
-- [Home](README.md)
+- [Home](home/index.md)
 
 - [Get Started](get-started/index.md)
 
