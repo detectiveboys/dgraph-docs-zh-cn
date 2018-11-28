@@ -14,3 +14,4 @@
 - [Dgraph Compared to Other](dgraph-compared-to-other-databases/index.md)
   
 - [Changelog](CHANGELOG.md)
+- [progress](progress.md)
