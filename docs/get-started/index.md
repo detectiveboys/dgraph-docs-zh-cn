@@ -52,7 +52,7 @@ sh /tmp/get.sh   # Execute the script
 
 ### 在Windows系统安装
 
-*注意：Windows的二进制文件可从`v0.8.3`版本获得。*
+*Windows的二进制文件可从`v0.8.3`版本获得。*
 
 如果您希望在Windows上安装二进制文件，可以从[Github releases](https://github.com/dgraph-io/dgraph/releases)中获取, 手动提取并安装。 `dgraph-windows-amd64-v1.x.y.tar.gz` 中包含dgraph二进制文件.
 
@@ -190,10 +190,10 @@ docker exec -it diggy dgraph-ratel
 ```sh
 dgraph zero --lru_mb=<typically one-third the RAM> --port_offset -2000
 ```
+
 Ratel's default port is 8081, so override it using -p 8000.
 
 {{% /notice %}}
-
 
 ## Step 3: Run Queries
 {{% notice "tip" %}}Once Dgraph is running, you can access Ratel at [`http://localhost:8000`](http://localhost:8000). It allows browser-based queries, mutations and visualizations.
