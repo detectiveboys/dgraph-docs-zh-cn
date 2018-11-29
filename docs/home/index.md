@@ -95,7 +95,7 @@ Dgraph是一个开源，可扩展，分布式，高可用和快速的图数据�
   </div>
 </section>
 
-## 助力Dgraph
+## 助力 Dgraph
 
 <section class="toc">
   <div class="container">
@@ -104,7 +104,7 @@ Dgraph是一个开源，可扩展，分布式，高可用和快速的图数据�
         <div class="section-item">
           <div class="section-name">
             <a href="https://github.com/dgraph-io/dgraph/blob/master/CONTRIBUTING.md">
-              助力Dgraph
+              助力 Dgraph
             </a>
           </div>
           <p class="section-desc">
