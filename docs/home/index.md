@@ -1,9 +1,8 @@
+**欢迎来到Dgraph官方文档.**
 
-**Welcome to the official Dgraph documentation.**
+Dgraph是一个开源，可扩展，分布式，高可用和快速的图数据库，从头开始设计，可在生产中运行。
 
-Dgraph is an open source, scalable, distributed, highly available and fast graph database, designed from ground up to be run in production.
-
-## Using Dgraph
+## 使用 Dgraph
 
 <section class="toc">
   <div class="container">
@@ -12,11 +11,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="https://tour.dgraph.io" target="_blank">
-              Tour of Dgraph
+              Dgraph互动之旅
             </a>
           </div>
           <p class="section-desc">
-            Take an interactive tour of Dgraph to learn the concepts.
+            通过参加Dgraph的互动之旅了解一些概念
           </p>
         </div>
       </div>
@@ -24,11 +23,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/get-started/index">
-              Get Started
+              快速开始
             </a>
           </div>
           <p class="section-desc">
-            Install Dgraph and run a query in 7 minutes.
+            在7分钟内安装Dgraph和运行query
           </p>
         </div>
       </div>
@@ -36,11 +35,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/query-language/index">
-              Query Language
+              查询语言
             </a>
           </div>
           <p class="section-desc">
-            A reference guide for Dgraph query language
+            Dgraph查询语言参考指南
           </p>
         </div>
       </div>
@@ -48,11 +47,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/tips/index"">
-              GraphQL+- Tips and Tricks
+              GraphQL+- 小技巧
             </a>
           </div>
           <p class="section-desc">
-            A list of commonly used GraphQL+- query snippets
+            常用的GraphQL+- query片段
           </p>
         </div>
       </div>
@@ -60,11 +59,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/clients/index"">
-              Clients
+              客户端
             </a>
           </div>
           <p class="section-desc">
-            Dgraph clients in various programming languages
+            各种语言的Dgraph客户端
           </p>
         </div>
       </div>
@@ -72,11 +71,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/deploy">
-              Deploy
+              部署
             </a>
           </div>
           <p class="section-desc">
-            Running Dgraph cluster in production
+            在生产环境运行Dgraph集群
           </p>
         </div>
       </div>
@@ -84,11 +83,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="/#/faq/index">
-              FAQ
+              常见问题
             </a>
           </div>
           <p class="section-desc">
-            Frequently asked questions
+            常见问题解答
           </p>
         </div>
       </div>
@@ -96,7 +95,7 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
   </div>
 </section>
 
-## Contribute
+## 助力Dgraph
 
 <section class="toc">
   <div class="container">
@@ -105,11 +104,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="https://github.com/dgraph-io/dgraph/blob/master/CONTRIBUTING.md">
-              Contribute to Dgraph
+              助力Dgraph
             </a>
           </div>
           <p class="section-desc">
-            Get started with contributing fixes and enhancements to Dgraph and related software.
+            开始为Dgraph和相关软件提供修复和增强功能。
           </p>
         </div>
       </div>
@@ -117,9 +116,9 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
   </div>
 </section>
 
-## Our Community
+## 我们的社区
 
-**Dgraph is made better everyday by the growing community and the contributors all over the world.**
+**日渐壮大的社区和世界各地的贡献者使Dgraph每天变得更好。**
 
 <section class="toc">
   <div class="container">
@@ -132,7 +131,7 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
             </a>
           </div>
           <p class="section-desc">
-            Chat instantly to the Dgraph community and engineers.
+            立即参与Dgraph社区和工程师聊天。
           </p>
         </div>
       </div>
@@ -140,11 +139,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="https://discuss.dgraph.io">
-              Forum
+              论坛
             </a>
           </div>
           <p class="section-desc">
-            Discuss Dgraph on the official forum.
+            在Dgraph官方论坛中讨论
           </p>
         </div>
       </div>
@@ -153,7 +152,7 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
 </section>
 
 
-## Demo
+## 案例
 
 <section class="toc">
   <div class="container">
@@ -162,11 +161,11 @@ Dgraph is an open source, scalable, distributed, highly available and fast graph
         <div class="section-item">
           <div class="section-name">
             <a href="https://play.dgraph.io">
-              Dgraph Playground
+              Dgraph演示案例
             </a>
           </div>
           <p class="section-desc">
-            Play with Freebase movie dataset with 21 million edges
+            使用有2100万条边的Freebase电影数据集
           </p>
         </div>
       </div>

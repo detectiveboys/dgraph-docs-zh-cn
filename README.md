@@ -4,7 +4,7 @@
 
 | Page                        | Progress                                    | Dog  | Start |  Change    |
 | ----------------------------------- | -----------------------------------------:| ----------- | :------: |  :--------:  |
-| [Home](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: ![Home](http://progressed.io/bar/0) :cn: | -  | -      |       -       |
+| [Home](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: ![Home](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)  | 2018-11-29      |       -       |
 | [Get Started](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: ![Get Started](http://progressed.io/bar/0) :cn: | -    |    -   | -         |
 | [Query Language](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)                      |:uk: ![Query Language](http://progressed.io/bar/0) :cn:  | -           | - | - |
 | [GraphQL+- Tips and Tricks](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: ![GraphQL+- Tips and Tricks](http://progressed.io/bar/0) :cn:  | -           | -   |      -        |
