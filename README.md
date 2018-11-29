@@ -2,16 +2,16 @@
 
 ## 翻译进度
 
-| Project Name                        | Status                                    | Dog  | Start |  Change    |
-| ----------------------------------- |:-----------------------------------------:| ----------- | :------: |  :--------:  |
-| [Home](#brain-programming)         | ![Home](http://progressed.io/bar/0)  | -  | -      |       -       |
-| [Get Started](#project-status)  | ![Get Started](http://progressed.io/bar/0) | -    |   -    | -         |
-| [Query Language](#cs50)                       | ![Query Language](http://progressed.io/bar/0)  | -           | - | - |
-| [GraphQL+- Tips and Tricks](#artoo-editor)       | ![GraphQL+- Tips and Tricks](http://progressed.io/bar/0)  | -           | -   |      -        |
-| [Mutations](#swift)       | ![Mutations](http://progressed.io/bar/0)  | -       | -   |      -        |
-| [Clients](#assembly)    | ![Clients](http://progressed.io/bar/0)  | -    | -   |      -        |
-| [Deploy](#ballsy)                   | ![Deploy](http://progressed.io/bar/0)   | -   | -      |      -        |
-| [FAQ](#stepss)                   | ![FAQ](http://progressed.io/bar/0)  | - | -      |      -        |
-| [How To Guides](#project-euler)     | ![How To Guides](http://progressed.io/bar/0)  | -       | -      |      -        |
-| [Design Concepts](#comic-books)         | ![Design Concepts](http://progressed.io/bar/0) | -   | -      | -         |
-| [Dgraph Compared to Other](#brainfuck-interpreter) | ![Dgraph Compared to Other](http://progressed.io/bar/0) | -           | -      | -         |
+| Page                        | Words | Progress                                    | Dog  | Start |  Change    |
+| ----------------------------------- |:----------- | -----------------------------------------:| ----------- | :------: |  :--------:  |
+| [Home](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | 0  | :uk: ![Home](http://progressed.io/bar/0) :cn: | -  | -      |       -       |
+| [Get Started](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) | 0  |:uk: ![Get Started](http://progressed.io/bar/0) :cn: | -    |    -   | -         |
+| [Query Language](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)   | 0                     |:uk: ![Query Language](http://progressed.io/bar/0) :cn:  | -           | - | - |
+| [GraphQL+- Tips and Tricks](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)   | 0     |:uk: ![GraphQL+- Tips and Tricks](http://progressed.io/bar/0) :cn:  | -           | -   |      -        |
+| [Mutations](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)   | 0     |:uk: ![Mutations](http://progressed.io/bar/0) :cn:  | -       | -   |      -        |
+| [Clients](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)  | 0   |:uk: ![Clients](http://progressed.io/bar/0) :cn:  | -    | -   |      -        |
+| [Deploy](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/deploy/index.md)          | 0          |:uk: ![Deploy](http://progressed.io/bar/0) :cn:   | -   | -      |      -        |
+| [FAQ](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/faq/index.md)        | 0            |:uk: ![FAQ](http://progressed.io/bar/0) :cn:  | - | -      |      -        |
+| [How To Guides](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)  | 0    |:uk: ![How To Guides](http://progressed.io/bar/0) :cn:  | -       | -      |      -        |
+| [Design Concepts](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/design-concepts/index.md)    | 0      |:uk: ![Design Concepts](http://progressed.io/bar/0) :cn: | -   | -      | -         |
+| [Dgraph Compared to Other](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) | 0  |:uk: ![Dgraph Compared to Other](http://progressed.io/bar/0) :cn: | -           | -      | -         |
