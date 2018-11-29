@@ -38,4 +38,4 @@ npm i docsify-cli -g
 docsify serve ./docs
 ```
 
-访问http://localhost:3000进入项目主页。
+访问项目主页http://localhost:3000
