@@ -21,7 +21,7 @@ Dgraph集群由不同的节点（Zero、Alpha、Ratel）组成，每个节点有
 
 Dgraph可以从安装脚本安装，也可以通过Docker运行。
 
-### 从Docker镜像
+### Docker镜像安装
 
 从[这里](https://hub.docker.com/r/dgraph/dgraph/)拉取Dgraph镜像. 在终端执行:
 
@@ -29,7 +29,7 @@ Dgraph可以从安装脚本安装，也可以通过Docker运行。
 docker pull dgraph/dgraph
 ```
 
-### 从脚本安装(Linux/Mac)
+### 脚本安装(Linux/Mac)
 
 安装二进制文件
 
@@ -50,7 +50,7 @@ sh /tmp/get.sh   # Execute the script
 您可以通过运行`dgraph`命令来检查Dgraph二进制文件是否正确安装
 查看其输出，其中包括版本号。
 
-### Installing on Windows
+### 在Windows系统安装
 
 *注意：Windows的二进制文件可从`v0.8.3`版本获得。*
 
@@ -117,7 +117,7 @@ docker-compose up -d
 
 这将启动Dgraph Alpha，Zero和Ratel。 您可以使用`docker-compose logs`命令查看日志。
 
-### 从二进制安装
+### 二进制安装
 
 **运行 Dgraph zero 节点**
 
@@ -145,7 +145,7 @@ dgraph-ratel
 
 *你可以通过`lru_mb`字段设置Dgraph alpha占用的内存。 这只是对Dgraph alpha的示意，实际使用率会高于此值。建议将lru_mb设置为可用内存的三分之一。*
 
-### 在Linux上的docker方式
+### Linux上的docker方式安装
 
 ```sh
 # Directory to store data in. This would be passed to `-v` flag.
@@ -163,7 +163,7 @@ docker exec -it diggy dgraph-ratel
 
 dgraph alpha监听端口8080和9080，并将日志输出到终端。
 
-### 在非Linux发行版上的docker方式
+### 非Linux发行版上的docker方式安装
 
 使用docker时，挂载的文件系统中的文件访问速度较慢。尝试在安装卷上运行命令`time dd if = / dev / zero of = test.dat bs = 1024 count = 100000`，您会注意到使用安装卷时速度非常慢。我们建议用户使用docker数据卷。 使用数据卷的唯一缺点是您无法从主机访问文件，您必须启动容器才能访问它。
 
