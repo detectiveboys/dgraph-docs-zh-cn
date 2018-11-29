@@ -15,3 +15,29 @@
 | [How To Guides](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)    |:uk: ![How To Guides](http://progressed.io/bar/0) :cn:  | -       | -      |      -        |
 | [Design Concepts](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/design-concepts/index.md)        |:uk: ![Design Concepts](http://progressed.io/bar/0) :cn: | -   | -      | -         |
 | [Dgraph Compared to Other](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) |:uk: ![Dgraph Compared to Other](http://progressed.io/bar/0) :cn: | -           | -      | -         |
+
+## 本地运行
+
+- clone项目源码
+
+```bash
+git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
+```
+
+- 安装docsify-cli
+
+```bash
+npm i docsify-cli -g
+```
+
+关于[docsify](docsify.js.org)
+
+- 运行项目
+
+在项目根目录下执行：
+
+```bash
+docsify serve ./docs
+```
+
+访问http://localhost:3000进入项目主页。
