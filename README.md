@@ -24,13 +24,11 @@
 git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
 ```
 
-- 安装docsify-cli
+- 安装docsify-cli, 关于[docsify](docsify.js.org)
 
 ```bash
 npm i docsify-cli -g
 ```
-
-关于[docsify](docsify.js.org)
 
 - 运行项目
 
