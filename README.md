@@ -2,8 +2,8 @@
 
 ## 翻译进度
 
-| Page                        | Progress                                    | Dog  | Start |  Change    |
-| ----------------------------------- | -----------------------------------------:| ----------- | :------: |  :--------:  |
+| Page   |   Progress   | Dog  | Start |  Change    |
+| :-----------------: | :-------------: | :-----------: | :------: |  :--------:  |
 | [Home](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: ![Home](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)  | 2018-11-29      |       -       |
 | [Get Started](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: ![Get Started](http://progressed.io/bar/60) :cn: | [Valdanito](https://github.com/Valdanitooooo)   |  2018-11-29   | -         |
 | [Query Language](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)                      |:uk: ![Query Language](http://progressed.io/bar/0) :cn:  | -           | - | - |
@@ -24,7 +24,7 @@
 git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
 ```
 
-- 安装docsify-cli, 关于[docsify](docsify.js.org)
+- 安装docsify-cli, 关于[docsify](https://docsify.js.org)
 
 ```bash
 npm i docsify-cli -g
