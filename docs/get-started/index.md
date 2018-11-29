@@ -1,21 +1,21 @@
 
 ## Dgraph
 
-Dgraph cluster consists of different nodes (Zero, Alpha & Ratel) and each node serves a different purpose.
+Dgraph集群由不同的节点（Zero、Alpha、Ratel）组成，每个节点有不同的用途。
 
-**Dgraph Zero** controls the Dgraph cluster, assigns servers to a group and re-balances data between server groups.
+**Dgraph Zero** 控制Dgraph集群，将服务器分组，并在服务器组之间重新平衡数据。
 
-**Dgraph Alpha** hosts predicates and indexes.
+**Dgraph Alpha** 托管谓词和索引。
 
-**Dgraph Ratel** serves the UI to run queries, mutations & altering schema.
+**Dgraph Ratel** 为UI提供运行query，mutations和alter schema的功能。
 
-You need at least one Dgraph Zero and one Dgraph Alpha to get started.
+您需要至少一个Dgraph Zero节点和一个Dgraph Alpha节点才能开始使用。
 
-**Here's a 3 step tutorial to get you up and running.**
+**这是一个3步教程，可以让您启动并运行Dgraph**
 
-This is a quick-start guide to running Dgraph. For an interactive walk through, take the [tour](https://tour.dgraph.io).
+这是运行Dgraph的快速入门指南。 如需互动式指引，请参与[tour](https://tour.dgraph.io).
 
-You can see the accompanying [video here](https://www.youtube.com/watch?v=QIIdSp2zLcs).
+您可以在[此处](https://www.youtube.com/watch?v=QIIdSp2zLcs)查看随附的视频.
 
 ## Step 1: Install Dgraph
 
