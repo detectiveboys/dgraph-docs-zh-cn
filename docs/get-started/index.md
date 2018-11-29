@@ -17,29 +17,29 @@ Dgraph集群由不同的节点（Zero、Alpha、Ratel）组成，每个节点有
 
 您可以在[此处](https://www.youtube.com/watch?v=QIIdSp2zLcs)查看随附的视频.
 
-## Step 1: Install Dgraph
+## Step 1: 安装Dgraph
 
-Dgraph can be installed from the install scripts, or run via Docker.
+Dgraph可以从安装脚本安装，也可以通过Docker运行。
 
-### From Docker Image
+### 从Docker镜像
 
-Pull the Dgraph Docker images [from here](https://hub.docker.com/r/dgraph/dgraph/). From a terminal:
+从[这里](https://hub.docker.com/r/dgraph/dgraph/)拉取Dgraph镜像. 在终端执行:
 
 ```sh
 docker pull dgraph/dgraph
 ```
 
-### From Install Scripts (Linux/Mac)
+### 从脚本安装(Linux/Mac)
 
-Install the binaries with
+安装二进制文件
 
 ```sh
 curl https://get.dgraph.io -sSf | bash
 ```
 
-The script automatically installs Dgraph. Once done, jump straight to [step 2]({{< relref "#step-2-run-dgraph" >}}).
+该脚本自动安装Dgraph。 完成后，直接跳到[step 2](#step-2-运行Dgraph).
 
-**Alternative:** To mitigate potential security risks, instead try:
+**替代方案：**为了降低潜在的安全风险，请尝试：
 
 ```sh
 curl https://get.dgraph.io > /tmp/get.sh
@@ -47,25 +47,24 @@ vim /tmp/get.sh  # Inspect the script
 sh /tmp/get.sh   # Execute the script
 ```
 
-You can check that Dgraph binary installed correctly by running `dgraph` and
-looking at its output, which includes the version number.
+您可以通过运行`dgraph`命令来检查Dgraph二进制文件是否正确安装
+查看其输出，其中包括版本号。
 
 ### Installing on Windows
 
-{{% notice "note" %}}Binaries for Windows are available from `v0.8.3`.{{% /notice %}}
+*注意：Windows的二进制文件可从`v0.8.3`版本获得。*
 
-If you wish to install the binaries on Windows, you can get them from the [Github releases](https://github.com/dgraph-io/dgraph/releases), extract and install them manually. The file `dgraph-windows-amd64-v1.x.y.tar.gz` contains the dgraph binary.
+如果您希望在Windows上安装二进制文件，可以从[Github releases](https://github.com/dgraph-io/dgraph/releases)中获取, 手动提取并安装。 `dgraph-windows-amd64-v1.x.y.tar.gz` 中包含dgraph二进制文件.
 
-## Step 2: Run Dgraph
-{{% notice "note" %}} This is a set up involving just one machine. For multi-server setup, go to [Deploy](/deploy). {{% /notice %}}
+## Step 2: 运行Dgraph
+
+*这里只涉及一台机器的设置。对于多服务器设置，请转到[部署](/deploy/index)*
 
 ### Docker Compose
 
-The easiest way to get Dgraph up and running is using Docker Compose. Follow the instructions
-[here](https://docs.docker.com/compose/install/) to install Docker Compose if you don't have it
-already.
+启动并运行Dgraph的最简单方法是使用Docker Compose。 如果您还没有安装Docker Compose，请按照[此处](https://docs.docker.com/compose/install/)的说明进行安装。
 
-```
+```yaml
 version: "3.2"
 services:
   zero:
@@ -110,44 +109,43 @@ volumes:
   dgraph:
 ```
 
-Save the contents of the snippet above in a file called `docker-compose.yml`, then run the following
-command from the folder containing the file.
-```
+将上面的代码段的内容保存在名为`docker-compose.yml`的文件中，然后从包含该文件的文件夹中运行以下命令。
+
+```sh
 docker-compose up -d
 ```
 
-This would start Dgraph Alpha, Zero and Ratel. You can check the logs using `docker-compose logs`
+这将启动Dgraph Alpha，Zero和Ratel。 您可以使用`docker-compose logs`命令查看日志。
 
-### From Installed Binary
+### 从二进制安装
 
-**Run Dgraph zero**
+**运行 Dgraph zero 节点**
 
-Run `dgraph zero` to start Dgraph zero. This process controls Dgraph cluster,
-maintaining membership information, shard assignment and shard movement, etc.
+执行`dgraph zero`启动Dgraph zero节点。 此过程控制Dgraph集群、维护成员信息、碎片分配和碎片移动等。
 
 ```sh
 dgraph zero
 ```
 
-**Run Dgraph data server**
+**运行 Dgraph alpha 节点**
 
-Run `dgraph alpha` to start Dgraph alpha.
+执行 `dgraph alpha` 命令启动 Dgraph alpha 节点.
 
 ```sh
 dgraph alpha --lru_mb 2048 --zero localhost:5080
 ```
 
-**Run Ratel**
+**运行 Ratel 节点**
 
-Run 'dgraph-ratel' to start Dgraph UI. This can be used to do mutations and query through UI.
+执行 `dgraph-ratel` 命令启动Dgraph用户界面. 可以通过Dgraph用户界面做mutations和query.
 
 ```sh
 dgraph-ratel
 ```
 
-{{% notice "tip" %}}You need to set the estimated memory Dgraph alpha can take through `lru_mb` flag. This is just a hint to the Dgraph alpha and actual usage would be higher than this. It's recommended to set lru_mb to one-third the available RAM.{{% /notice %}}
+*你可以通过`lru_mb`字段设置Dgraph alpha占用的内存。 这只是对Dgraph alpha的示意，实际使用率会高于此值。建议将lru_mb设置为可用内存的三分之一。*
 
-### Docker on Linux
+### 在Linux上的docker方式
 
 ```sh
 # Directory to store data in. This would be passed to `-v` flag.
@@ -163,19 +161,22 @@ docker exec -it diggy dgraph alpha --lru_mb 2048 --zero localhost:5080
 docker exec -it diggy dgraph-ratel
 ```
 
-The dgraph alpha listens on ports 8080 and 9080  with log output to the terminal.
+dgraph alpha监听端口8080和9080，并将日志输出到终端。
 
-### Docker on Non Linux Distributions.
-File access in mounted filesystems is slower when using docker. Try running the command `time dd if=/dev/zero of=test.dat bs=1024 count=100000` on mounted volume and you will notice that it's horribly slow when using mounted volumes. We recommend users to use docker data volumes. The only downside of using data volumes is that you can't access the files from the host, you have to launch a container for accessing it.
+### 在非Linux发行版上的docker方式
 
-{{% notice "tip" %}}If you are using docker on non-linux distribution, please use docker data volumes.{{% /notice %}}
+使用docker时，挂载的文件系统中的文件访问速度较慢。尝试在安装卷上运行命令`time dd if = / dev / zero of = test.dat bs = 1024 count = 100000`，您会注意到使用安装卷时速度非常慢。我们建议用户使用docker数据卷。 使用数据卷的唯一缺点是您无法从主机访问文件，您必须启动容器才能访问它。
 
-Create a docker data container named *data* with dgraph/dgraph image.
+*如果您在非linux发行版上使用docker，请使用docker数据卷。*
+
+用dgraph/dgraph镜像创建一个名为*data*的数据容器。
+
 ```sh
 docker create -v /dgraph --name data dgraph/dgraph
 ```
 
-Now if we run Dgraph container with `--volumes-from` flag and run Dgraph with the following command, then anything we write to /dgraph in Dgraph container will get written to /dgraph volume of datacontainer.
+现在，如果我们使用`--volumes-from`参数启动Dgraph容器并使用以下命令运行Dgraph，那么我们写入Dgraph容器中/dgraph目录的任何内容都将被写入数据容器的/dgraph目录。
+
 ```sh
 docker run -it -p 5080:5080 -p 6080:6080 --volumes-from data --name diggy dgraph/dgraph dgraph zero
 docker exec -it diggy dgraph alpha --lru_mb 2048 --zero localhost:5080
@@ -184,8 +185,7 @@ docker exec -it diggy dgraph alpha --lru_mb 2048 --zero localhost:5080
 docker exec -it diggy dgraph-ratel
 ```
 
-{{% notice "tip" %}}
-If you are using Dgraph v1.0.2 (or older) then the default ports are 7080, 8080 for zero, so when following instructions for different setup guides override zero port using `--port_offset`.
+*If you are using Dgraph v1.0.2 (or older) then the default ports are 7080, 8080 for zero, so when following instructions for different setup guides override zero port using `--port_offset`.*
 
 ```sh
 dgraph zero --lru_mb=<typically one-third the RAM> --port_offset -2000

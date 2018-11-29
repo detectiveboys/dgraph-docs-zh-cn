@@ -29,7 +29,7 @@ If an edge is of a value type, the value can be returned by giving the edge name
 
 Query Example: In the example dataset, edges that link movies to directors and actors, movies have a name, release date and identifiers for a number of well known movie databases.  This query, with name `bladerunner`, and root matching a movie name, returns those values for the early 80's sci-fi classic "Blade Runner".
 
-```
+```graphql
 {
   bladerunner(func: eq(name@en, "Blade Runner")) {
     uid
