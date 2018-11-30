@@ -185,27 +185,27 @@ docker exec -it diggy dgraph alpha --lru_mb 2048 --zero localhost:5080
 docker exec -it diggy dgraph-ratel
 ```
 
-*If you are using Dgraph v1.0.2 (or older) then the default ports are 7080, 8080 for zero, so when following instructions for different setup guides override zero port using `--port_offset`.*
+*如果您使用的是Dgraph v1.0.2（或更早版本），zero节点默认端口为7080,8080，因此当不遵循指南的配置时，使用`--port_offset`参数覆盖默认zero节点端口。*
 
 ```sh
 dgraph zero --lru_mb=<typically one-third the RAM> --port_offset -2000
 ```
 
-Ratel's default port is 8081, so override it using -p 8000.
+*Ratel 节点的默认端口是8081，可以使用-p参数如 -p 8000覆盖它。*
 
-{{% /notice %}}
+## Step 3: 运行 query
 
-## Step 3: Run Queries
-{{% notice "tip" %}}Once Dgraph is running, you can access Ratel at [`http://localhost:8000`](http://localhost:8000). It allows browser-based queries, mutations and visualizations.
+*Dgraph运行后，您可以在[http//localhost:8000](http//localhost8000)访问Ratel。 Ratel是基于浏览器的query，mutations和可视化。*
 
-The mutations and queries below can either be run from the command line using `curl localhost:8080/query -XPOST -d $'...'` or by pasting everything between the two `'` into the running user interface on localhost.{{% /notice %}}
+*mutations和query可以命令行运行`curl localhost:8080/query -XPOST -d $'...'`，也可以将两个`'`之间的所有内容粘贴到localhost上的用户界面中运行。*
 
-### Dataset
-The dataset is a movie graph, where and the graph nodes are entities of the type directors, actors, genres, or movies.
+### 数据集
 
-### Storing data in the graph
-Changing the data stored in Dgraph is a mutation.  The following mutation stores information about the first three releases of the the ''Star Wars'' series and one of the ''Star Trek'' movies.  Running this mutation, either through the UI or on the command line, will store the data in Dgraph.
+所选用的数据集是电影图数据，图中节点是导演、演员、电影类型和电影的实体。
 
+### 在graph中存储数据
+
+更改存储在Dgraph中的数据的操作就是mutation。 以下mutation是存储有关“星球大战”系列前三部和一部“星际迷航”电影的信息。通过用户界面或命令行运行此mutation将数据存储在Dgraph中。
 
 ```sh
 curl localhost:8080/mutate -H "X-Dgraph-CommitNow: true" -XPOST -d $'
@@ -254,9 +254,7 @@ curl localhost:8080/mutate -H "X-Dgraph-CommitNow: true" -XPOST -d $'
 ' | python -m json.tool | less
 ```
 
-{{% notice "tip" %}}
-To run an RDF mutation via curl, you can use the curl option `--data-binary @/path/to/mutation.txt` instead of `-d $''`. The `--data-binary` option skips curl's default URL-encoding.
-{{% /notice %}}
+*To run an RDF mutation via curl, you can use the curl option `--data-binary @/path/to/mutation.txt` instead of `-d $''`. The `--data-binary` option skips curl's default URL-encoding.*
 
 ### Adding indexes
 Alter the schema to add indexes on some of the data so queries can use term matching, filtering and sorting.
