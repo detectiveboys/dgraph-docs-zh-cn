@@ -18,15 +18,15 @@
 
 ## 翻译风格
 
-- 不予翻译的名词或术语：
+- 不予翻译的名词或术语
 
 dgraph、Zero、Alpha、Ratel、query、mutations
 
 - 语法高亮标记
   
 graphql语句：```graphql
-docker-compose语句：```yaml
 
+docker-compose语句：```yaml
 
 ## 本地运行
 
