@@ -20,25 +20,25 @@
 
 - 不予翻译的名词或术语
 
-dgraph、Zero、Alpha、Ratel、query、mutations、schema
+    dgraph、Zero、Alpha、Ratel、query、mutations、schema
 
 - 语法高亮标记
 
-graphql语句：```graphql
+    graphql语句：```graphql
 
-docker-compose语句：```yaml
+    docker-compose语句：```yaml
 
-golang语句：```go
+    golang语句：```go
 
-json数据：```json
+    json数据：```json
 
 ## 翻译工具推荐
 
-[谷歌翻译](https://translate.google.com)
-[百度翻译](https://fanyi.baidu.com/translate)
-[Bing词典](http://cn.bing.com/dict/)
-[词都](http://www.dictall.com/)
-[词博](http://www.cibo.cn/)
+    [谷歌翻译](https://translate.google.com)
+    [百度翻译](https://fanyi.baidu.com/translate)
+    [Bing词典](http://cn.bing.com/dict/)
+    [词都](http://www.dictall.com/)
+    [词博](http://www.cibo.cn/)
 
 ## 运行项目
 
