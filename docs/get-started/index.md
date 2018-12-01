@@ -207,7 +207,7 @@ dgraph zero --lru_mb=<typically one-third the RAM> --port_offset -2000
 
 更改存储在Dgraph中的数据的操作就是mutation。 以下mutation是存储有关“星球大战”系列前三部和一部“星际迷航”电影的信息。通过用户界面或命令行运行此mutation将数据存储在Dgraph中。
 
-```sh
+```graphql
 curl localhost:8080/mutate -H "X-Dgraph-CommitNow: true" -XPOST -d $'
 {
   set {
@@ -254,12 +254,13 @@ curl localhost:8080/mutate -H "X-Dgraph-CommitNow: true" -XPOST -d $'
 ' | python -m json.tool | less
 ```
 
-*To run an RDF mutation via curl, you can use the curl option `--data-binary @/path/to/mutation.txt` instead of `-d $''`. The `--data-binary` option skips curl's default URL-encoding.*
+*要通过curl运行RDF mutation，需要使用curl选项`--data-binary @/path/to/mutation.txt`而不是`-d $''`。`--data-binary`选项跳过curl的默认URL编码。*
 
-### Adding indexes
-Alter the schema to add indexes on some of the data so queries can use term matching, filtering and sorting.
+### 添加索引
 
-```sh
+更改schema给某些数据上添加索引，以便查询时可以使用匹配，过滤和排序的术语。
+
+```graphql
 curl localhost:8080/alter -XPOST -d $'
   name: string @index(term) .
   release_date: datetime @index(year) .
@@ -268,10 +269,11 @@ curl localhost:8080/alter -XPOST -d $'
 ' | python -m json.tool | less
 ```
 
-### Get all movies
-Run this query to get all the movies. The query works below all the movies have a starring edge
+### 查询所有电影
 
-```sh
+运行此查询以获取所有电影。查询具有starring（主演）这条边的所有电影。
+
+```graphql
 curl localhost:8080/query -XPOST -d $'
 {
  me(func: has(starring)) {
@@ -281,11 +283,11 @@ curl localhost:8080/query -XPOST -d $'
 ' | python -m json.tool | less
 ```
 
-### Get all movies released after "1980"
-Run this query to get "Star Wars" movies released after "1980".  Try it in the user interface to see the result as a graph.
+### 查询“1980”年之后发布的所有电影
 
+运行此查询以获取“1980”年之后发布的“星球大战”电影。在用户界面中尝试通过图形查看结果。
 
-```sh
+```graphql
 curl localhost:8080/query -XPOST -d $'
 {
   me(func:allofterms(name, "Star Wars")) @filter(ge(release_date, "1980")) {
@@ -304,7 +306,7 @@ curl localhost:8080/query -XPOST -d $'
 ' | python -m json.tool | less
 ```
 
-Output
+输出
 
 ```json
 {
@@ -359,29 +361,27 @@ Output
 }
 ```
 
-That's it! In these three steps, we set up Dgraph, added some data, set a schema
-and queried that data back.
+好了！ 在这三个步骤中，我们设运行了Dgraph，导入了一些数据，设置了schema，查询并返回了数据。
 
-## Where to go from here
+## 现在该去哪呢？
 
-- Go to [Clients]({{< relref "clients/index.md" >}}) to see how to communicate
-with Dgraph from your application.
-- Take the [Tour](https://tour.dgraph.io) for a guided tour of how to write queries in Dgraph.
-- A wider range of queries can also be found in the [Query Language](/query-language) reference.
-- See [Deploy](/deploy) if you wish to run Dgraph
-  in a cluster.
+- 去[客户端](clients/index.md)模块了解您的应用程序怎样与Dgraph进行通信。
+- 参加[Tour](https://tour.dgraph.io)，了解如何在Dgraph中编写query。
+- 在[查询语言](query-language/index.md)模块中也可以找到更多的query语法相关参考。
+- 如果要在群集中运行Dgraph，请参阅[部署]（deploy/index.md）。
 
-## Need Help
+## 需要帮助？
 
-* Please use [discuss.dgraph.io](https://discuss.dgraph.io) for questions, feature requests and discussions.
-* Please use [Github Issues](https://github.com/dgraph-io/dgraph/issues) if you encounter bugs or have feature requests.
-* You can also join our [Slack channel](http://slack.dgraph.io).
+- 请使用[discuss.dgraph.io](https://discuss.dgraph.io)查询问题，功能请求和讨论。
+- 如果您遇到错误或有功能请求，请使用[Github Issues](https://github.com/dgraph-io/dgraph/issues)。
+- 您也可以加入我们的[Slack channel](http://slack.dgraph.io)。
 
-## Troubleshooting
+## 故障排除
 
 ### 1. Docker: Error response from daemon; Conflict. Container name already exists.
 
-Remove the diggy container and try the docker run command again.
-```
+删除diggy容器并再次尝试docker run命令。
+
+```sh
 docker rm diggy
 ```
