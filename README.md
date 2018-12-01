@@ -14,7 +14,7 @@
 | [常见问题](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/faq/index.md)                  |:uk: ![FAQ](http://progressed.io/bar/0) :cn:  | - | -      |      -        |
 | [具体问题指引](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)    |:uk: ![How To Guides](http://progressed.io/bar/0) :cn:  | -       | -      |      -        |
 | [设计理念](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/design-concepts/index.md)        |:uk: ![Design Concepts](http://progressed.io/bar/0) :cn: | -   | -      | -         |
-| [与同类产品比较](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) |:uk: ![Dgraph Compared to Other](http://progressed.io/bar/0) :cn: | -           | -      | -         |
+| [与同类产品比较](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) |:uk: ![Dgraph Compared to Other](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)     | 2018-12-01     | -         |
 
 ## 翻译风格
 
