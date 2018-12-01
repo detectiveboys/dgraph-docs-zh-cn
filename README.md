@@ -9,7 +9,7 @@
 | [查询语言](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)                      |:uk: ![Query Language](http://progressed.io/bar/0) :cn:  | -           | - | - |
 | [GraphQL+- 小技巧](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: ![GraphQL+- Tips and Tricks](http://progressed.io/bar/0) :cn:  | -           | -   |      -        |
 | [Mutations](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)      |:uk: ![Mutations](http://progressed.io/bar/0) :cn:  | -       | -   |      -        |
-| [客户端](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: ![Clients](http://progressed.io/bar/60) :cn:  | [Valdanito](https://github.com/Valdanitooooo)  | -   |      -        |
+| [客户端](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: ![Clients](http://progressed.io/bar/60) :cn:  | [Valdanito](https://github.com/Valdanitooooo)  | 2018-12-01 |      -        |
 | [部署](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/deploy/index.md)                  |:uk: ![Deploy](http://progressed.io/bar/0) :cn:   | -   | -      |      -        |
 | [常见问题](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/faq/index.md)                  |:uk: ![FAQ](http://progressed.io/bar/0) :cn:  | - | -      |      -        |
 | [具体问题指引](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)    |:uk: ![How To Guides](http://progressed.io/bar/0) :cn:  | -       | -      |      -        |
