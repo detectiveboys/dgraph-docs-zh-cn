@@ -34,11 +34,15 @@
 
 ## 翻译工具推荐
 
-    [谷歌翻译](https://translate.google.com)
-    [百度翻译](https://fanyi.baidu.com/translate)
-    [Bing词典](http://cn.bing.com/dict/)
-    [词都](http://www.dictall.com/)
-    [词博](http://www.cibo.cn/)
+>[谷歌翻译](https://translate.google.com)
+
+>[百度翻译](https://fanyi.baidu.com/translate)
+
+>[Bing词典](http://cn.bing.com/dict/)
+
+>[词都](http://www.dictall.com/)
+
+>[词博](http://www.cibo.cn/)
 
 ## 运行项目
 
