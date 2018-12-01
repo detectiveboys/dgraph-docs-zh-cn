@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+  docsify:
+    container_name: docsify
+    image: littlstar/docker-docsify:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./docs:/usr/local/docsify"

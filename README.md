@@ -20,34 +20,46 @@
 
 - 不予翻译的名词或术语
 
-dgraph、Zero、Alpha、Ratel、query、mutations
+dgraph、Zero、Alpha、Ratel、query、mutations、schema
 
 - 语法高亮标记
-  
+
 graphql语句：```graphql
 
 docker-compose语句：```yaml
 
-## 本地运行
+json数据：```json
+
+## 运行项目
 
 - clone项目源码
 
-```bash
-git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
-```
+    ```bash
+    git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
+    ```
 
-- 安装docsify-cli, 关于[docsify](https://docsify.js.org)
+- 方式一：本机运行（需要node环境）
+  
+    安装docsify-cli, 关于[docsify](https://docsify.js.org)
 
-```bash
-npm i docsify-cli -g
-```
+    ```bash
+    npm i docsify-cli -g
+    ```
 
-- 运行项目
+    在项目根目录下执行：
 
-在项目根目录下执行：
+    ```bash
+    docsify serve ./docs
+    ```
 
-```bash
-docsify serve ./docs
-```
+    访问项目主页http://localhost:3000
 
-访问项目主页http://localhost:3000
+- 方式二：docker容器运行（需要docker环境）
+  
+    在项目根目录下执行：
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    访问项目主页http://localhost:3000
