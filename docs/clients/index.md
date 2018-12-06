@@ -1,16 +1,17 @@
 
 ## 实现方案
 
-*所有的mutations和query都在事务的上下文中运行。这与v0.9版本之前的交互模型有很大不同。*
+**Note** *所有的mutations和query都在事务的上下文中运行。这与v0.9版本之前的交互模型有很大不同。*
 
 客户端可以通过两种不同的方式与服务器通信：
 
-- **通过 [gRPC](http://www.grpc.io/)。** 在内部，它使用[Protocol Buffers](https://developers.google.com/protocol-buffers)（Graph使用的proto文件位于[api.proto](https://github.com/dgraph-io/dgo/blob/master/protos/api.proto)）。
+- **通过 [gRPC](http://www.grpc.io/)**。在内部，它使用[Protocol Buffers](https://developers.google.com/protocol-buffers)（Graph使用的proto文件位于[api.proto](https://github.com/dgraph-io/dgo/blob/master/protos/api.proto)）。
 
-- **通过 HTTP。** 有各种端点，每个端点都接收并返回JSON。 HTTP端点和gRPC服务方法之间存在一对一的对应关系。
+- **通过 HTTP**。有各种端点，每个端点都接收并返回JSON。 HTTP端点和gRPC服务方法之间存在一对一的对应关系。
 
 可以通过gRPC或HTTP直接与Dgraph连接。但是，如果您使用的语言存在客户端库，则会更容易。
 
+**Tip**
 *对于多节点，谓词将分配给首先看到该谓词的组。Dgraph还自动将谓词数据移动到不同的组，以平衡谓词分布。每10分钟自动移动一次。客户端可以通过与所有Dgraph实例通信来辅助这个过程。对于Go客户端，这意味着向每个Dgraph实例传入一个`grpc.ClientConn`。 Mutations将以循环方式进行，导致初始时谓词的半随机谓词分布。*
 
 ## Go
@@ -282,43 +283,32 @@ fmt.Println(string(resp.Json))
 
 ## Java
 
-The official Java client [can be found here](https://github.com/dgraph-io/dgraph4j)
-and it fully supports Dgraph v1.0.x. Follow the instructions in the
-[README](https://github.com/dgraph-io/dgraph4j#readme)
-to get it up and running.
+官方Java客户端可以在[这里](https://github.com/dgraph-io/dgraph4j)找到，它完全支持Dgraph v1.0.x. 按照[README](https://github.com/dgraph-io/dgraph4j#readme)中的说明进行运行即可。
 
 We also have a [DgraphJavaSample] project, which contains an end-to-end
 working example of how to use the Java client.
-
-[DgraphJavaSample]:https://github.com/dgraph-io/dgraph4j/tree/master/samples/DgraphJavaSample
+我们还有一个[DgraphJavaSample](https://github.com/dgraph-io/dgraph4j/tree/master/samples/DgraphJavaSample)项目，其中包含如何使用Java客户端的端到端工作示例。
 
 ## Javascript
 
-The official Javascript client [can be found here](https://github.com/dgraph-io/dgraph-js)
-and it fully supports Dgraph v1.0.x. Follow the instructions in the
-[README](https://github.com/dgraph-io/dgraph-js#readme) to get it up and running.
+官方Javascript客户端可以在[这里](https://github.com/dgraph-io/dgraph-js)找到，它完全支持Dgraph v1.0.x. 按照[README](https://github.com/dgraph-io/dgraph-js#readme) 中的说明启动并运行。
 
 We also have a [simple example](https://github.com/dgraph-io/dgraph-js/tree/master/examples/simple)
 project, which contains an end-to-end working example of how to use the Javascript client,
 for Node.js >= v6.
+我们还有一个[simple example](https://github.com/dgraph-io/dgraph-js/tree/master/examples/simple)项目，其中包含如何使用Javascript客户端的端到端工作示例，需要Node.js版本 >= v6。
 
 ## Python
 
-The official Python client [can be found here](https://github.com/dgraph-io/pydgraph)
-and it fully supports Dgraph v1.0.x and Python versions >= 2.7 and >= 3.5. Follow the
-instructions in the [README](https://github.com/dgraph-io/pydgraph#readme) to get it
-up and running.
+官方Python客户端可以在[这里](https://github.com/dgraph-io/pydgraph)找到，它完全支持Dgraph v1.0.x，Python版本>= 2.7和>=3.5。按照[README](https://github.com/dgraph-io/pydgraph#readme)中的说明启动并运行。
 
-We also have a [simple example](https://github.com/dgraph-io/pydgraph/tree/master/examples/simple)
-project, which contains an end-to-end working example of how to use the Python client.
+我们还有一个[simple example](https://github.com/dgraph-io/pydgraph/tree/master/examples/simple)项目，其中包含如何使用Python客户端的端到端工作示例。
 
-## Unofficial Dgraph Clients
+## 非官方Dgraph客户端
 
-{{% notice "note" %}}
-These third-party clients are contributed by the community and are not officially supported by Dgraph.
-{{% /notice %}}
+**Note** *这些第三方客户由社区提供，Dgraph没有正式支持。*
 
-### C\#
+### C(C#)
 
 - https://github.com/AlexandreDaSilva/DgraphNet
 - https://github.com/MichaelJCompton/Dgraph-dotnet
@@ -329,110 +319,76 @@ These third-party clients are contributed by the community and are not officiall
 
 ## Raw HTTP
 
-{{% notice "warning" %}}
-Raw HTTP needs more chops to use than our language clients. We wrote this to be a
-guide to help you build Dgraph client in a new language.
-{{% /notice %}}
+ **Warning** *Raw HTTP需要比我们的客户端语言更多的chop。我们写这篇文章是为了帮助您用新语言构建Dgraph客户端。*
 
-It's also possible to interact with dgraph directly via its HTTP endpoints.
-This allows clients to be built for languages that don't have access to a
-working gRPC implementation.
+可以通过其HTTP端点直接与dgraph交互。这让无法访问gRPC实现的语言也可以构建客户端。
 
-In the examples shown here, regular command line tools such as `curl` and
-[`jq`](https://stedolan.github.io/jq/) are used. However, the real intention
-here is to show other programmers how they could implement a client in their
-language on top of the HTTP API.
+在此处显示的示例中，使用常规命令行工具，例如`curl`和[`jq`](https://stedolan.github.io/jq/)。 然而，真正意图是向其他程序员展示他们如何在HTTP API之上使用他们的语言实现客户端。
 
-Similar to the Go client example, we use a bank account transfer example.
+与Go客户端示例类似，我们使用银行帐户转帐示例。
 
-### Create the Client
+### 创建客户端
 
-A client built on top of the HTTP API will need to track state at two different
-levels:
+构建在HTTP API之上的客户端需要在两个不同级别跟踪状态：
 
-1. Per client. Each client will need to keep a linearized reads (`lin_read`)
-   map. This is a map from dgraph group id to proposal id. This will be needed
-for the system as a whole (client + server) to have
-[linearizability](https://en.wikipedia.org/wiki/Linearizability). Whenever a
-`lin_read` map is received in a server response (*for any transaction*), the
-client should update its version of the map by merging the two maps together.
-The merge operation is simple - the new map gets all key/value pairs from the
-parent maps. Where a key exists in both maps, the max value is taken. The
-client's initial `lin_read` is should be an empty map.
+1. 每个客户端。所有客户端都需要保持一个线性化的读取（`lin_read`）map。这是一个从group id到proposal id的map。整个系统（客户端 + 服务器）都需要[线性化](https://en.wikipedia.org/wiki/Linearizability)。每当在服务器响应（*for any transaction*）中接收到`lin_read`map时，客户端应及时通过合并两个map来更新版本。合并操作很简单 - 新map从父map中获取所有key/value。如果两个map中有相同的key，则采用值最大的。 客户端的初始`lin_read`应该是一个空map。
 
-2. Per transaction. There are three pieces of state that need to be maintained
-   for each transaction.
-
-    1. Each transaction needs its own `lin_read` (updated independently of the
-       client level `lin_read`). Any `lin_read` maps received in server
-responses *associated with the transaction* should be merged into the
-transactions `lin_read` map.
+2. 每个事物。每个事务需要维护三个状态。
+    1. 所有事务都需要自己的`lin_read`（独立于客户端级别的`lin_read`更新）。所有在服务器相应*associated with the transaction*中收到的`lin_read`map应该合并到事务`lin_read`map中。
   
-    2. A start timestamp (`start_ts`). This uniquely identifies a transaction,
-       and doesn't change over the transaction lifecycle.
+    2. 开始时间戳（`start_ts`）。唯一地标识了一个事务，并且不会在事务生命周期中进行更改。
   
-    3. The set of keys modified by the transaction (`keys`). This aids in
-       transaction conflict detection.
+    3. 由事务修改的键集（`keys`）。有助于事务冲突检测。
 
-{{% notice "note" %}}
-On a dgraph set up with no replication, there is no need to track `lin_read`.
-It can be ignored in responses received from dgraph and doesn't need to be sent
-in any requests.
-{{% /notice %}}
+**Note** *在没有多副本的dgraph设置中，不需要跟踪`lin_read`。在从dgraph收到的相应中可以忽略它，并且不需要在任何请求中发送它。*
 
-### Alter the database
+### 更改数据库
 
-The `/alter` endpoint is used to create or change the schema. Here, the
-predicate `name` is the name of an account. It's indexed so that we can look up
-accounts based on their name.
+`/alter`端点用于创建或更改schema。这里，谓词`name`是帐户的名称。它被编入索引，以便我们可以根据他们的名字查找帐户。
 
 ```sh
 curl -X POST localhost:8080/alter -d 'name: string @index(term) .'
 ```
 
-If all goes well, the response should be `{"code":"Success","message":"Done"}`.
+成功的话，响应应为`{"code":"Success","message":"Done"}`.
 
-Other operations can be performed via the `/alter` endpoint as well. A specific
-predicate or the entire database can be dropped.
+其他操作也可以通过`/alter`端点执行。可以删除特定谓词或整个数据库。
 
-E.g. to drop the predicate `name`:
+例如，删除谓词`name`：
+
 ```sh
 curl -X POST localhost:8080/alter -d '{"drop_attr": "name"}'
 ```
-To drop all data and schema:
+
+要删除所有数据和schema：
+
 ```sh
 curl -X POST localhost:8080/alter -d '{"drop_all": true}'
 ```
 
-### Start a transaction
+### 开始事物
 
-Assume some initial accounts with balances have been populated. We now want to
-transfer money from one account to the other. This is done in four steps:
+假设已填充了一些具有余额的初始帐户。我们现在想把钱从一个帐户转移到另一个帐户。需要分四步完成：
 
-1. Create a new transaction.
+1. 创建一个事物。
 
-1. Inside the transaction, run a query to determine the current balances.
+2. 在事务内部，运行query以确定当前余额。
 
-2. Perform a mutation to update the balances.
+3. 执行mutation以更新余额。
 
-3. Commit the transaction.
+4. 提交事物。
 
-Starting a transaction doesn't require any interaction with dgraph itself.
-Some state needs to be set up for the transaction to use. The transaction's
-`lin_read` is initialized by *copying* the client's `lin_read`. The `start_ts`
-can initially be set to 0. `keys` can start as an empty set.
+启动事务不需要与dgraph本身进行任何交互。为要使用的事务设置某些状态。事务的`lin_read`通过拷贝客户端的`lin_read`初始化。`start_ts`最初可以设为0.`key`设为空集合。
 
-**For both query and mutation if the `start_ts` is provided as a path parameter, then the operation
-is performed as part of the ongoing transaction else a new transaction is initiated.**
+**对于query和mutation，如果提供`start_ts`作为路径参数，则该操作作为正在进行的事务的一部分执行，否则启动新事务。**
 
-### Run a query
+### 执行query
 
-To query the database, the `/query` endpoint is used. We need to use the
-transaction scoped `lin_read`. Assume that `lin_read` is `{"1": 12}`.
+要查询数据库，使用`/query`端点。我们需要使用事务作用域`lin_read`。假设`lin_read`是`{"1": 12}`。
 
-To get the balances for both accounts:
+获取两个帐户的余额：
 
-```sh
+```graphql
 curl -X POST -H 'X-Dgraph-LinRead: {"1": 12}' localhost:8080/query -d $'
 {
   balances(func: anyofterms(name, "Alice Bob")) {
@@ -444,7 +400,7 @@ curl -X POST -H 'X-Dgraph-LinRead: {"1": 12}' localhost:8080/query -d $'
 
 ```
 
-The result should look like this:
+结果应该是这样的：
 
 ```json
 {
@@ -480,36 +436,24 @@ The result should look like this:
 }
 ```
 
-Notice that along with the query result under the `data` field, there is some
-additional data in the `extensions -> txn` field. This data will have to be
-tracked by the client.
+请注意，除了`data`字段下的查询结果，`extensions -> txn`字段中还有一些额外的数据。客户必须追踪此数据。
 
-First, there is a `start_ts` in the response. This `start_ts` will need to be
-used in all subsequent interactions with dgraph for this transaction, and so
-should become part of the transaction state.
+首先，响应中有一个`start_ts`。这个`start_ts`将需要在与该事务所有与dgraph后续交互中使用，因此应该成为事务状态的一部分。
 
-Second, there is a new `lin_read` map. The `lin_read` map should be merged with
-both the client scoped and transaction scoped `lin_read` maps. Recall that both
-the transaction scoped and client scoped `lin_read` maps are `{"1": 12}`. The
-`lin_read` in the response is `{"1": 14}`. The merged result is `{"1": 14}`,
-since we take the max all of the keys.
+其次，有一个新的`lin_read`map。 `lin_read`map应该与客户端范围和事务范围的`lin_read`map合并。回想一下，事务作用域和客户端作用域的`lin_read`映射都是`{"1": 12}`。响应中的`lin_read`是`{"1": 14}`。合并的结果是`{"1": 14}`，因为我们取所有key中值最大的。
 
-### Run a Mutation
+### 执行mutation
 
-Now that we have the current balances, we need to send a mutation to dgraph
-with the updated balances. If Bob transfers $10 to Alice, then the RDFs to send
-are:
+现在我们有了当前的余额，我们需要使用更新的余额向dgraph发送mutation。如果Bob向Alice转账10美元，那么要发送的RDF是：
 
-```
+```sh
 <0x1> <balance> "110" .
 <0x2> <balance> "60" .
 ```
-Note that we have to to refer to the Alice and Bob nodes by UID in the RDF
-format.
 
-We now send the mutations via the `/mutate` endpoint. We need to provide our
-transaction start timestamp as a path parameter, so that dgraph knows which
-transaction the mutation should be part of.
+注意，我们必须用RDF格式中的UID引用Alice和Bob节点。
+
+我们现在通过`/mutate`端点发送mutation。我们需要提供事务开始时间戳作为路径参数，以便dgraph知道mutation应该属于哪个事务。
 
 ```sh
 curl -X POST localhost:8080/mutate/4 -d $'
@@ -522,7 +466,7 @@ curl -X POST localhost:8080/mutate/4 -d $'
 ' | jq
 ```
 
-The result:
+返回结果:
 
 ```json
 {
@@ -550,24 +494,14 @@ The result:
 }
 ```
 
-We get another `lin_read` map, which needs to be merged (the new `lin_read` map
-for **both the client and transaction** becomes `{"1": 17}`). We also get some
-`keys`. These should be added to the set of `keys` stored in the transaction
-state.
+我们得到需要合并（对于**both the client and transaction**的新`lin_read`map变为`{"1": 17}`）的另一个`lin_read`map。我们也得到一些`keys`。这些`keys`应该添加到存储在事务状态中的`keys`集合中。
 
-### Committing the transaction
+### 提交事物
 
-{{% notice "note" %}}
-It's possible to commit immediately after a mutation is made (without requiring
-to use the `/commit` endpoint as explained in this section). To do this, add
-the `X-Dgraph-CommitNow: true` header to the final `/mutate` call.
-{{% /notice %}}
+**Note** *在发生mutation后可以立即提交（不需要使用本节中讲解的`/commit`端点）。 为了能这样做，需要将`X-Dgraph-CommitNow: true`请求头添加到最终的`/mutate`调用中。*
 
-Finally, we can commit the transaction using the `/commit` endpoint. We need
-the `start_ts` we've been using for the transaction along with the `keys`.
-If we had performed multiple mutations in the transaction instead of the just
-the one, then the keys provided during the commit would be the union of all
-keys returned in the responses from the `/mutate` endpoint.
+最后，我们可以使用`/commit`端点提交事务。需要我们一直用于事务`start_ts`以及`keys`。如果我们在事务中执行了多个mutation，那么在提交期间提供的`keys`将是来自`/mutate`端点的响应中返回的所有`keys`的并集。
+
 
 ```sh
 curl -X POST localhost:8080/commit/4 -d $'
@@ -593,11 +527,10 @@ curl -X POST localhost:8080/commit/4 -d $'
   }
 }
 ```
-The transaction is now complete.
 
-If another client were to perform another transaction concurrently affecting
-the same keys, then it's possible that the transaction would *not* be
-successful.  This is indicated in the response when the commit is attempted.
+事物现已完成。
+
+如果另一个客户端同时执行影响相同`keys`的另一个事务，则该事务可能*不会*成功。会在提交的响应中表明。
 
 ```json
 {
@@ -610,5 +543,4 @@ successful.  This is indicated in the response when the commit is attempted.
 }
 ```
 
-In this case, it should be up to the user of the client to decide if they wish
-to retry the transaction.
+在这种情况下，应该由客户端的用户决定他们是否希望重试事务。
