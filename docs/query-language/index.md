@@ -1,24 +1,24 @@
 
-Dgraph's GraphQL+- is based on Facebook's [GraphQL](https://facebook.github.io/graphql/).  GraphQL wasn't developed for Graph databases, but its graph-like query syntax, schema validation and subgraph shaped response make it a great language choice.  We've modified the language to better support graph operations, adding and removing features to get the best fit for graph databases.  We're calling this simplified, feature rich language, ''GraphQL+-''.
+Dgraph的 GraphQL+- 基于Facebook的[GraphQL]（https://facebook.github.io/graphql/）。GraphQL不是为Graph数据库开发的，但它的图形式查询语法，模式验证和子图形状响应使其成为一种很好的语言选择。我们修改了语言以更好地支持图形操作，添加和删除功能以最适合图形数据库。我们称这种简化的，功能丰富的语言为“GraphQL+- ”。
 
 GraphQL+- is a work in progress. We're adding more features and we might further simplify existing ones.
 
-## Take a Tour - https://tour.dgraph.io
+## 浏览一下 - https://tour.dgraph.io
 
-This document is the Dgraph query reference material.  It is not a tutorial.  It's designed as a reference for users who already know how to write queries in GraphQL+- but need to check syntax, or indices, or functions, etc.
+本文档是Dgraph查询参考资料。这不是一个教程。它被设计为已经知道如何在GraphQL+-中编写查询的用户的参考，但需要检查语法，索引或函数等。
 
-{{% notice "note" %}}If you are new to Dgraph and want to learn how to use Dgraph and GraphQL+-, take the tour - https://tour.dgraph.io{{% /notice %}}
+{{% notice "note" %}}如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 - https://tour.dgraph.io {{% /notice %}}
 
 
-### Running examples
+### 运行示例
 
-The examples in this reference use a database of 21 million triples about movies and actors.  The example queries run and return results.  The queries are executed by an instance of Dgraph running at https://play.dgraph.io/.  To run the queries locally or experiment a bit more, see the [Getting Started]({{< relref "get-started/index.md" >}}) guide, which also shows how to load the datasets used in the examples here.
+该参考文献中的示例使用了关于电影和演员的2100万三倍的数据库。示例查询运行并返回结果。查询由运行在 https://play.dgraph.io/ 的Dgraph实例执行。要在本地运行查询或进行更多实验，请参阅[入门]({{< relref "get-started/index.md" >}}) 指南，该指南还说明如何加载此处示例中使用的数据集。
 
-## GraphQL+- Fundamentals
+## GraphQL+-基本原理
 
-A GraphQL+- query finds nodes based on search criteria, matches patterns in a graph and returns a graph as a result.
+GraphQL+- 查询根据搜索条件查找节点，匹配图中的模式并返回图形作为结果。
 
-A query is composed of nested blocks, starting with a query root.  The root finds the initial set of nodes against which the following graph matching and filtering is applied.
+查询由嵌套块组成，从查询根开始。根找到初始节点集，应用以下图形匹配和过滤。
 
 
 ### Returning Values
