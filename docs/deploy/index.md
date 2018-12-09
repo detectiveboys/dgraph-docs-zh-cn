@@ -1,107 +1,93 @@
 
-This page talks about running Dgraph in various deployment modes, in a distributed fashion and involves
-running multiple instances of Dgraph, over multiple servers in a cluster.
+本页讨论以分布式方式在各种部署模式下运行Dgraph，并涉及在集群中的多个服务器上运行Dgraph的多个实例。
 
-{{% notice "tip" %}}
-For a single server setup, recommended for new users, please see [Get Started](/get-started) page.
-{{% /notice %}}
+**Tip** *对于单个服务器设置，建议新用户使用，请参阅[快速开始](/get-started/index)页。*
 
-## Install Dgraph
+## 安装Dgraph
+
 #### Docker
 
 ```sh
 docker pull dgraph/dgraph:latest
 
-# You can test that it worked fine, by running:
+# 测试它运行是否良好，运行：
 docker run -it dgraph/dgraph:latest dgraph
 ```
 
-#### Automatic download
+#### 自动下载
 
-Running
+执行
+
 ```sh
 curl https://get.dgraph.io -sSf | bash
 
-# Test that it worked fine, by running:
+# 测试它运行是否良好，运行：
 dgraph
 ```
-would install the `dgraph` binary into your system.
 
-#### Manual download [optional]
+将`dgraph`二进制文件安装到您的系统中。
 
-If you don't want to follow the automatic installation method, you could manually download the appropriate tar for your platform from **[Dgraph releases](https://github.com/dgraph-io/dgraph/releases)**. After downloading the tar for your platform from Github, extract the binary to `/usr/local/bin` like so.
+#### 手动下载[可选]
+
+如果您不想遵循自动安装方法，可以从 **[Dgraph releases](https://github.com/dgraph-io/dgraph/releases)** 手动下载适用于您平台的tar包。 从Github下载适用于您的平台的tar包后，将二进制文件解压缩到`/usr/local/bin`目录下。
 
 ```sh
-# For Linux
+# 对于Linux系统
 $ sudo tar -C /usr/local/bin -xzf dgraph-linux-amd64-VERSION.tar.gz
 
-# For Mac
+# 对于Mac系统
 $ sudo tar -C /usr/local/bin -xzf dgraph-darwin-amd64-VERSION.tar.gz
 
-# Test that it worked fine, by running:
+# 测试它运行是否良好，运行：
 dgraph
 ```
 
-#### Building from Source
+#### 从源码构建
 
-{{% notice "note" %}}
-Ratel UI is closed source right now, so you cannot build it from source. But you can connect to your Dgraph instance
-through Ratel UI installed using any of the methods listed above.
-{{% /notice %}}
+**注意** *Ratel UI现在是闭源的，因此您无法从源代码构建它。但您可以通过使用上面列出的任何方法安装的Ratel UI连接到Dgraph实例。*
 
 Make sure you have [Go](https://golang.org/dl/) (version >= 1.8) installed.
+确保安装了[Go](https://golang.org/dl/)（版本> = 1.8）。
 
-After installing Go, run
+安装Go后，运行
+
 ```sh
-# This should install dgraph binary in your $GOPATH/bin.
+# 你的$GOPATH/bin中安装dgraph二进制文件。
 
 go get -u -v github.com/dgraph-io/dgraph/dgraph
 ```
 
-If you get errors related to `grpc` while building them, your
-`go-grpc` version might be outdated. We don't vendor in `go-grpc`(because it
-causes issues while using the Go client). Update your `go-grpc` by running.
+If you get errors related to `grpc` while building them, your `go-grpc` version might be outdated. We don't vendor in `go-grpc`(because it causes issues while using the Go client). Update your `go-grpc` by running.
+如果在构建它们时遇到与`grpc`相关的错误，那么你的`go-grpc`版本可能已经过时了。 我们不在`go-grpc`中供应（因为它在使用Go客户端时会引起问题）。通过运行一下命令更新你的`go-grpc`。
+
 ```sh
 go get -u -v google.golang.org/grpc
 ```
 
-#### Config
+#### 配置
 
-The full set of dgraph's configuration options (along with brief descriptions)
-can be viewed by invoking dgraph with the `--help` flag. For example, to see
-the options available for `dgraph alpha`, run `dgraph alpha --help`.
+可以通过使用 `--help` 标志调用dgraph来查看dgraph的配置选项的完整集合（以及简要描述）。例如，为了查看`dgraph alpha`可用的选项，运行`dgraph alpha --help`。
 
-The options can be configured in multiple ways (from highest precedence to
-lowest precedence):
+可以通过多种方式配置选项（从最高优先级到最低优先级）：
 
-- Using command line flags (as described in the help output).
+- 使用命令行标志（如帮助输出中所述）。
 
-- Using environment variables.
+- 使用环境变量。
 
-- Using a configuration file.
+- 使用配置文件。
 
-If no configuration for an option is used, then the default value as described
-in the `--help` output applies.
+如果没有使用选项的配置，`--help`输出默认值。
 
-Multiple configuration methods can be used all at the same time. E.g. a core
-set of options could be set in a config file, and instance specific options
-could be set using environment vars or flags.
+可以同时使用多种配置方法。例如，可以在配置文件中设置一组核心选项，同时使用环境变量或命令行标志设置特定于实例的选项。
 
-The environment variable names mirror the flag names as seen in the `--help`
-output. They are the concatenation of `DGRAPH`, the subcommand invoked
-(`ALPHA`, `ZERO`, `LIVE`, or `BULK`), and then the name of the flag (in
-uppercase). For example, instead of using `dgraph alpha --lru_mb=8096`, you
-could use `DGRAPH_ALPHA_LRU_MB=8096 dgraph alpha`.
+环境变量名称与标志名称相同，如`--help`输出中所示。
+它们是`DGRAPH`连接，调用的子命令（`ALPHA`，`ZERO`，`LIVE`或`BULK`），然后是标志的名称（大写）。 例如，您可以使用`DGRAPH_ALPHA_LRU_MB = 8096 dgraph alpha`代替`dgraph alpha --lru_mb = 8096`。
 
-Configuration file formats supported are JSON, TOML, YAML, HCL, and Java
-properties (detected via file extension).
+支持的配置文件格式是JSON，TOML，YAML，HCL和Java properties（通过文件扩展名检测）。
 
-A configuration file can be specified using the `--config` flag, or an
-environment variable. E.g. `dgraph zero --config my_config.json` or
-`DGRAPH_ZERO_CONFIG=my_config.json dgraph zero`.
+可以使用`--config`标志或环境变量指定配置文件。例如。 `dgraph zero --config my_config.json`或`DGRAPH_ZERO_CONFIG = my_config.json dgraph zero`。
 
-The config file structure is just simple key/value pairs (mirroring the flag
-names). E.g. a JSON config file that sets `--idx`, `--peer`, and `--replicas`:
+配置文件结构只是简单的键值对（与标志名称相同）。 例如。一个JSON配置文件，设置`--idx`，`--peer`和`--replicas`：
 
 ```json
 {
@@ -111,93 +97,74 @@ names). E.g. a JSON config file that sets `--idx`, `--peer`, and `--replicas`:
 }
 ```
 
-## Cluster Setup
+## 集群设置
 
-### Understanding Dgraph cluster
+### 了解Dgraph集群
 
-Dgraph is a truly distributed graph database - not a master-slave replication of
-universal dataset. It shards by predicate and replicates predicates across the
-cluster, queries can be run on any node and joins are handled over the
-distributed data.  A query is resolved locally for predicates the node stores,
-and via distributed joins for predicates stored on other nodes.
+Dgraph是一个真正的分布式图形数据库 - 而不是通用数据集的主从复制。 它通过谓词进行分片并在群集中复制谓词，查询可以在任何节点上运行，连接通过分布式数据进行处理。对于节点存储的谓词本地解析查询，并通过分布式连接解析存储在其他节点上的谓词。
 
-For effectively running a Dgraph cluster, it's important to understand how
-sharding, replication and rebalancing works.
+为了有效地运行Dgraph集群，了解分片，复制和重新平衡的工作原理非常重要。
 
-**Sharding**
+**分片**
 
-Dgraph colocates data per predicate (* P *, in RDF terminology), thus the
-smallest unit of data is one predicate. To shard the graph, one or many
-predicates are assigned to a group. Each Alpha node in the cluster serves a
-single group. Dgraph Zero assigns a group to each Alpha node.
+Dgraph为每个谓词编写数据（* P *，在RDF术语中），因此最小的数据单位是一个谓词。要对graph进行分片，请将一个或多个谓词分配为一组。群集中的每个Alpha节点都服务于一个组。 Dgraph Zero为每个Alpha节点分配一个组。
 
-**Shard rebalancing**
+**重新平衡分片**
 
-Dgraph Zero tries to rebalance the cluster based on the disk usage in each
-group. If Zero detects an imbalance, it would try to move a predicate along
-with index and reverse edges to a group that has minimum disk usage. This can
-make the predicate unavailable temporarily.
+Dgraph Zero尝试根据每个组中的磁盘使用情况重新平衡群集。如果Zero节点检测到不平衡，它将尝试将谓词与索引和反向边一起移动到具有最小磁盘使用量的组。这使谓词暂时不可用。
 
-Zero would continuously try to keep the amount of data on each server even,
-typically running this check on a 10-min frequency.  Thus, each additional
-Dgraph Alpha instance would allow Zero to further split the predicates from
-groups and move them to the new node.
+Zero节点会不断尝试保持每台服务器上的数据量，通常以10分钟的频率运行此检查。因此，每个额外的Dgraph Alpha实例将允许Zero进一步从组中拆分谓词并将它们移动到新节点。
 
-**Consistent Replication**
+**相合复制**
 
-If `--replicas` flag is set to something greater than one, Zero would assign the
-same group to multiple nodes. These nodes would then form a Raft group aka
-quorum. Every write would be consistently replicated to the quorum. To achieve
-consensus, its important that the size of quorum be an odd number. Therefore, we
-recommend setting `--replicas` to 1, 3 or 5 (not 2 or 4). This allows 0, 1, or 2
-nodes serving the same group to be down, respectively without affecting the
-overall health of that group.
+如果`--replicas`标志设置为大于1的值，则Zero节点会将同一组分配给多个节点。 然后，这些节点将形成一个Raft组，即quorum。每次写入都会相合复制到quorum。 为了达成共识，quorum的数量要是奇数。 因此，我们建议将`--replicas`设置为1,3或5（不是2或4）。这允许服务于同一组的0,1或2个节点分别关闭，而不会影响该组的整体健康状况。
 
-## Ports Usage
+## 端口使用
 
-Dgraph cluster nodes use different ports to communicate over gRPC and HTTP. User has to pay attention while choosing these ports based on their topology and deployment-mode as each port needs different access security rules or firewall.
+Dgraph集群节点使用不同的端口通过GRPC和HTTP进行通信。由于每个端口需要不同的访问安全规则或防火墙，因此用户在选择这些端口时必须注意它们的拓扑结构和部署模式。
 
-### Types of ports
+### 端口类型
 
-- **gRPC-internal:** Port that is used between the cluster nodes for internal communication and message exchange.
-- **gRPC-external:** Port that is used by Dgraph clients, Dgraph Live Loader , and Dgraph Bulk loader to access APIs over gRPC.
-- **http-external:** Port that is used by clients to access APIs over HTTP and other monitoring & administrative tasks.
+- **gRPC-internal:** 在集群节点之间用于内部通信和消息交换的端口。
+- **gRPC-external:** Dgraph客户端，Dgraph Live Loader和Dgraph Bulk loader用于通过gRPC访问API的端口。
+- **http-external:** 客户端用于通过HTTP与其他监控和管理任务访问API的端口。
 
-### Ports used by different nodes
+### 不同节点使用的端口
 
- Dgraph Node Type | gRPC-internal  | gRPC-external | HTTP-external
+ Dgraph节点类型 | gRPC-内部  | gRPC-外部 | HTTP-外部
 ------------------|----------------|---------------|---------------
        zero       |  --Not Used--  |     5080      |     6080
        alpha      |      7080      |     9080      |     8080
        ratel      |  --Not Used--  | --Not Used--  |     8000
 
-Users have to modify security rules or open firewall depending up on their underlying network to allow communication between cluster nodes and between a server and a client. During development a general rule could be wide open *-external (gRPC/HTTP) ports to public and gRPC-internal to be open within the cluster nodes.
+用户必须根据其底层网络修改安全规则或打开防火墙，以允许群集节点之间以及服务器和客户端之间的通信。 在开发期间，一般*-external（gRPC/HTTP）端口规则可以是公开的，gRPC-internal端口在集群节点内是开放的。
 
-**Ratel UI** accesses Dgraph Alpha on the HTTP-external port (default localhost:8080) and can be configured to talk to remote Dgraph cluster. This way you can run Ratel on your local machine and point to a remote cluster. But if you are deploying Ratel along with Dgraph cluster, then you may have to expose 8000 to the public.
+**Ratel UI** 访问http-external端口上的Dgraph Alpha 节点（默认localhost:8080），并且可以配置为与远程Dgraph集群通信。这样，您可以在本地计算机上运行Ratel并指向远程群集。但是如果你要将Ratel和Dgraph集群一起部署，那么你可能不得不向公众公开8000。
 
-**Port Offset** To make it easier for user to setup the cluster, Dgraph defaults the ports used by Dgraph nodes and let user to provide an offset  (through command option `--port_offset`) to define actual ports used by the node. Offset can also be used when starting multiple zero nodes in a HA setup.
+**Port Offset** 为了方便用户设置集群，Dgraph各节点使用默认的端口，并允许用户提供偏移量（通过命令选项`--port_offset`）来定义节点使用的实际端口。 在高可用集群设置中启动多个zero节点时也可以使用偏移。
 
-For example, when a user runs a Dgraph Alpha by setting `--port_offset 2`, then the Alpha node binds to 7082 (gRPC-internal), 8082 (HTTP-external) & 9092 (gRPC-external) respectively.
+例如，当用户通过设置`--port_offset 2`运行Dgraph Alpha 节点时，Alpha节点分别绑定到7082（gRPC-internal），8082（http-external）和9092（gRPC-external）。
 
-**Ratel UI** by default listens on port 8000. You can use the `-port` flag to configure to listen on any other port.
+**Ratel UI** 默认情况下监听端口8000.您可以使用`-port`标志配置为监听任何其他端口。
 
-{{% notice "tip" %}}
-**For Dgraph v1.0.2 (or older)**
+**tip**
 
-Zero's default ports are 7080 and 8080. When following instructions for the different setup guides below, override the Zero ports using `--port_offset` to match the current default ports.
+**对于Dgraph v1.0.2 (或这之后版本)**
+
+Zero 节点的默认端口为7080和8080.当按照以下不同设置指南的说明操作时，使用`--port_offset`覆盖Zero端口以匹配当前的默认端口。
 
 ```sh
-# Run Zero with ports 5080 and 6080
+# 使用端口5080和6080运行Zero
 dgraph zero --idx=1 --port_offset -2000
-# Run Zero with ports 5081 and 6081
+# 使用端口5081和6081运行Zero
 dgraph zero --idx=2 --port_offset -1999
 ```
-Likewise, Ratel's default port is 8081, so override it using `--port` to the current default port.
+
+同样，Ratel的默认端口是8081，因此使用`--port`将其覆盖到当前默认端口。
 
 ```sh
 dgraph-ratel --port 8080
 ```
-{{% /notice %}}
 
 ### HA Cluster Setup
 
