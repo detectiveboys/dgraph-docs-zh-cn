@@ -1,33 +1,33 @@
 
-Dgraph's GraphQL+- is based on Facebook's [GraphQL](https://facebook.github.io/graphql/).  GraphQL wasn't developed for Graph databases, but its graph-like query syntax, schema validation and subgraph shaped response make it a great language choice.  We've modified the language to better support graph operations, adding and removing features to get the best fit for graph databases.  We're calling this simplified, feature rich language, ''GraphQL+-''.
+Dgraph的 GraphQL+- 基于Facebook的[GraphQL](https://facebook.github.io/graphql/)。GraphQL不是为Graph数据库开发的，但它的图形式查询语法，模式验证和子图形状响应使其成为一种很好的语言选择。我们修改了语言以更好地支持图形操作，添加和删除功能以最适合图形数据库。我们称这种简化的，功能丰富的语言为“GraphQL+- ”。
 
-GraphQL+- is a work in progress. We're adding more features and we might further simplify existing ones.
+GraphQL+-正在开发中。我们正在添加更多功能，我们可能会进一步简化现有功能。
 
-## Take a Tour - https://tour.dgraph.io
+## 浏览一下 - https://tour.dgraph.io
 
-This document is the Dgraph query reference material.  It is not a tutorial.  It's designed as a reference for users who already know how to write queries in GraphQL+- but need to check syntax, or indices, or functions, etc.
+本文档是Dgraph查询参考资料。这不是一个教程。它被设计为已经知道如何在GraphQL+-中编写查询的用户的参考，但需要检查语法，索引或函数等。
 
-{{% notice "note" %}}If you are new to Dgraph and want to learn how to use Dgraph and GraphQL+-, take the tour - https://tour.dgraph.io{{% /notice %}}
-
-
-### Running examples
-
-The examples in this reference use a database of 21 million triples about movies and actors.  The example queries run and return results.  The queries are executed by an instance of Dgraph running at https://play.dgraph.io/.  To run the queries locally or experiment a bit more, see the [Getting Started]({{< relref "get-started/index.md" >}}) guide, which also shows how to load the datasets used in the examples here.
-
-## GraphQL+- Fundamentals
-
-A GraphQL+- query finds nodes based on search criteria, matches patterns in a graph and returns a graph as a result.
-
-A query is composed of nested blocks, starting with a query root.  The root finds the initial set of nodes against which the following graph matching and filtering is applied.
+{{% notice "note" %}}如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 - https://tour.dgraph.io {{% /notice %}}
 
 
-### Returning Values
+### 运行示例
 
-Each query has a name, specified at the query root, and the same name identifies the results.
+该参考文献中的示例使用了关于电影和演员的2100万三倍的数据库。示例查询运行并返回结果。查询由运行在 https://play.dgraph.io/ 的Dgraph实例执行。要在本地运行查询或进行更多实验，请参阅[入门]({{< relref "get-started/index.md" >}}) 指南，该指南还说明如何加载此处示例中使用的数据集。
 
-If an edge is of a value type, the value can be returned by giving the edge name.
+## GraphQL+-基本原理
 
-Query Example: In the example dataset, edges that link movies to directors and actors, movies have a name, release date and identifiers for a number of well known movie databases.  This query, with name `bladerunner`, and root matching a movie name, returns those values for the early 80's sci-fi classic "Blade Runner".
+GraphQL+- 查询根据搜索条件查找节点，匹配图中的模式并返回图形作为结果。
+
+查询由嵌套块组成，从查询根开始。根找到初始节点集，应用以下图形匹配和过滤。
+
+
+### 返回结果
+
+每个查询都有一个名称，在查询根目录中指定，并且相同的名称标识结果。
+
+如果边是值类型，则可以通过给出边名来返回该值。
+
+查询示例：在示例数据集中，将电影链接到导演和演员的边，电影具有许多众所周知的电影数据库的名称，发布日期和标识符。这个名为`bladerunner`的查询，以及与电影名称匹配的根，返回80年代早期科幻经典“Blade Runner”的值。
 
 ```graphql
 {
@@ -40,11 +40,11 @@ Query Example: In the example dataset, edges that link movies to directors and a
 }
 ```
 
-The query first searches the graph, using indexes to make the search efficient, for all nodes with a `name` edge equalling "Blade Runner".  For the found node the query then returns the listed outgoing edges.
+对于所有“name”边缘等于“Blade Runner”的节点，查询首先使用索引搜索图形，以使搜索更有效。对于找到的节点，查询然后返回列出的传出边。
 
-Every node had a unique 64 bit identifier.  The `uid` edge in the query above returns that identifier.  If the required node is already known, then the function `uid` finds the node.
+每个节点都有一个唯一的64位标识符。上面查询中的`uid`边缘返回该标识符。如果已知所需节点，则函数“uid”找到该节点。
 
-Query Example: "Blade Runner" movie data found by UID.
+查询示例：通过UID找到的“Blade Runner”电影数据。
 
 ```
 {
@@ -57,9 +57,9 @@ Query Example: "Blade Runner" movie data found by UID.
 }
 ```
 
-A query can match many nodes and return the values for each.
+查询可以匹配许多节点并返回每个节点的值。
 
-Query Example: All nodes that have either "Blade" or "Runner" in the name.
+查询示例：名称中包含“Blade”或“Runner”的所有节点。
 
 ```
 {
@@ -72,9 +72,9 @@ Query Example: All nodes that have either "Blade" or "Runner" in the name.
 }
 ```
 
-Multiple IDs can be specified in a list to the `uid` function.
+可以在列表中为`uid`函数指定多个ID。
 
-Query Example:
+查询示例：
 ```
 {
   movies(func: uid(0x107b2c, 0x85f961)) {
@@ -91,14 +91,13 @@ Query Example:
 ```
 
 
-{{% notice "note" %}} If your predicate has special characters, then you should wrap it with angular
-brackets while asking for it in the query. E.g. `<first:name>`{{% /notice %}}
+{{% notice "note" %}} 如果你的谓词有特殊字符，那么你应该在查询中询问它时用尖括号包装它。 例如 `<first:name>`{{% /notice %}}
 
-### Expanding Graph Edges
+### 扩展图形边缘
 
-A query expands edges from node to node by nesting query blocks with `{ }`.
+查询通过使用 `{ }` 嵌套查询块来扩展节点之间的边缘。
 
-Query Example: The actors and characters played in "Blade Runner".  The query first finds the node with name "Blade Runner", then follows  outgoing `starring` edges to nodes representing an actor's performance as a character.  From there the `performance.actor` and `performance,character` edges are expanded to find the actor names and roles for every actor in the movie.
+Query Example: 查询在“Blade Runner”中扮演的演员和角色。 查询首先找到名为“Blade Runner”的节点, 然后将传出的“starring”边缘跟随表示actor作为角色的表现的节点。 从那里扩展`performance.actor` 和 `performance,character` 的边，以找到电影中每个演员的演员姓名和角色。
 ```
 {
   brCharacters(func: eq(name@en, "Blade Runner")) {
@@ -117,15 +116,15 @@ Query Example: The actors and characters played in "Blade Runner".  The query fi
 ```
 
 
-### Comments
+### 注释
 
-Anything on a line following a `#` is a comment
+`#` 后面的任何内容都是注释。
 
-### Applying Filters
+### 应用过滤器
 
-The query root finds an initial set of nodes and the query proceeds by returning values and following edges to further nodes - any node reached in the query is found by traversal after the search at root.  The nodes found can be filtered by applying `@filter`, either after the root or at any edge.
+查询根找到一组初始节点，查询通过返回值和后续边缘继续进一步节点继续进行 - 查询中到达的任何节点都是在根搜索后通过遍历找到的。 找到的节点可以通过在根之后或任何边缘应用 `@ filter` 进行过滤。
 
-Query Example: "Blade Runner" director Ridley Scott's movies released before the year 2000.
+查询示例: 查询导演雷德利斯科特在2000年之前发布的电影“Blade Runner”。
 ```
 {
   scott(func: eq(name@en, "Ridley Scott")) {
@@ -139,7 +138,7 @@ Query Example: "Blade Runner" director Ridley Scott's movies released before the
 }
 ```
 
-Query Example: Movies with either "Blade" or "Runner" in the title and released before the year 2000.
+查询示例：查询标题中带有“Blade”或“Runner”，并在2000年之前发行的电影。
 
 ```
 {
