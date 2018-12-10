@@ -39,7 +39,7 @@
     ```html
     **note** *note内容......*
     **tip** *tip内容......*
-    **warning** *note内容......*
+    **warning** *warning内容......*
     ```
 
 ## 翻译工具推荐
