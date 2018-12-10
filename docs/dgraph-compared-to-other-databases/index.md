@@ -1,81 +1,60 @@
 
-This page attempts to draw a comparison between Dgraph and other popular graph databases/datastores. The summaries that follow are brief descriptions that may help a person decide if Dgraph will suit their needs.
+这里尝试比较Dgraph与其他流行的图数据库/数据存储之间的不同。以下是简要的说明，可以帮助您判断Dgraph是否符合您的需求。
 
-# Batch based
-Batch based graph processing frameworks provide a very high throughput to do periodic processing of data. This is useful to convert graph data into a shape readily usable by other systems to then serve the data to end users.
+# 基于批处理
+
+基于批处理的图处理框架提供了非常高的吞吐量来定期处理数据。这对于将图数据转换为其他系统可随时使用的形态然后将数据提供给最终用户非常有用。
 
 ## Pregel
-* [Pregel](https://kowshik.github.io/JPregel/pregel_paper.pdf), is a system for large-scale graph processing by Google. You can think of it as equivalent to MapReduce/Hadoop.
-* Pregel isn't designed to be exposed directly to users, i.e. run with real-time updates and execute arbitrary complexity queries. Dgraph is designed to be able to respond to arbitrarily complex user queries in low latency and allow user interaction.
-* Pregel can be used along side Dgraph for complementary processing of the graph, to allow for queries which would take over a minute to run via Dgraph, or produce too much data to be consumed by clients directly.
+
+- [Pregel](https://kowshik.github.io/JPregel/pregel_paper.pdf)，是Google的一个大规模图形处理系统。您可以将其视为与MapReduce/Hadoop等效。
+- Pregel不直接暴露给用户，即运行实时更新并执行任意复杂性查询。Dgraph能够以低延迟响应任意复杂的用户查询并允许用户交互。
+- Pregel可以与Dgraph一起使用，用于于补充处理图，这样通过Dgraph运行需要一分钟以上的查询，或者产生太多数据的查询就可以被客户直接使用。
 
 ---
 
-# Database
-Graph databases optimize internal data representation to be able to do graph operations efficiently.
+# 数据库
+
+图数据库优化内部数据表示，以便能够有效地进行图形操作。
 
 ## Neo4j
-[Neo4j](https://neo4j.com/) is the most popular graph database according to [db-engines.com](http://db-engines.com/en/ranking/graph+dbms) and has been around since 2007. Dgraph is a much newer graph database built to scale to Google web scale and for serious production usage as the primary database.
 
-### Language
+[Neo4j](https://neo4j.com/)是2007年以来[db-engines.com](http://db-engines.com/en/ranking/graph+dbms)中最受欢迎的图数据库，Dgraph是一个比较新的图数据库，可以扩展到Google Web规模并作为主要数据库进行严格的生产使用。
 
-Neo4j supports Cypher and Gremlin query language. Dgraph supports
-[GraphQL+-]({{< relref "query-language/index.md#graphql">}}), a variation of
-[GraphQL](https://facebook.github.io/graphql/), a query language created by
-Facebook. As opposed to Cypher or Gremlin, which produce results in simple list
-format, GraphQL allows results to be produced in a subgraph format, which has
-richer semantics. Also, GraphQL supports schema validation which is useful to
-ensure data correctness during both input and output.
+### 语言
 
-While GraphQL is modern, Gremlin and Cypher are a lot more popular. Dgraph plans to support them after v1.0.
+Neo4j支持Cypher和Gremlin查询语言。Dgraph支持[GraphQL+-](query-language/index.md)，是[GraphQL](https://facebook.github.io/graphql/)的变体，一种由Facebook创建的查询语言。与以简单列表格式生成结果的Cypher或Gremlin相反，GraphQL允许以子图格式生成结果，其具有更丰富的语义。 此外，GraphQL支持Schema验证，这有助于确保输入和输出期间的数据正确性。
 
-### Scalability
+虽然当前只支持GraphQL，但Gremlin和Cypher更受欢迎。Dgraph计划在v1.0版本之后支持它们。
 
-Neo4j runs on a single server. The enterprise version of Neo4j only runs
-universal data replicas. As the data scales, this requires user to vertically
-scale their servers. [Vertical scaling is expensive.][vert]
+### 可扩展性
 
-Dgraph has a distributed architecture. You can split your data among many Dgraph
-servers to distribute it horizontally. As you add more data, you can just add
-more commodity hardware to serve it. Dgraph bakes more performance features like
-reducing network calls in a cluster and a highly concurrent execution of
-queries, to achieve a high query throughput. Dgraph does consistent replication
-of each shard, which makes it crash resilient, and protects users from server
-downtime.
+Neo4j在单个服务器上运行。企业版Neo4j仅运行通用数据副本。随着数据的扩展，需要用户垂直扩展其服务器。 [垂直缩放是昂贵的](https://blog.openshift.com/best-practices-for-horizontal-application-scaling/)
 
-[vert]: https://blog.openshift.com/best-practices-for-horizontal-application-scaling/
+Dgraph具有分布式架构。您可以在多个Dgraph服务器之间拆分数据以水平分发它。当您添加更多数据时，您可以添加更多商用硬件来为其提供服务。Dgraph提供了更多性能功能，如减少群集中的网络调用和高度并发的查询执行，以实现高查询吞吐量。 Dgraph对每个分片进行一致的复制，这使其具有崩溃弹性，并保护用户免受服务器停机影响。
 
-### Transactions
+### 事物
 
-Both systems provide ACID transactions. Neo4j supports ACID transactions in its
-single server architecture. Dgraph, despite being a distributed and consistently
-replicated system, supports ACID transactions with snapshot isolation.
+两个系统都提供ACID事物。NeN4J支持其单服务器体系结构中的ACID事物。尽管Dgraph是分布式且一致复制的系统，但它支持具有快照隔离的ACID事务。
 
-### Replication
+### 复制
 
-Neo4j's universal data replication is only available to users who purchase their
-[enterprise license][neo4je]. At Dgraph, we consider horizontal scaling and
-consistent replication the basic necessities of any application built today.
-Dgraph not only would automatically shard your data, it would move data around
-to rebalance these shards, so users achieve the best machine utilization and
-query latency possible.
+Neo4j的通用数据复制仅适用于购买它们的用户[企业证书](https://neo4j.com/subscriptions/#editions)。在Dgraph，我们将横向扩展和一致复制视为当今构建的任何应用程序的基本必需品。Dgraph不仅会自动对数据进行分片，还会移动数据以重新平衡这些分片，从而使用户实现最佳的机器利用率和查询延迟。
 
-Dgraph is consistently replicated. Any read followed by a write would be visible
-to the client, irrespective of which replica it hit. In short, we achieve
-linearizable reads.
+Dgraph一直在复制。 任何写入后的读取都将对客户端可见，而不管它属于哪个副本。简而言之，我们实现了线性化读取。
 
-[neo4je]: https://neo4j.com/subscriptions/#editions
-
-***For a more thorough comparison of Dgraph vs Neo4j, you can read our [blog](https://open.dgraph.io/post/benchmark-neo4j)***
+***有关Dgraph与Neo4j的更全面比较，您可以阅读我们的[博客](https://open.dgraph.io/post/benchmark-neo4j)***
 
 ---
 
-# Datastore
-Graph datastores act like a graph layer above some other SQL/NoSQL database to do the data management for them. This other database is the one responsible for backups, snapshots, server failures and data integrity.
+# 数据存储
+
+图数据存储就像一些其他SQL/NoSQL数据库之上的图层一样，可以为它们进行数据管理。其他数据库负责备份，快照，服务器故障和数据完整性。
 
 ## Cayley
-* Both [Cayley](https://cayley.io/) and Dgraph are written primarily in Go language and inspired from different projects at Google.
-* Cayley acts like a graph layer, providing a clean storage interface that could be implemented by various stores, for, e.g., PostGreSQL, RocksDB for a single machine, MongoDB to allow distribution. In other words, Cayley hands over data to other databases. While Dgraph uses [Badger](https://github.com/dgraph-io/badger), it assumes complete ownership over the data and tightly couples data storage and management to allow for efficient distributed queries.
-* Cayley's design suffers from high fan-out issues. In that, if intermediate steps cause a lot of results to be returned, and the data is distributed, it would result in many network calls between Cayley and the underlying data layer. Dgraph's design minimizes the number of network calls, to reduce the number of servers it needs to touch to respond to a query. This design produces better and predictable query latencies in a cluster, even as cluster size increases.
 
-***For a comparison of query and data loading benchmarks for Dgraph vs Cayley, you can read [Differences between Dgraph and Cayley](https://discuss.dgraph.io/t/differences-between-dgraph-and-cayley/23/3)***.
+- [Cayley](https://cayley.io/)和Dgraph都主要使用Go语言编写，受到Google不同项目的启发。
+- Cayley就像一个图层，提供了一个可以由各种存储实现的存储接口，例如PostGreSQL，RocksDB用于单个机器，MongoDB允许分发。换句话说，Cayley将数据移交给其他数据库。Dgraph使用[Badger](https://github.com/dgraph-io/badger), 它拥有完整的数据所有权和紧密耦合的数据存储和管理，以实现高效的分布式查询。
+- Cayley的设计受到高fan-out问题的困扰。其中，如果中间步骤导致返回大量结果，并且数据是分布的，那么它将导致Cayley和底层数据层之间的许多网络调用。 Dgraph的设计最小化了网络调用的数量，从而减少了响应查询所需的服务器数量。这种设计在集群中产生更好的、可预测的查询延迟，即使集群规模加大。
+
+***要比较Dgraph和Cayley的查询和数据加载基准，可以阅读[Differences between Dgraph and Cayley](https://discuss.dgraph.io/t/differences-between-dgraph-and-cayley/23/3)***.

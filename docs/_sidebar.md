@@ -4,7 +4,7 @@
 - [GraphQL+- 小技巧](tips/index.md)
 - [Mutations](mutations/index.md)
 - [客户端](clients/index.md)
-- [部署](deploy/index.md)
+- [集群部署](deploy/index.md)
 - [常见问题](faq/index.md)
 - [具体问题指引](howto/index.md)
 - [设计理念](design-concepts/index.md)

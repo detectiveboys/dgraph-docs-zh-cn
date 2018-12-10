@@ -58,6 +58,7 @@
       formatUpdated: '{MM}/{DD} {HH}:{mm}',
       plugins: []
     }
+    
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
@@ -65,8 +66,26 @@
   <!-- <script src="//unpkg.com/prismjs/components/prism-bash.min.js"></script> -->
   <script src="//unpkg.com/prismjs/components/prism-yaml.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-graphql.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-go.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-json.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-markdown.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-nginx.min.js"></script>
+  <script src="//cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
 </body>
-
+<script >
+  $(document).on('click', '.app-nav a', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var uri = window.location.hash, len = uri.length, new_uri = '', index = uri.indexOf('?');
+    if (-1 != index) {
+      len = index;
+    }
+    if("English" == $(this).text().trim()){
+      new_uri = '#/en' + uri.slice(1, len);
+    } else {
+      new_uri = '#' + uri.slice(4, len);
+    }
+    window.location.href = new_uri || uri;
+  })
+</script>
 </html>
