@@ -166,40 +166,29 @@ dgraph zero --idx=2 --port_offset -1999
 dgraph-ratel --port 8080
 ```
 
-### HA Cluster Setup
+### 高可用集群设置
 
-In a high-availability setup, we need to run 3 or 5 replicas for Zero, and similarly, 3 or 5 replicas for Alpha.
-{{% notice "note" %}}
-If number of replicas is 2K + 1, up to **K servers** can be down without any impact on reads or writes.
+在高可用设置中，我们需要为Zero节点运行3或5个副本，同样地，为Alpha节点运行3或5个副本。
 
-Avoid keeping replicas to 2K (even number). If K servers go down, this would block reads and writes, due to lack of consensus.
-{{% /notice %}}
+**note** *如果副本数量为2K+1，则最多 **K个服务器** 可以关闭而不会对读取或写入产生任何影响。*
+*避免将副本保持为2K（偶数）。 如果K个服务器出现故障，由于缺乏共识，这会阻止读写操作。*
 
-**Dgraph Zero**
-Run three Zero instances, assigning a unique ID(Integer) to each via `--idx` flag, and
-passing the address of any healthy Zero instance via `--peer` flag.
+**Dgraph Zero 节点**
+运行三个Zero实例，通过`--idx`标志为每个实例分配一个唯一的ID（整数），并通过`--peer`标志传递健康的Zero实例的地址。
 
-To run three replicas for the alphas, set `--replicas=3`. Every time a new
-Dgraph Alpha is added, Zero would check the existing groups and assign them to
-one, which doesn't have three replicas.
+要为alpha节点运行三个副本，请设置`--replicas = 3`。每次添加新的Dgraph Alpha 节点时，Zero 节点都会检查现有的组并将它们分配给一个没有三个副本的组。
 
-**Dgraph Alpha**
-Run as many Dgraph Alphas as you want. You can manually set `--idx` flag, or you
-can leave that flag empty, and Zero would auto-assign an id to the Alpha. This
-id would get persisted in the write-ahead log, so be careful not to delete it.
+**Dgraph Alpha 节点**
+根据需要运行尽可能多的Dgraph Alpha 节点。您可以手动设置`--idx`标志，或者您可以将该标志留空，Zero节点会自动为Alpha节点分配一个ID。此ID将在写前日志中保留，因此请注意不要删除它。
 
-The new Alphas will automatically detect each other by communicating with
-Dgraph zero and establish connections to each other.
+新的Alpha节点将通过与Zero节点通信来自动检测彼此，并建立相互连接。
 
 Typically, Zero would first attempt to replicate a group, by assigning a new
 Dgraph alpha to run the same group as assigned to another. Once the group has
 been replicated as per the `--replicas` flag, Zero would create a new group.
+通常，Zero节点会首先尝试复制一个组，方法是指定一个新的Alpha节点去运行指定的另一个相同的组。一旦该组按照`--replicas`标志复制，Zero节点将创建一个新组。
 
-Over time, the data would be evenly split across all the groups. So, it's
-important to ensure that the number of Dgraph alphas is a multiple of the
-replication setting. For e.g., if you set `--replicas=3` in Zero, then run three
-Dgraph alphas for no sharding, but 3x replication. Run six Dgraph alphas, for
-sharding the data into two groups, with 3x replication.
+随着时间的推移，数据将在所有组中均匀分配。因此，确保Dgraph alpha节点的数量是replicas设置的倍数非常重要。 例如，如果在Zero节点中设置`--replicas = 3`，则运行三个Dgraph alpha节点，不进行分片，而是3x复制。 运行六个Dgraph alphas，将数据分成两组，复制3次。
 
 ## Single Host Setup
 
