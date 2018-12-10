@@ -32,6 +32,16 @@
 
     json数据：```json
 
+- 将一些原有的标记替换掉
+
+    如{{% notice "note" %}}、{{% notice "tip" %}} 、{{% notice "warning" %}} 等，这些dgraph文档原有的标记markdown无法直接解释，替换成如下格式：
+
+    ```html
+    **note** *note内容......*
+    **tip** *tip内容......*
+    **warning** *note内容......*
+    ```
+
 ## 翻译工具推荐
 
 >[谷歌翻译](https://translate.google.com)
