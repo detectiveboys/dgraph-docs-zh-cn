@@ -1,7 +1,7 @@
 
 本页讨论以分布式方式在各种部署模式下运行Dgraph，并涉及在集群中的多个服务器上运行Dgraph的多个实例。
 
-**Tip** *对于单个服务器设置，建议新用户使用，请参阅[快速开始](/get-started/index)页。*
+**提示** *对于单个服务器设置，建议新用户使用，请参阅[快速开始](/get-started/index)页。*
 
 ## 安装Dgraph
 
@@ -147,7 +147,7 @@ Dgraph集群节点使用不同的端口通过GRPC和HTTP进行通信。由于每
 
 **Ratel UI** 默认情况下监听端口8000.您可以使用`-port`标志配置为监听任何其他端口。
 
-**tip**
+**提示**
 
 **对于Dgraph v1.0.2 (或这之后版本)**
 
@@ -170,7 +170,7 @@ dgraph-ratel --port 8080
 
 在高可用设置中，我们需要为Zero节点运行3或5个副本，同样地，为Alpha节点运行3或5个副本。
 
-**note** *如果副本数量为2K+1，则最多 **K个服务器** 可以关闭而不会对读取或写入产生任何影响。*
+**注意** *如果副本数量为2K+1，则最多 **K个服务器** 可以关闭而不会对读取或写入产生任何影响。*
 *避免将副本保持为2K（偶数）。 如果K个服务器出现故障，由于缺乏共识，这会阻止读写操作。*
 
 **Dgraph Zero 节点**
@@ -190,93 +190,97 @@ been replicated as per the `--replicas` flag, Zero would create a new group.
 
 随着时间的推移，数据将在所有组中均匀分配。因此，确保Dgraph alpha节点的数量是replicas设置的倍数非常重要。 例如，如果在Zero节点中设置`--replicas = 3`，则运行三个Dgraph alpha节点，不进行分片，而是3x复制。 运行六个Dgraph alphas，将数据分成两组，复制3次。
 
-## Single Host Setup
+## 单主机设置
 
-### Run directly on the host
+### 直接在主机上运行
 
-**Run dgraph zero**
+**运行 Dgraph Zero 节点**
 
 ```sh
 dgraph zero --my=IPADDR:5080
 ```
-The `--my` flag is the connection that Dgraph alphas would dial to talk to
-zero. So, the port `5080` and the IP address must be visible to all the Dgraph alphas.
 
-For all other various flags, run `dgraph zero --help`.
+`--my`标志是alpha节点与zero节点通话的连接。因此，端口“5080”和IP地址必须对所有Dgraph alpha都可见。
 
-**Run dgraph alpha**
+对于所有其他各种标志，运行`dgraph zero --help`。
+
+**运行 Dgraph Alpha 节点**
 
 ```sh
 dgraph alpha --lru_mb=<typically one-third the RAM> --my=IPADDR:7080 --zero=localhost:5080
 dgraph alpha --lru_mb=<typically one-third the RAM> --my=IPADDR:7081 --zero=localhost:5080 -o=1
 ```
 
-Notice the use of `-o` for the second Alpha to add offset to the default ports used. Zero automatically assigns an unique ID to each Alpha, which is persisted in the write ahead log (wal) directory, users can specify the index using `--idx` option. Dgraph Alphas use two directories to persist data and
-wal logs, and these directories must be different for each Alpha if they are running on the same host. You can use `-p` and `-w` to change the location of the data and WAL directories. For all other flags, run
+注意第二个Alpha使用`-o`来为使用的默认端口添加偏移量。Zero会自动为每个Alpha分配一个唯一ID，该ID保留在写入日志（wal）目录中，用户可以使用`--idx`选项指定索引。Dgraph Alphas使用两个目录来保存数据和wal日志，如果每个Alpha在同一主机上运行，则这些目录必须不同。 您可以使用`-p`和`-w`来更改数据和WAL目录的位置。
 
-`dgraph alpha --help`.
+对于所有其他标志，运行`dgraph alpha --help`。
 
-**Run dgraph UI**
+**运行 dgraph UI**
 
 ```sh
 dgraph-ratel
 ```
 
-### Run using Docker
+### 使用Docker运行
 
-Dgraph cluster can be setup running as containers on a single host. First, you'd want to figure out the host IP address. You can typically do that via
+可以将Dgraph集群设置为在单个主机上作为容器运行。首先，您需要确定主机IP地址。你通常可以通过
 
 ```sh
-ip addr  # On Arch Linux
-ifconfig # On Ubuntu/Mac
+ip addr  # Arch Linux系统上
+ifconfig # Ubuntu/Mac系统上
 ```
-We'll refer to the host IP address via `HOSTIPADDR`.
 
-**Run dgraph zero**
+我们将通过`HOSTIPADDR`来引用主机IP地址。
+
+**运行 Dgraph Zero**
 
 ```sh
-mkdir ~/zero # Or any other directory where data should be stored.
+mkdir ~/zero # 或存储数据的任何其他目录。
 
 docker run -it -p 5080:5080 -p 6080:6080 -v ~/zero:/dgraph dgraph/dgraph:latest dgraph zero --my=HOSTIPADDR:5080
 ```
 
-**Run dgraph alpha**
+**运行 Dgraph Alpha**
+
 ```sh
-mkdir ~/server1 # Or any other directory where data should be stored.
+mkdir ~/server1 # 或存储数据的任何其他目录。
 
 docker run -it -p 7080:7080 -p 8080:8080 -p 9080:9080 -v ~/server1:/dgraph dgraph/dgraph:latest dgraph alpha --lru_mb=<typically one-third the RAM> --zero=HOSTIPADDR:5080 --my=HOSTIPADDR:7080
 
-mkdir ~/server2 # Or any other directory where data should be stored.
+mkdir ~/server2 # 或存储数据的任何其他目录。
 
 docker run -it -p 7081:7081 -p 8081:8081 -p 9081:9081 -v ~/server2:/dgraph dgraph/dgraph:latest dgraph alpha --lru_mb=<typically one-third the RAM> --zero=HOSTIPADDR:5080 --my=HOSTIPADDR:7081  -o=1
 ```
-Notice the use of -o for server2 to override the default ports for server2.
 
-**Run dgraph UI**
+注意，server2使用-o覆盖server2的默认端口。
+
+**运行 dgraph UI**
+
 ```sh
 docker run -it -p 8000:8000 dgraph/dgraph:latest dgraph-ratel
 ```
 
-### Run using Docker Compose (On single AWS instance)
+### 使用Docker Compose运行（在单个AWS实例上）
 
-We will use [Docker Machine](https://docs.docker.com/machine/overview/). It is a tool that lets you install Docker Engine on virtual machines and easily deploy applications.
+我们将使用[Docker Machine](https://docs.docker.com/machine/overview/)。它是一个工具，可让您在虚拟机上安装Docker引擎，并轻松部署应用程序。
 
-* [Install Docker Machine](https://docs.docker.com/machine/install-machine/) on your machine.
+* [安装 Docker Machine](https://docs.docker.com/machine/install-machine/) 在你的机器上。
 
-{{% notice "note" %}}These instructions are for running Dgraph Alpha without TLS config.
-Instructions for running with TLS refer [TLS instructions](#tls-configuration).{{% /notice %}}
+**注意** *这些说明适用于在没有TLS配置的情况下运行Dgraph Alpha。*
+*使用TLS运行的说明参考[TLS instructions](#tls-configuration).*
 
 Here we'll go through an example of deploying Dgraph Zero, Alpha and Ratel on an AWS instance.
+在这里，我们将通过一个例子在AWS实例上部署Dgraph Zero，Alpha和Ratel。
 
-* Make sure you have Docker Machine installed by following [instructions](https://docs.docker.com/machine/install-machine/), provisioning an instance on AWS is just one step away. You'll have to [configure your AWS credentials](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) for programmatic access to the Amazon API.
+* 确保按照[instructions](https://docs.docker.com/machine/install-machine/)中的方式安装了Docker Machine, 在AWS上配置实例只需一步之遥。您必须[配置您的AWS凭证](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html)才能以编程方式访问Amazon API。
 
-* Create a new docker machine.
+* 创建一个新的 docker machine.
 
 ```sh
 docker-machine create --driver amazonec2 aws01
 ```
 
-Your output should look like
+输出应该是这样的
 
 ```sh
 Running pre-create checks...
@@ -288,20 +292,17 @@ Docker is up and running!
 To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: docker-machine env aws01
 ```
 
-The command would provision a `t2-micro` instance with a security group called `docker-machine`
-(allowing inbound access on 2376 and 22). You can either edit the security group to allow inbound access to '5080`, `8080`, `9080` (default ports for Dgraph Zero & Alpha) or you can provide your own security
-group which allows inbound access on port 22, 2376 (required by Docker Machine), 5080, 8080 and 9080. Remember port *5080* is only required if you are running Dgraph Live Loader or Dgraph Bulk Loader from outside.
+该命令将提供一个名为`docker-machine`的安全组的`t2-micro`实例（允许在2376和22上进行入站访问）。您可以编辑安全组以允许对`5080`, `8080`, `9080`（Dgraph Zero和Alpha的默认端口）的入站访问，或者您可以提供自己的安全组，允许在端口22,2376上进行入站访问（Docker Machine，5080,8080和9080要求。只有从外面运行Dgraph Live Loader或Dgraph Bulk Loader时，才需要记住端口*5080*。
 
-[Here](https://docs.docker.com/machine/drivers/aws/#options) is a list of full options for the `amazonec2` driver which allows you choose the instance type, security group, AMI among many other things.
+[这里](https://docs.docker.com/machine/drivers/aws/#options) 是一个`amazonec2`驱动程序的完整选项列表，它允许您选择实例类型，安全组，AMI以及许多其他内容。
 
-{{% notice "tip" %}}Docker machine supports [other drivers](https://docs.docker.com/machine/drivers/gce/) like GCE, Azure etc.{{% /notice %}}
+**提示** *Docker machine 支持 [其他驱动程序](https://docs.docker.com/machine/drivers/gce/)，如GCE，Azure等。*
 
-* Install and run Dgraph using docker-compose
+* 使用docker-compose安装并运行Dgraph
 
-Docker Compose is a tool for running multi-container Docker applications. You can follow the
-instructions [here](https://docs.docker.com/compose/install/) to install it.
+Docker Compose是一个用于运行多容器Docker应用程序的工具。您可以按照[此处](https://docs.docker.com/compose/install/)的说明进行安装。
 
-Copy the file below in a directory on your machine and name it `docker-compose.yml`.
+将以下文件复制到计算机上的目录中并命名`docker-compose.yml`.
 
 ```sh
 version: "3.2"
@@ -331,47 +332,49 @@ services:
     command: dgraph-ratel
 ```
 
-{{% notice "note" %}}The config mounts `/data`(you could mount something else) on the instance to `/dgraph` within the
-container for persistence.{{% /notice %}}
+**注意** *配置将实例上的`/data`（你可以挂载别的东西）目录挂载到容器中的`/dgraph`目录以持久化数据。*
 
-* Connect to the Docker Engine running on the machine.
+* 连接到机器上运行的Docker引擎。
 
-Running `docker-machine env aws01` tells us to run the command below to configure
-our shell.
-```
+运行`docker-machine env aws01`告诉我们运行以下命令进行配置我们的shell。
+
+```sh
 eval $(docker-machine env aws01)
 ```
-This configures our Docker client to talk to the Docker engine running on the AWS Machine.
 
-Finally run the command below to start the Zero and Alpha.
-```
+这会将我们的Docker客户端配置为与在AWS机器上运行的Docker引擎进行通信。
+
+最后运行以下命令启动Zero和Alpha。
+
+```sh
 docker-compose up -d
 ```
-This would start 3 Docker containers running Dgraph Zero, Alpha and Ratel on the same machine. Docker would restart the containers in case there is any error.
-You can look at the logs using `docker-compose logs`.
 
-## Multi Host Setup
+这将启动3个Docker容器在同一台机器上运行Dgraph Zero，Alpha和Ratel。如果出现任何错误，Docker会重新启动容器。
+您可以使用`docker-compose logs`命令查看日志。
 
-### Using Docker Swarm
+## 多主机设置
 
-#### Cluster Setup Using Docker Swarm
+### 使用Docker Swarm
 
-{{% notice "note" %}}These instructions are for running Dgraph Alpha without TLS config.
-Instructions for running with TLS refer [TLS instructions](#tls-configuration).{{% /notice %}}
+#### 使用Docker Swarm进行群集设置
 
-Here we'll go through an example of deploying 3 Dgraph Alpha nodes and 1 Zero on three different AWS instances using Docker Swarm with a replication factor of 3.
+**注意** *这些说明适用于在没有TLS配置的情况下运行Dgraph Alpha。*
+*使用TLS运行的说明参考[TLS instructions](#tls-configuration).*
 
-* Make sure you have Docker Machine installed by following [instructions](https://docs.docker.com/machine/install-machine/).
+在这里，我们将通过一个例子使用Docker Swarm在复制因子为3的三个不同AWS实例上部署3个Dgraph Alpha节点和1个Zero。
+
+* .确保按照[instructions](https://docs.docker.com/machine/install-machine/)中的方式安装了Docker Machine。
 
 ```sh
 docker-machine --version
 ```
 
-* Create 3 instances on AWS and [install Docker Engine](https://docs.docker.com/engine/installation/) on them. This can be done manually or by using `docker-machine`.
-You'll have to [configure your AWS credentials](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) to create the instances using Docker Machine.
+* 在AWS上创建3个实例，并在其上安装[安装Docker Engine](https://docs.docker.com/engine/installation/)。可以手动完成或使用`docker-machine`完成。
 
-Considering that you have AWS credentials setup, you can use the below commands to start 3 AWS
-`t2-micro` instances with Docker Engine installed on them.
+您必须[配置您的AWS凭证](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html)才能使用Docker Machine创建实例。
+
+考虑到您已设置AWS凭据，您可以使用以下命令启动安装了Docker Engine的3个AWS`t2-micro`实例。
 
 ```sh
 docker-machine create --driver amazonec2 aws01
@@ -379,7 +382,7 @@ docker-machine create --driver amazonec2 aws02
 docker-machine create --driver amazonec2 aws03
 ```
 
-Your output should look like
+输出应该是这样的
 
 ```sh
 Running pre-create checks...
@@ -391,32 +394,24 @@ Docker is up and running!
 To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: docker-machine env aws01
 ```
 
-The command would provision a `t2-micro` instance with a security group called `docker-machine`
-(allowing inbound access on 2376 and 22).
+该命令将提供一个名为`docker-machine`的安全组的`t2-micro`实例（允许在2376和22上进行入站访问）。
 
-You would need to edit the `docker-machine` security group to open inbound traffic on the following ports.
+您需要编辑`docker-machine`安全组以打开以下端口上的入站流量。
 
-1. Allow all inbound traffic on all ports with Source being `docker-machine`
-   security ports so that Docker related communication can happen easily.
+1. 允许源为“docker machine”安全端口的所有端口上的所有入站流量，以便轻松进行与docker相关的通信。
 
-2. Also open inbound TCP traffic on the following ports required by Dgraph:
-   `5080`, `6080`, `8000`, `808[0-2]`, `908[0-2]`. Remember port *5080* is only
-   required if you are running Dgraph Live Loader or Dgraph Bulk Loader from
-   outside. You need to open `7080` to enable Alpha-to-Alpha communication in
-   case you have not opened all ports in #1.
+2. 还可以在dgraph要求的以下端口上打开入站TCP流量：`5080`、`6080`、`8000`、`808[0-2]`、`908[0-2]`。请记住，只有从外部运行dgraph live loader或dgraph bulk loader时才需要端口*5080*。如果您没有打开1中的所有端口，则需要打开“7080”以启用Alpha-to-Alpha的通信。
 
-If you are on AWS, below is the security group (**docker-machine**) after
-necessary changes.
+如果您在AWS上，则在进行必要的更改后，安全组（**docker-machine**）如下。
 
 ![AWS Security Group](./images/aws.png)
 
-[Here](https://docs.docker.com/machine/drivers/aws/#options) is a list of full options for the `amazonec2` driver which allows you choose the
-instance type, security group, AMI among many other
-things.
+[这里](https://docs.docker.com/machine/drivers/aws/#options)是一个`amazonec2`驱动程序的完整选项列表，它允许您选择实例类型，安全组，AMI以及许多其他内容。
 
-{{% notice "tip" %}}Docker machine supports [other drivers](https://docs.docker.com/machine/drivers/gce/) like GCE, Azure etc.{{% /notice %}}
+**提示** *Docker machine 支持 [其他驱动程序](https://docs.docker.com/machine/drivers/gce/)，如GCE，Azure等。*
 
-Running `docker-machine ps` shows all the AWS EC2 instances that we started.
+运行`docker-machine ps`显示我们启动的所有AWS EC2实例。
+
 ```sh
 ➜  ~ docker-machine ls
 NAME    ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
@@ -425,28 +420,27 @@ aws02   -        amazonec2    Running   tcp://54.236.58.120:2376            v17.
 aws03   -        amazonec2    Running   tcp://34.201.22.2:2376              v17.11.0-ce
 ```
 
-* Start the Swarm
+* 启动Swarm
 
-Docker Swarm has manager and worker nodes. Swarm can be started and updated on manager nodes. We
-   will setup `aws01` as swarm manager. You can first run the following commands to initialize the
-   swarm.
+Docker Swarm有manager和worker节点。可以在manager节点上启动和更新Swarm。我们将`aws01`设置为swarm manager。您可以先运行以下命令来初始化swarm。
 
-We are going to use the internal IP address given by AWS. Run the following command to get the
-internal IP for `aws01`. Lets assume `172.31.64.18` is the internal IP in this case.
-```
+我们将使用AWS提供的内部IP地址。运行以下命令获取`aws01`的内部IP。
+
+```sh
 docker-machine ssh aws01 ifconfig eth0
 ```
 
-Now that we have the internal IP, let's initiate the Swarm.
+现在我们有了内部IP，让我们假设`172.31.64.18`是这种情况下的内部IP。让我们启动Swarm。
 
 ```sh
-# This configures our Docker client to talk to the Docker engine running on the aws01 host.
+# 这会将我们的Docker客户端配置为与在aws01主机上运行的Docker引擎进行通信。
 eval $(docker-machine env aws01)
 docker swarm init --advertise-addr 172.31.64.18
 ```
 
-Output:
-```
+输出:
+
+```sh
 Swarm initialized: current node (w9mpjhuju7nyewmg8043ypctf) is now a manager.
 
 To add a worker to this swarm, run the following command:
@@ -458,7 +452,7 @@ To add a worker to this swarm, run the following command:
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 ```
 
-Now we will make other nodes join the swarm.
+现在我们将使其他节点加入swarm。
 
 ```sh
 eval $(docker-machine env aws02)
@@ -467,12 +461,14 @@ docker swarm join \
     172.31.64.18:2377
 ```
 
-Output:
-```
+输出:
+
+```sh
 This node joined a swarm as a worker.
 ```
 
-Similary, aws03
+aws03也一样
+
 ```sh
 eval $(docker-machine env aws03)
 docker swarm join \
@@ -480,12 +476,14 @@ docker swarm join \
     172.31.64.18:2377
 ```
 
-On the Swarm manager `aws01`, verify that your swarm is running.
+在Swarm manager`aws01`上，验证你的swarm是否正在运行。
+
 ```sh
 docker node ls
 ```
 
-Output:
+输出:
+
 ```sh
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
 ghzapjsto20c6d6l3n0m91zev     aws02               Ready               Active
@@ -493,9 +491,9 @@ rb39d5lgv66it1yi4rto0gn6a     aws03               Ready               Active
 waqdyimp8llvca9i09k4202x5 *   aws01               Ready               Active              Leader
 ```
 
-* Start the Dgraph cluster
+* 启动Dgraph集群
 
-Copy the following file on your host machine and name it as `docker-compose.yml`
+将以下文件复制到计算机上的目录中并命名`docker-compose.yml`
 
 ```sh
 version: "3"
@@ -572,38 +570,31 @@ services:
 volumes:
   data-volume:
 ```
-Run the following command on the Swarm leader to deploy the Dgraph Cluster.
+
+在Swarm leader上运行以下命令以部署Dgraph Cluster。
 
 ```sh
 eval $(docker-machine env aws01)
 docker stack deploy -c docker-compose.yml dgraph
 ```
 
-This should run three Dgraph Alpha services (one on each VM because of the
-constraint we have), one Dgraph Zero service on aws01 and one Dgraph Ratel.
+这样会运行三个Dgraph Alpha服务（由于我们的约束，每个VM上有一个），aws01上有一个Dgraph Zero服务和一个Dgraph Ratel。
 
-These placement constraints (as seen in the compose file) are important so that
-in case of restarting any containers, swarm places the respective Dgraph Alpha
-or Zero containers on the same hosts to re-use the volumes. Also, if you are
-running fewer than three hosts, make sure you use either different volumes or
-run Dgraph Alpha with `-p p1 -w w1` options.
+这些约束（如compose文件中所示）非常重要，以便在重新启动任何容器时，swarm将相应的Dgraph Alpha或Zero容器放置在同一主机上以重新使用卷。 此外，如果运行的主机少于三台，请确保使用不同的卷或使用`-p p1 -w w1`选项运行Dgraph Alpha。
 
-{{% notice "note" %}}
+**注意**
 
-1. This setup would create and use a local volume called `dgraph_data-volume` on
-   the instances. If you plan to replace instances, you should use remote
-   storage like
-   [cloudstore](https://docs.docker.com/docker-for-aws/persistent-data-volumes)
-   instead of local disk. {{% /notice %}}
+*此设置将在实例上创建并使用名为`dgraph_data-volume`的本地卷。如果您计划替换实例，则应使用如[cloudstore](https://docs.docker.com/docker-for-aws/persistent-data-volumes)等远程存储而不是本地磁盘。*
 
-You can verify that all services were created successfully by running:
+您可以通过运行以下命令来验证是否已成功创建所有服务：
 
 ```sh
 docker service ls
 ```
 
-Output:
-```
+输出:
+
+```sh
 ID                  NAME                MODE                REPLICAS            IMAGE                PORTS
 vp5bpwzwawoe        dgraph_ratel        replicated          1/1                 dgraph/dgraph:latest   *:8000->8000/tcp
 69oge03y0koz        dgraph_alpha_2      replicated          1/1                 dgraph/dgraph:latest   *:8081->8081/tcp,*:9081->9081/tcp
@@ -612,9 +603,9 @@ uild5cqp44dz        dgraph_zero         replicated          1/1                 
 v9jlw00iz2gg        dgraph_alpha_1      replicated          1/1                 dgraph/dgraph:latest   *:8080->8080/tcp,*:9080->9080/tcp
 ```
 
-To stop the cluster run
+停止群集运行
 
-```
+```sh
 docker stack rm dgraph
 ```
 
