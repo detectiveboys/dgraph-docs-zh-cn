@@ -609,26 +609,23 @@ v9jlw00iz2gg        dgraph_alpha_1      replicated          1/1                 
 docker stack rm dgraph
 ```
 
-### HA Cluster setup using Docker Swarm
+### 使用Docker Swarm建立高可用集群
 
-Here is a sample swarm config for running 6 Dgraph Alpha nodes and 3 Zero nodes on 6 different
-ec2 instances. Setup should be similar to [Cluster setup using Docker Swarm]({{< relref "#cluster-setup-using-docker-swarm" >}}) apart from a couple of differences. This setup would ensure replication with sharding of data. The file assumes that there are six hosts available as docker-machines. Also if you are running on fewer than six hosts, make sure you use either different volumes or run Dgraph Alpha with `-p p1 -w w1` options.
+下面是一个示例swarm配置，用于在6个不同的ec2实例上运行6个Dgraph Alpha节点和3个Zero节点。 类似于[使用Docker Swarm进行群集设置](#使用Docker-Swarm进行群集设置) 除了几处不同。 此设置将确保使用分片数据进行复制。 该文件假定有六个主机可用作docker-machine。 此外，如果您在少于六台主机上运行，请确保使用不同的卷或使用`-p p1 -w w1`选项运行Dgraph Alpha。
 
-You would need to edit the `docker-machine` security group to open inbound traffic on the following ports.
+您需要编辑`docker-machine`安全组以打开以下端口上的入站流量。
 
-1. Allow all inbound traffic on all ports with Source being `docker-machine` security ports so that
-   docker related communication can happen easily.
+1. 允许源为“docker machine”安全端口的所有端口上的所有入站流量，以便轻松进行与docker相关的通信。
 
-2. Also open inbound TCP traffic on the following ports required by Dgraph: `5080`, `8000`, `808[0-5]`, `908[0-5]`. Remember port *5080* is only required if you are running Dgraph Live Loader or Dgraph Bulk Loader from outside. You need to open `7080` to enable Alpha-to-Alpha communication in case you have not opened all ports in #1.
+2. 还可以在dgraph要求的以下端口上打开入站TCP流量：`5080`、`8000`、`808[0-5]`、`908[0-5]`。请记住，只有从外部运行dgraph live loader或dgraph bulk loader时才需要端口*5080*。如果您没有打开#1中的所有端口，则需要打开“7080”以启用Alpha到Alpha的通信。
 
-If you are on AWS, below is the security group (**docker-machine**) after necessary changes.
-
+如果您在AWS上，下面是经过必要更改后的安全组（**docker machine**）。
 
 ![AWS Security Group](./images/aws.png)
 
-Copy the following file on your host machine and name it as docker-compose.yml
+在主机上复制以下文件，并将其命名为docker-compose.yml
 
-```sh
+```yaml
 version: "3"
 networks:
   dgraph:
@@ -779,21 +776,21 @@ services:
 volumes:
   data-volume:
 ```
-{{% notice "note" %}}
-1. This setup assumes that you are using 6 hosts, but if you are running fewer than 6 hosts then you have to either use different volumes between Dgraph alphas or use `-p` & `-w` to configure data directories.
-2. This setup would create and use a local volume called `dgraph_data-volume` on the instances. If you plan to replace instances, you should use remote storage like [cloudstore](https://docs.docker.com/docker-for-aws/persistent-data-volumes) instead of local disk. {{% /notice %}}
 
-## Using Kubernetes (v1.8.4)
+**注意**
+*1. 此设置假定您使用的是6台主机，但如果运行的主机少于6台，则必须在Dgraph alpha之间使用不同的卷，或使用`-p`和`-w`配置数据目录。*
+*2. 此设置将在实例上创建并使用名为“dgraph_data-volume”的本地卷。 如果您计划替换实例，则应使用[cloudstore](https://docs.docker.com/docker-for-aws/persistent-data-volumes)等远程存储而不是本地磁盘。*
 
-{{% notice "note" %}}These instructions are for running Dgraph Alpha without TLS config.
-Instructions for running with TLS refer [TLS instructions](#tls-configuration).{{% /notice %}}
+## 使用 Kubernetes (v1.8.4)
 
-* Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) which is used to deploy
-  and manage applications on kubernetes.
-* Get the kubernetes cluster up and running on a cloud provider of your choice. You can use [kops](https://github.com/kubernetes/kops/blob/master/docs/aws.md) to set it up on AWS. Kops does auto-scaling by default on AWS and creates the volumes and instances for you.
+**注意**
+*这些说明适用于在没有TLS配置的情况下运行Dgraph Alpha。 使用TLS运行的说明参考[TLS指令](#TLS配置).*
 
-Verify that you have your cluster up and running using `kubectl get nodes`. If you used `kops` with
-the default options, you should have a master and two worker nodes ready.
+- 安装[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)，用于在kubernetes上部署和管理应用程序。
+
+- 获取kubernetes群集并在您选择的云提供商上运行。您可以使用[kops](https://github.com/kubernetes/kops/blob/master/docs/aws.md)在AWS上进行设置。Kops默认在AWS上进行自动扩展，并为您创建卷和实例。
+
+使用`kubectl get nodes`验证您的群集已启动并正在运行。 如果您使用带有默认选项的`kops`，则应准备好主节点和两个工作节点。
 
 ```sh
 ➜  kubernetes git:(master) ✗ kubectl get nodes
@@ -803,66 +800,67 @@ ip-172-20-61-179.us-west-2.compute.internal   Ready     master    2h        v1.8
 ip-172-20-61-73.us-west-2.compute.internal    Ready     node      2h        v1.8.4
 ```
 
-### Single Server
+### 单服务器
 
-Once your Kubernetes cluster is up, you can use [dgraph-single.yaml](https://github.com/dgraph-io/dgraph/blob/master/contrib/config/kubernetes/dgraph-single.yaml) to start a Zero and Alpha.
+一旦你的Kubernetes集群启动，你可以使用[dgraph-single.yaml](https://github.com/dgraph-io/dgraph/blob/master/contrib/config/kubernetes/dgraph-single.yaml)来启动Zero和Alpha。
 
-* From your machine, run the following command to start a StatefulSet that
-  creates a Pod with Zero and Alpha running in it.
+- 在您的计算机上，运行以下命令以启动StatefulSet，该StatefulSet创建一个在其中运行Zero和Alpha的Pod。
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-single.yaml
 ```
 
-Output:
-```
+输出:
+
+```sh
 service "dgraph-public" created
 statefulset "dgraph" created
 ```
 
-* Confirm that the pod was created successfully.
+- 确认已成功创建pod。
 
 ```sh
 kubectl get pods
 ```
 
-Output:
-```
+输出:
+
+```sh
 NAME       READY     STATUS    RESTARTS   AGE
 dgraph-0   3/3       Running   0          1m
 ```
 
-{{% notice "tip" %}}You can check the logs for the containers in the pod using `kubectl logs -f dgraph-0 <container_name>`. For example, try `kubectl logs -f dgraph-0 alpha` for server logs.{{% /notice %}}
+**注意**
+*您可以使用`kubectl logs -f dgraph-0 <container_name>`检查容器中容器的日志。例如，尝试使用`kubectl logs -f dgraph-0 alpha`得到服务器日志。*
 
-* Test the setup
+- 测试设置
 
-Port forward from your local machine to the pod
+从本地机器向pod转发端口
 
 ```sh
 kubectl port-forward dgraph-0 8080
 kubectl port-forward dgraph-0 8000
 ```
 
-Go to `http://localhost:8000` and verify Dgraph is working as expected.
+转到`http://localhost:8000`并验证Dgraph是否按预期工作。
 
-{{% notice "note" %}} You can also access the service on its External IP address.{{% /notice %}}
+**注意** *您还可以在其外部IP地址上访问该服务。*
 
+- 停止群集
 
-* Stop the cluster
-
-Delete all the resources
+删除所有资源
 
 ```sh
 kubectl delete pods,statefulsets,services,persistentvolumeclaims,persistentvolumes -l app=dgraph
 ```
 
-Stop the cluster. If you used `kops` you can run the following command.
+停止群集。如果您使用`kops`，则可以运行以下命令。
 
 ```sh
 kops delete cluster ${NAME} --yes
 ```
 
-### HA Cluster Setup Using Kubernetes
+### 使用Kubernets进行高可用群集设置
 
 This setup allows you to run 3 Dgraph Alphas and 3 Dgraph Zeros. We start Zero with `--replicas
 3` flag, so all data would be replicated on 3 Alphas and form 1 alpha group.
@@ -877,6 +875,7 @@ kubectl get nodes
 ```
 
 Output:
+
 ```sh
 NAME                                          STATUS    ROLES     AGE       VERSION
 ip-172-20-34-90.us-west-2.compute.internal    Ready     master    6m        v1.8.4
