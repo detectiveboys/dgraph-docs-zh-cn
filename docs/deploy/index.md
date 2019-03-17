@@ -292,7 +292,7 @@ Docker is up and running!
 To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: docker-machine env aws01
 ```
 
-该命令将提供一个名为`docker-machine`的安全组的`t2-micro`实例（允许在2376和22上进行入站访问）。您可以编辑安全组以允许对`5080`, `8080`, `9080`（Dgraph Zero和Alpha的默认端口）的入站访问，或者您可以提供自己的安全组，允许在端口22,2376上进行入站访问（Docker Machine，5080,8080和9080要求。只有从外面运行Dgraph Live Loader或Dgraph Bulk Loader时，才需要记住端口*5080*。
+该命令将提供一个名为`docker-machine`的安全组的`t2-micro`实例（允许在2376和22上进行入站访问）。您可以编辑安全组以允许对`5080`, `8080`, `9080`（Dgraph Zero和Alpha的默认端口）的入站访问，或者您可以提供自己的安全组，允许在端口22,2376上进行入站访问（Docker Machine，5080,8080和9080要求。只有从外面运行Dgraph Live Loader或Dgraph Bulk Loader时，才需要记住端口*5080*
 
 [这里](https://docs.docker.com/machine/drivers/aws/#options) 是一个`amazonec2`驱动程序的完整选项列表，它允许您选择实例类型，安全组，AMI以及许多其他内容。
 
@@ -860,21 +860,19 @@ kubectl delete pods,statefulsets,services,persistentvolumeclaims,persistentvolum
 kops delete cluster ${NAME} --yes
 ```
 
-### 使用Kubernets进行高可用群集设置
+### 使用Kubernets进行高可用群集安装
 
-This setup allows you to run 3 Dgraph Alphas and 3 Dgraph Zeros. We start Zero with `--replicas
-3` flag, so all data would be replicated on 3 Alphas and form 1 alpha group.
+此设置允许您运行3个dgraph alphas和3个dgraph zero。我们用`--replicas3`标志从zero启动，所有数据都将复制到3个alphas上，形成1个alpha组。
 
-{{% notice "note" %}} Ideally you should have at least three worker nodes as part of your Kubernetes
-cluster so that each Dgraph Alpha runs on a separate node.{{% /notice %}}
+**注意** *理想情况下，作为kubernetes集群的一部分，您应该至少有三个工作节点，以便每个dgraph alpha运行在单独的节点上。*
 
-* Check the nodes that are part of the Kubernetes cluster.
+- 检查属于kubernetes集群的节点。
 
 ```sh
 kubectl get nodes
 ```
 
-Output:
+输出:
 
 ```sh
 NAME                                          STATUS    ROLES     AGE       VERSION
@@ -884,15 +882,16 @@ ip-172-20-59-116.us-west-2.compute.internal   Ready     node      4m        v1.8
 ip-172-20-61-88.us-west-2.compute.internal    Ready     node      5m        v1.8.4
 ```
 
-Once your Kubernetes cluster is up, you can use [dgraph-ha.yaml](https://github.com/dgraph-io/dgraph/blob/master/contrib/config/kubernetes/dgraph-ha.yaml) to start the cluster.
+一旦您的kubernetes集群启动，就可以使用[dgraph-ha.yaml](https://github.com/dgraph-io/dgraph/blob/master/contrib/config/kubernetes/dgraph-ha.yaml)启动集群。
 
-* From your machine, run the following command to start the cluster.
+- 在你的机器上，运行以下命令启动集群。
 
 ```sh
 kubectl create -f https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-ha.yaml
 ```
 
-Output:
+输出:
+
 ```sh
 service "dgraph-zero-public" created
 service "dgraph-alpha-public" created
@@ -905,13 +904,14 @@ statefulset "dgraph-alpha" created
 deployment "dgraph-ratel" created
 ```
 
-* Confirm that the pods were created successfully.
+- 确认已成功创建pods。
 
 ```sh
 kubectl get pods
 ```
 
-Output:
+输出:
+
 ```sh
 NAME                   READY     STATUS    RESTARTS   AGE
 dgraph-ratel-<pod-id>  1/1       Running   0          9s
@@ -923,26 +923,24 @@ dgraph-zero-1          1/1       Running   0          2m
 dgraph-zero-2          1/1       Running   0          2m
 
 ```
+**提示** *您可以使用`kubectl logs -f dgraph-alpha-0` 和 `kubectl logs -f dgraph-zero-0`检查容器中容器的日志。*
 
-{{% notice "tip" %}}You can check the logs for the containers in the pod using `kubectl logs -f dgraph-alpha-0` and `kubectl logs -f dgraph-zero-0`.{{% /notice %}}
+- 测试安装
 
-* Test the setup
-
-Port forward from your local machine to the pod
+从本地机器向pod转发端口
 
 ```sh
 kubectl port-forward dgraph-alpha-0 8080
 kubectl port-forward dgraph-ratel-<pod-id> 8000
 ```
 
-Go to `http://localhost:8000` and verify Dgraph is working as expected.
+转到`http://localhost:8000`，验证dgraph是否按预期工作。
 
-{{% notice "note" %}} You can also access the service on its External IP address.{{% /notice %}}
+**注意** *您还可以在其外部IP地址上访问该服务。*
 
+- 停止集群
 
-* Stop the cluster
-
-Delete all the resources
+删除所有资源
 
 ```sh
 kubectl delete pods,statefulsets,services,persistentvolumeclaims,persistentvolumes -l app=dgraph-zero
@@ -950,130 +948,117 @@ kubectl delete pods,statefulsets,services,persistentvolumeclaims,persistentvolum
 kubectl delete pods,replicasets,services,persistentvolumeclaims,persistentvolumes -l app=dgraph-ratel
 ```
 
-Stop the cluster. If you used `kops` you can run the following command.
+停止集群。如果你使用`kops`，你可以运行下一个命令。
 
 ```sh
 kops delete cluster ${NAME} --yes
 ```
 
-## More about Dgraph
+## 有关dgraph的详细信息
 
-On its HTTP port, a Dgraph Alpha exposes a number of admin endpoints.
+在其HTTP端口上，dgraph alpha公开了许多管理端点。
 
-* `/health` returns HTTP status code 200 and an "OK" message if the worker is running, HTTP 503 otherwise.
-* `/admin/shutdown` initiates a proper [shutdown]({{< relref "#shutdown">}}) of the Alpha.
-* `/admin/export` initiates a data [export]({{< relref "#export">}}).
+- 如果工作进程正在运行，则`/health`返回HTTP状态代码200和“OK”消息，否则返回HTTP 503。
+- `/admin/shutdown` 启动alpha正确的 [关闭]("#shutdown")。
+- `/admin/export` 启动数据[导出]("#export")。
 
-By default the Alpha listens on `localhost` for admin actions (the loopback address only accessible from the same machine). The `--bindall=true` option binds to `0.0.0.0` and thus allows external connections.
+默认情况下，alpha在“localhost”上侦听管理操作（loopback地址只能从同一台计算机访问）。`--bindall=true`选项绑定到“0.0.0.0”，因此允许外部连接。
 
-{{% notice "tip" %}}Set max file descriptors to a high value like 10000 if you are going to load a lot of data.{{% /notice %}}
+**注意** *如果要加载大量数据，请将max文件描述符设置为10000这样的高值。*
 
-## More about Dgraph Zero
+## 有关Dgraph Zero的详细信息
 
-Dgraph Zero controls the Dgraph cluster. It automatically moves data between
-different Dgraph Alpha instances based on the size of the data served by each Alpha instance.
+dgraph zero控制dgraph集群。它根据每个alpha实例提供的数据大小自动在不同的dgraph alpha实例之间移动数据。
 
-It is mandatory to run at least one `dgraph zero` node before running any `dgraph alpha`.
-Options present for `dgraph zero` can be seen by running `dgraph zero --help`.
+在运行任何`dgraph alpha`之前，必须至少运行一个`dgraph zero`节点。运行`dgraph zero --help`可以看到`dgraph zero`的选项。
 
-* Zero stores information about the cluster.
-* `--replicas` is the option that controls the replication factor. (i.e. number of replicas per data shard, including the original shard)
-* When a new Alpha joins the cluster, it is assigned a group based on the replication factor. If the replication factor is 1 then each Alpha node will serve different group. If replication factor is 2 and you launch 4 Alphas, then first two Alphas would serve group 1 and next two machines would serve group 2.
-* Zero also monitors the space occupied by predicates in each group and moves them around to rebalance the cluster.
+- Zero存储关于集群的信息。
+- `--replicas`是控制复制因子的选项。（即每个数据碎片的副本数，包括原始碎片）
+- 当一个新的alpha加入集群时，它将根据复制因子分配一个组。如果复制因子为1，则每个alpha节点将服务于不同的组。如果复制因子为2，并且您启动了4个alphas，那么前两个alphas将服务于组1，后两个机器将服务于组2。
+- Zero还监视每个组中谓词占用的空间，并移动它们以重新平衡集群。
 
-Like Alpha, Zero also exposes HTTP on 6080 (+ any `--port_offset`). You can query it
-to see useful information, like the following:
+和alpha一样，zero也在6080（+任何`--port_offset`）上公开HTTP。您可以查询它以查看有用的信息，如下所示：
 
-* `/state` Information about the nodes that are part of the cluster. Also contains information about
-  size of predicates and groups they belong to.
-* `/assignIds?num=100` This would allocate `num` ids and return a JSON map
-containing `startId` and `endId`, both inclusive. This id range can be safely assigned
-externally to new nodes, during data ingestion.
-* `/removeNode?id=3&group=2` If a replica goes down and can't be recovered, you can remove it and add a new node to the quorum.
-This endpoint can be used to remove a dead Zero or Dgraph alpha node. To remove dead Zero nodes, just pass `group=0` and the
-id of the Zero node.
-{{% notice "note" %}}
-Before using the api ensure that the node is down and ensure that it doesn't come back up ever again.
+- `/state`有关作为集群一部分的节点的信息。还包含有关谓词及其所属组的大小的信息。
+- `/assignIds?num=100`将分配`num`个id并返回包含`startId`和`endId`的JSON映射，两者都包含在内。在数据接收期间，可以将此ID范围安全地分配给外部的新节点。
+- `/removeNode?id=3&group=2`如果一个复制副本出现故障并且无法恢复，您可以将其删除，并将一个新节点添加到仲裁中。此端点可用于删除死点零或dgraph alpha节点。要删除死掉的零节点，只需传递“group=0”和零节点的ID。
 
-You should not use the same `idx` as that of a node that was removed earlier.
-{{% /notice %}}
-* `/moveTablet?tablet=name&group=2` This endpoint can be used to move a tablet to a group. Zero
-  already does shard rebalancing every 8 mins, this endpoint can be used to force move a tablet.
+**注意** *在使用API之前，请确保节点已关闭，并且不会再次恢复。*
+*不应使用与先前删除的节点相同的`idx`。*
+
+- `/moveTablet?tablet=name&group=2` 此端点可用于将片到组。Zero已经每8分钟进行一次碎片重新平衡，这个端点可以用来强制移动片。
 
 
-## TLS configuration
+## TLS 配置
 
-{{% notice "note" %}}
-This section refers to the `dgraph cert` command which was introduced in v1.0.9. For previous releases, see the previous [TLS configuration documentation](https://docs.dgraph.io/v1.0.7/deploy/#tls-configuration).
-{{% /notice %}}
+**注意** *本节引用了v1.0.9中引入的 `dgraph cert` 命令。有关早期版本，请参阅早期的[TLS配置文档](https://docs.dgraph.io/v1.0.7/deploy/#tls-configuration).*
 
+客户端和服务器之间的连接可以通过TLS进行保护。受密码保护的私钥**not supported**。
 
-Connections between client and server can be secured with TLS. Password protected private keys are **not supported**.
+**注意** *如果使用`openssl`生成加密私钥，请确保显式指定加密算法（如`-aes256`）。这将强制`openssl`在私钥中包含`DEK-Info`头，这是用dgraph解密密钥所必需的。使用默认加密时，`openssl`不会写入头，无法解密密钥。*
 
-{{% notice "tip" %}}If you're generating encrypted private keys with `openssl`, be sure to specify encryption algorithm explicitly (like `-aes256`). This will force `openssl` to include `DEK-Info` header in private key, which is required to decrypt the key by Dgraph. When default encryption is used, `openssl` doesn't write that header and key can't be decrypted.{{% /notice %}}
+### 自签名证书
 
-### Self-signed certificates
-
-The `dgraph cert` program creates and manages self-signed certificates using a generated Dgraph Root CA. The _cert_ command simplifies certificate management for you.
+`dgraph cert`程序使用生成的dgraph根CA创建和管理自签名证书。`cert`命令简化了证书管理。
 
 ```sh
-# To see the available flags.
+# 查看可用标志。
 $ dgraph cert --help
 
-# Create Dgraph Root CA, used to sign all other certificates.
+# 创建dgraph根CA，用于签署所有其他证书。
 $ dgraph cert
 
-# Create node certificate (needed for Dgraph Live Loader using TLS)
+# 创建节点证书（使用tls的dgraph live loader时需要）
 $ dgraph cert -n live
 
-# Create client certificate
+# 创建客户端证书
 $ dgraph cert -c dgraphuser
 
-# Combine all in one command
+# 合并一体命令
 $ dgraph cert -n live -c dgraphuser
 
-# List all your certificates and keys
+# 列出所有证书和密钥
 $ dgraph cert ls
 ```
 
-### File naming conventions
+### 文件命名约定
 
-To enable TLS you must specify the directory path to find certificates and keys. The default location where the _cert_ command stores certificates (and keys) is `tls` under the Dgraph working directory; where the data files are found. The default dir path can be overridden using the `--dir` option.
+要启用TLS，必须指定目录路径以查找证书和密钥。`cert`命令存储证书（和密钥）的默认位置是dgraph工作目录下的`tls`；在该目录下可以找到数据文件。可以使用`--dir`选项重写默认的dir路径。
 
 ```sh
-$ dgraph cert --dir ~/mycerts
+dgraph cert --dir ~/mycerts
 ```
 
-The following file naming conventions are used by Dgraph for proper TLS setup.
+dgraph使用以下文件命名约定来正确设置tls。
 
-| File name | Description | Use |
+| 文件名 | 描述 | 使用 |
 |-----------|-------------|-------|
-| ca.crt | Dgraph Root CA certificate | Verify all certificates |
-| ca.key | Dgraph CA private key | Validate CA certificate |
-| node.crt | Dgraph node certificate | Shared by all nodes for accepting TLS connections |
-| node.key | Dgraph node private key | Validate node certificate |
-| client._name_.crt | Dgraph client certificate | Authenticate a client _name_ |
-| client._name_.key | Dgraph client private key | Validate _name_ client certificate |
+| ca.crt | Dgraph根CA证书 | 验证所有证书 |
+| ca.key | Dgraph CA私钥 | 验证CA证书 |
+| node.crt | Dgraph节点证书 | 由所有节点共享以接受TLS连接 |
+| node.key | Dgraph节点私钥 | 验证节点证书 |
+| client._name_.crt | Dgraph客户端证书 | 验证客户端 _name_ |
+| client._name_.key | Dgraph客户端私钥 | 验证 _name_ 客户端证书 |
 
-The Root CA certificate is used for verifying node and client certificates, if changed you must regenerate all certificates.
+根CA证书用于验证节点和客户端证书，如果更改，则必须重新生成所有证书。
 
-For client authentication, each client must have their own certificate and key. These are then used to connect to the Dgraph node(s).
+对于客户端身份验证，每个客户端必须拥有自己的证书和密钥。 然后将它们用于连接到Dgraph节点。
 
-The node certificate `node.crt` can support multiple node names using multiple host names and/or IP address. Just separate the names with commas when generating the certificate.
+节点证书`node.crt`可以使用多个主机名和/或IP地址支持多个节点名。 在生成证书时，只需用逗号分隔名称即可。
 
 ```sh
-$ dgraph cert -n localhost,104.25.165.23,dgraph.io,2400:cb00:2048:1::6819:a417
+dgraph cert -n localhost,104.25.165.23,dgraph.io,2400:cb00:2048:1::6819:a417
 ```
 
-{{% notice "tip" %}}You must delete the old node cert and key before you can generate a new pair.{{% /notice %}}
+**注意** *您必须先删除旧节点证书和密钥，然后才能生成新对。*
 
-{{% notice "note" %}}When using host names for node certificates, including _localhost_, your clients must connect to the matching host name -- such as _localhost_ not 127.0.0.1. If you need to use IP addresses, then add them to the node certificate.{{% /notice %}}
+**注意** *使用节点证书的主机名（包括`localhost`）时，客户端必须连接到匹配的主机名 - 例如`localhost`而不是127.0.0.1。 如果需要使用IP地址，请将它们添加到节点证书中。*
 
-### Certificate inspection
+### 证书检查
 
-The command `dgraph cert ls` lists all certificates and keys in the `--dir` directory (default 'tls'), along with details to inspect and validate cert/key pairs.
+命令`dgraph cert ls`列出`-dir`目录中的所有证书和密钥（默认'tls'），以及检查和验证证书/密钥对的详细信息。
 
-Example of command output:
+命令输出示例：
 
 ```sh
 -rw-r--r-- ca.crt - Dgraph Root CA certificate
@@ -1107,133 +1092,112 @@ Expiration: 25 Sep 23 19:39 UTC
   MD5 hash: FA0FFC88F7AA654575CD48A493C3D65A
 ```
 
-Important points:
+重点：
 
-* The cert/key pairs should always have matching MD5 hashes. Otherwise, the cert(s) must be regenerated. If the Root CA pair differ, all cert/key must be regenerated; the flag `--force` can help.
-* All certificates must pass Dgraph CA verification.
-* All key files should have the least access permissions, specially the `ca.key`, but be readable.
-* Key files won't be overwritten if they have limited access, even with `--force`.
-* Node certificates are only valid for the hosts listed.
-* Client certificates are only valid for the named client/user.
+- 证书/密钥对应始终具有匹配的MD5哈希值。 否则，必须重新生成证书。 如果根CA对不同，则必须重新生成所有证书/密钥; 标志`--force`可以提供帮助。
+- 所有证书必须通过Dgraph CA验证。
+- 所有密钥文件应具有最少的访问权限，特别是`ca.key`，但是必须可读。
+- 如果密钥文件的访问权限有限，则不会覆盖密钥文件，即使使用`--force`也是如此。
+- 节点证书仅对列出的主机有效。
+- 客户端证书仅对指定的客户端/用户有效。
 
-### TLS options
+### TLS选项
 
-The following configuration options are available for Alpha:
+Alpha提供以下配置选项：
 
-* `--tls_dir string` - TLS dir path; this enables TLS connections (usually 'tls').
-* `--tls_use_system_ca` - Include System CA with Dgraph Root CA.
-* `--tls_client_auth string` - TLS client authentication used to validate client connection. See [Client authentication](#client-authentication) for details.
+- `--tls_dir string` - TLS目录路径; 这启用了TLS连接（通常是'tls'）。
+- `--tls_use_system_ca` - 包含带有Dgraph根CA的系统CA。
+- `--tls_client_auth string` - 用于验证客户端连接的TLS客户端身份验证。有关详细信息，请参阅[客户端身份验证](＃客户端验证)。
 
 ```sh
-# Default use for enabling TLS server (after generating certificates)
+# 默认用于启用TLS服务器（生成证书后）
 $ dgraph alpha --tls_dir tls
 ```
 
-Dgraph Live Loader can be configured with following options:
+Dgraph Live Loader可以配置以下选项：
 
-* `--tls_dir string` - TLS dir path; this enables TLS connections (usually 'tls').
-* `--tls_use_system_ca` - Include System CA with Dgraph Root CA.
-* `--tls_server_name string` - Server name, used for validating the server's TLS host name.
+- `--tls_dir string` - TLS目录路径; 这启用了TLS连接（通常是'tls'）。
+- `--tls_use_system_ca` - 包含带有Dgraph根CA的系统CA。
+- `--tls_server_name string` - 服务器名称，用于验证服务器的TLS主机名。
 
 ```sh
-# First, create a client certificate for live loader. This will create 'tls/client.live.crt'
+# 首先，为live loader创建客户端证书。 将创建'tls/client.live.crt'文件
 $ dgraph cert -c live
 
-# Now, connect to server using TLS
+# 现在，使用TLS连接到服务器
 $ dgraph live --tls_dir tls -s 21million.schema -r 21million.rdf.gz
 ```
 
-### Client authentication
+### 客户端验证
 
-The server option `--tls_client_auth` accepts different values that change the security policty of client certificate verification.
+server选项`--tls client auth`接受不同的值，这些值会更改客户端证书验证的安全策略。
 
-| Value | Description |
+| 值 | 描述 |
 |-------|-------------|
-| REQUEST | Server accepts any certificate, invalid and unverified (least secure) |
-| REQUIREANY | Server expects any certificate, valid and unverified |
-| VERIFYIFGIVEN | Client certificate is verified if provided (default) |
-| REQUIREANDVERIFY | Always require a valid certificate (most secure) |
+| REQUEST | 服务器接受任何证书，无效和未验证（最不安全） |
+| REQUIREANY | 服务器需要任何有效和未经验证的证书 |
+| VERIFYIFGIVEN | 如果提供，则验证客户端证书（默认） |
+| REQUIREANDVERIFY | 始终需要有效证书（最安全） |
 
-{{% notice "note" %}}REQUIREANDVERIFY is the most secure but also the most difficult to configure for remote clients. When using this value, the value of `--tls_server_name` is matched against the certificate SANs values and the connection host.{{% /notice %}}
+**注意** *REQUIREANDVERIF是最安全但也是最难配置的远程客户端。 使用此值时，`--tls_server_name`的值将与证书SAN值和连接主机匹配。*
 
-## Cluster Checklist
+## 群集检查表
 
-In setting up a cluster be sure the check the following.
+在设置群集时，请确保检查以下各项。
 
-* Is at least one Dgraph Zero node running?
-* Is each Dgraph Alpha instance in the cluster set up correctly?
-* Will each Dgraph Alpha instance be accessible to all peers on 7080 (+ any port offset)?
-* Does each instance have a unique ID on startup?
-* Has `--bindall=true` been set for networked communication?
+- 是否至少有一个dgraph zero节点正在运行？
+- 集群中的每个dgraph alpha实例设置是否正确？
+- 7080（+任何端口偏移）上的所有对等端是否都可以访问每个dgraph alpha实例？
+- 启动时每个实例都有唯一的ID吗？
+- 是否为网络通信设置了`--bindall=true`？
 
-## Fast Data Loading
+## 快速数据加载
 
-There are two different tools that can be used for fast data loading:
+有两种不同的工具可用于快速数据加载：
 
-- `dgraph live` runs the Dgraph Live Loader
-- `dgraph bulk` runs the Dgraph Bulk Loader
+- `dgraph live` 运行 Dgraph Live Loader
+- `dgraph bulk` 运行 Dgraph Bulk Loader
 
-{{% notice "note" %}} Both tools only accept [RDF NQuad/Triple
-data](https://www.w3.org/TR/n-quads/) in plain or gzipped format. Data
-in other formats must be converted.{{% /notice %}}
+**注意** *两种工具都只接受plain或gzipped格式的[RDF nQuad/Triple Data](https://www.w3.org/TR/n-quads/)。必须转换其他格式的数据。*
 
 ### Live Loader
 
-Dgraph Live Loader (run with `dgraph live`) is a small helper program which reads RDF NQuads from a gzipped file, batches them up, creates mutations (using the go client) and shoots off to Dgraph.
+dgraph live loader（通过`dgraph live`运行）是一个小的助手程序，它从gzipped文件中读取RDF NQUAD，将其批处理，创建mutation（使用go客户端），然后发送到dgraph。
 
-Dgraph Live Loader correctly handles assigning unique IDs to blank nodes across multiple files, and can optionally persist them to disk to save memory, in case the loader was re-run.
+dgraph live loader可以正确地处理跨多个文件向空节点分配唯一ID的问题，并且可以选择将它们保存到磁盘以节省内存，以防重新运行加载程序。
 
-{{% notice "note" %}} Dgraph Live Loader can optionally write the xid->uid mapping to a directory specified using the `-x` flag, which can reused
-given that live loader completed successfully in the previous run.{{% /notice %}}
+**注意** *dgraph live loader可以选择将xid->uid映射写入使用`-x`标志指定的目录，如果live loader在上一次运行中成功完成，则可以重复使用该标志。*
 
 ```sh
-$ dgraph live --help # To see the available flags.
+$ dgraph live --help # 查看可用标志。
 
-# Read RDFs from the passed file, and send them to Dgraph on localhost:9080.
+# 从传递的文件中读取RDF，并将它们发送到本地主机9080上的dgraph。
 $ dgraph live -r <path-to-rdf-gzipped-file>
 
-# Read RDFs and a schema file and send to Dgraph running at given address
+# 读取RDF和模式文件并发送到在给定地址运行的dgraph
 $ dgraph live -r <path-to-rdf-gzipped-file> -s <path-to-schema-file> -d <dgraph-alpha-address:grpc_port> -z <dgraph-zero-address:grpc_port>
 ```
 
 ### Bulk Loader
 
-{{% notice "note" %}}
-It's crucial to tune the bulk loader's flags to get good performance. See the
-section below for details.
-{{% /notice %}}
+**注意** *调优Bulk Loader的标志以获得良好的性能是至关重要的。有关详细信息，请参阅下面的部分。*
 
-Dgraph Bulk Loader serves a similar purpose to the Dgraph Live Loader, but can
-only be used to load data into a new cluster. It cannot be run on an existing
-live Dgraph cluster. Dgraph Bulk Loader is **considerably faster** than the
-Dgraph Live Loader and is the recommended way to perform the initial import of
-large datasets into Dgraph.
+Dgraph Bulk Loader serves a similar purpose to the Dgraph Live Loader, but can only be used to load data into a new cluster. It cannot be run on an existing
+live Dgraph cluster. Dgraph Bulk Loader is **considerably faster** than the Dgraph Live Loader and is the recommended way to perform the initial import of large datasets into Dgraph.
+Dgraph Bulk Loader的用途与Dgraph live loader类似，但只能用于将数据加载到新集群中。它不能在现有的活动dgraph集群上运行。Dgraph Bulk Loader比Dgraph live loader**快得多**，是将大型数据集初始导入到Dgraph的推荐方法。
 
-Only one or more Dgraph Zeros should be running for bulk loading. Dgraph Alphas
-will be started later.
+对于批量加载，只应运行一个或多个dgraph zero。稍后将启动dgraph alphas。
 
-{{% notice "warning" %}}
-Don't use bulk loader once the Dgraph cluster is up and running. Use it to import
-your existing data to a new cluster.
-{{% /notice %}}
+**警告** *在dgraph集群启动并运行后，不要使用批量加载程序。使用它将现有数据导入新群集。*
 
-You can [read some technical details](https://blog.dgraph.io/post/bulkloader/)
-about the bulk loader on the blog.
+您可以在[博客](https://blog.dgraph.io/post/bulkloader/)上阅读一些关于bulk loader的技术细节。
 
-See [Fast Data Loading]({{< relref "#fast-data-loading" >}}) for more info about
-the expected N-Quads format.
+有关预期的N-Quads格式的更多信息，请参见[快速数据加载]("#快速数据加载")。
 
-**Reduce shards**: Before running the bulk load, you need to decide how many
-Alpha groups will be running when the cluster starts. The number of Alpha groups
-will be the same number of reduce shards you set with the `--reduce_shards`
-flag. For example, if your cluster will run 3 Alpha with 3 replicas per group,
-then there is 1 group and `--reduce_shards` should be set to 1. If your cluster
-will run 6 Alphas with 3 replicas per group, then there are 2 groups and
-`--reduce_shards` should be set to 2.
+**reduce shards**: Before running the bulk load, you need to decide how many Alpha groups will be running when the cluster starts. The number of Alpha groups will be the same number of reduce shards you set with the `--reduce_shards` flag. For example, if your cluster will run 3 Alpha with 3 replicas per group, then there is 1 group and `--reduce_shards` should be set to 1. If your cluster will run 6 Alphas with 3 replicas per group, then there are 2 groups and `--reduce_shards` should be set to 2.
+在运行bulk load之前，需要决定集群启动时将运行多少Alpha组。alpha组的数量将与使用`--reduce_shards`标志设置的reduce shards的数量相同。例如，如果集群将运行3个alpha，每组3个副本，那么有1个组，那`--reduce_shards`应设置为1。如果集群将运行6个alphas，每组3个副本，那么有2个组，那`--reduce_shards`应该设置为2。
 
-**Map shards**: The `--map_shards` option must be set to at least what's set for
-`--reduce_shards`. A higher number helps the bulk loader evenly distribute
-predicates between the reduce shards.
+**Map shards**: `--map_shards`选项必须至少设置为`--reduce_shards`的设置。 较大的数字有助于批量加载程序在reduce分片之间均匀分布谓词。
 
 ```sh
 $ dgraph bulk -r goldendata.rdf.gz -s goldendata.schema --map_shards=4 --reduce_shards=2 --http localhost:8000 --zero=localhost:5080
@@ -1283,8 +1247,7 @@ REDUCE 22s [100.00%] edge_count:3.695M edge_speed:584.4k/sec plist_count:1.778M 
 Total: 22s
 ```
 
-The output will be generated in the `out` directory by default. Here's the bulk
-load output from the example above:
+默认情况下，输出将在`out`目录中生成。 以下是上述示例的bulk load输出：
 
 ```sh
 $ tree ./out
@@ -1303,62 +1266,38 @@ $ tree ./out
 4 directories, 6 files
 ```
 
-Because `--reduce_shards` was set to 2, there are two sets of p directories: one
-in `./out/0` directory and another in the `./out/1` directory.
+因为`--reduce_shards`设置为2，所以有两组p目录：一个在`./out/0`目录中，另一个在`./out/1`目录中。
 
-Once the output is created, they can be copied to all the servers that will run
-Dgraph Alphas. Each Dgraph Alpha must have its own copy of the group's p
-directory output. Each replica of the first group should have its own copy of
-`./out/0/p`, each replica of the second group should have its own copy of
-`./out/1/p`, and so on.
+创建输出后，可以将它们复制到将运行Dgraph Alphas的所有服务器。 每个Dgraph Alpha必须有自己的组的p目录输出的副本。 第一组的每个副本都应该有自己的`./out/0/p`副本，第二组的每个副本都应该有自己的副本`./out/1/p`，依此类推。
 
-#### Tuning & monitoring
+#### 调优和监控
 
-##### Performance Tuning
+##### 性能调优
 
-{{% notice "tip" %}}
-We highly recommend [disabling swap
-space](https://askubuntu.com/questions/214805/how-do-i-disable-swap) when
-running Bulk Loader. It is better to fix the parameters to decrease memory
-usage, than to have swapping grind the loader down to a halt.
-{{% /notice %}}
+**注意** *我们强烈建议您在运行Bulk Loader时使用[禁用交换空间](https://askubuntu.com/questions/214805/how-do-i-disable-swap)。最好修复参数以减少内存使用量，而不是将交换空间用完。*
 
-Flags can be used to control the behaviour and performance characteristics of
-the bulk loader. You can see the full list by running `dgraph bulk --help`. In
-particular, **the flags should be tuned so that the bulk loader doesn't use more
-memory than is available as RAM**. If it starts swapping, it will become
-incredibly slow.
+标记可用于控制批量加载程序的行为和性能特征。您可以通过运行`dgraph bulk --help`来查看完整的列表。特别是，**标记应该被调优，这样批量加载程序使用的内存不会超过可用的RAM**。如果它开始使用交换空间，它将变得异常缓慢。
 
-**In the map phase**, tweaking the following flags can reduce memory usage:
+**在map阶段**, 调整以下标志可以减少内存使用：
 
-- The `--num_go_routines` flag controls the number of worker threads. Lowering reduces memory
-  consumption.
+- `--num-go-u routines`标志控制工作线程的数量。降低内存消耗。
 
-- The `--mapoutput_mb` flag controls the size of the map output files. Lowering
-  reduces memory consumption.
+- `--mapoutput_mb`标志控制map输出文件的大小。可降低内存消耗。
 
-For bigger datasets and machines with many cores, gzip decoding can be a
-bottleneck during the map phase. Performance improvements can be obtained by
-first splitting the RDFs up into many `.rdf.gz` files (e.g. 256MB each). This
-has a negligible impact on memory usage.
+对于具有多个内核的更大数据集和机器，gzip解码可能是映射阶段的瓶颈。通过首先将RDF分成许多`.rdf.gz`文件（例如每个256MB），可以获得性能改进。 这对内存使用的影响可以忽略不计。
 
-**The reduce phase** is less memory heavy than the map phase, although can still
-use a lot.  Some flags may be increased to improve performance, *but only if
-you have large amounts of RAM*:
+**在reduce阶段**, 虽然仍然可以使用很多，但是比map阶段的内存更重 可能会增加一些标志以提高性能，*但前提是您有大量RAM*:
 
-- The `--reduce_shards` flag controls the number of resultant Dgraph alpha instances.
-  Increasing this increases memory consumption, but in exchange allows for
-higher CPU utilization.
+- `--reduce_shards`标志控制Dgraph alpha实例结果的数量。增加这会增加内存消耗，但在交换中允许更高的CPU利用率。
 
-- The `--map_shards` flag controls the number of separate map output shards.
-  Increasing this increases memory consumption but balances the resultant
-Dgraph alpha instances more evenly.
+- `--map_shards`标志控制单独映射输出碎片的数量。增加这会增加内存消耗，但会更均匀地平衡生成的dgraph alpha实例结果。
 
-- The `--shufflers` controls the level of parallelism in the shuffle/reduce
-  stage. Increasing this increases memory consumption.
+- `--shufflers`控制shuffle/reduce阶段的并行度。增加这会增加内存消耗。
 
-## Monitoring
-Dgraph exposes metrics via the `/debug/vars` endpoint in json format and the `/debug/prometheus_metrics` endpoint in Prometheus's text-based format. Dgraph doesn't store the metrics and only exposes the value of the metrics at that instant. You can either poll this endpoint to get the data in your monitoring systems or install **[Prometheus](https://prometheus.io/docs/introduction/install/)**. Replace targets in the below config file with the ip of your Dgraph instances and run prometheus using the command `prometheus -config.file my_config.yaml`.
+## 监控
+
+Dgraph通过json格式的`/debug/vars`端点和Prometheus基于文本的格式的`/debug/prometheus_metrics`端点公开指标。Dgraph不存储指标，只显示该时刻指标的价值。您可以轮询此端点以获取监控系统中的数据，也可以安装[Prometheus](https://prometheus.io/docs/introduction/install/)。使用Dgraph实例的ip替换下面配置文件中的相应的ip，并使用命令`prometheus -config.file my_config.yaml`运行prometheus。
+
 ```sh
 scrape_configs:
   - job_name: "dgraph"
@@ -1372,144 +1311,127 @@ scrape_configs:
       - 172.31.8.118:8080
 ```
 
-{{% notice "note" %}}
-Raw data exported by Prometheus is available via `/debug/prometheus_metrics` endpoint on Dgraph alphas.
-{{% /notice %}}
+**注意** *Prometheus导出的原始数据可通过Dgraph alphas上的`/debug/prometheus_metrics`端点获得。*
 
-Install **[Grafana](http://docs.grafana.org/installation/)** to plot the metrics. Grafana runs at port 3000 in default settings. Create a prometheus datasource by following these **[steps](https://prometheus.io/docs/visualization/grafana/#creating-a-prometheus-data-source)**. Import **[grafana_dashboard.json](https://github.com/dgraph-io/benchmarks/blob/master/scripts/grafana_dashboard.json)** by following this **[link](http://docs.grafana.org/reference/export_import/#importing-a-dashboard)**.
+安装[Grafana](http://docs.grafana.org/installation/)绘制指标。Grafana在默认设置下在端口3000运行。按照这些[步骤](https://prometheus.io/docs/visualization/grafana/#creating-a-prometheus-data-source)创建prometheus数据源。按照[link](http://docs.grafana.org/reference/export_import/#importing-a-dashboard)导入[grafana_dashboard.json](https://github.com/dgraph-io/benchmarks/blob/master/scripts/grafana_dashboard.json)。
 
-## Metrics
+## 指标
 
-Dgraph metrics follow the [metric and label conventions for
-Prometheus](https://prometheus.io/docs/practices/naming/).
+Dgraph指标遵循[Prometheus的指标和标签约定](https://prometheus.io/docs/practices/naming/)。
 
-### Disk Metrics
+### 磁盘指标
 
-The disk metrics let you track the disk activity of the Dgraph process. Dgraph does not interact
-directly with the filesystem. Instead it relies on [Badger](https://github.com/dgraph-io/badger) to
-read from and write to disk.
+通过磁盘指标，您可以跟踪Dgraph流程的磁盘活动。Dgraph不直接与文件系统交互。相反，它依赖于[Badger](https://github.com/dgraph-io/badger)来读取和写入磁盘。
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `badger_disk_reads_total`        | Total count of disk reads in Badger.
- `badger_disk_writes_total`       | Total count of disk writes in Badger.
- `badger_gets_total`              | Total count of calls to Badger's `get`.
- `badger_memtable_gets_total`     | Total count of memtable accesses to Badger's `get`.
- `badger_puts_total`              | Total count of calls to Badger's `put`.
- `badger_read_bytes`              | Total bytes read from Badger.
- `badger_written_bytes`           | Total bytes written to Badger.
+ `badger_disk_reads_total`        | Badger中的磁盘读取总数。
+ `badger_disk_writes_total`       | Badger中磁盘写入的总数。
+ `badger_gets_total`              | 调用Badger的`get`的总次数。
+ `badger_memtable_gets_total`     | 对Badger的“get”的记忆访问总数。
+ `badger_puts_total`              | 对Badger的`put`的调用总数。
+ `badger_read_bytes`              | 从Badger读取的总字节数。
+ `badger_written_bytes`           | 写入Badger的总字节数。
 
-### Memory Metrics
+### 内存指标
 
-The memory metrics let you track the memory usage of the Dgraph process. The idle and inuse metrics
-gives you a better sense of the active memory usage of the Dgraph process. The process memory metric
-shows the memory usage as measured by the operating system.
+内存指标可让您跟踪Dgraph流程的内存使用情况。空闲和使用指标使您可以更好地了解Dgraph进程的活动内存使用情况。进程内存度量标准显示操作系统测量的内存使用情况。
 
-By looking at all three metrics you can see how much memory a Dgraph process is holding from the
-operating system and how much is actively in use.
+通过查看所有三个指标，您可以看到Dgraph流程从操作系统中保留了多少内存以及正在使用多少内存。
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `dgraph_memory_idle_bytes`       | Estimated amount of memory that is being held idle that could be reclaimed by the OS.
- `dgraph_memory_inuse_bytes`      | Total memory usage in bytes (sum of heap usage and stack usage).
- `dgraph_memory_proc_bytes`       | Total memory usage in bytes of the Dgraph process. On Linux/macOS, this metric is equivalent to resident set size. On Windows, this metric is equivalent to [Go's runtime.ReadMemStats](https://golang.org/pkg/runtime/#ReadMemStats).
+ `dgraph_memory_idle_bytes`       | 可以由操作系统回收的估计空闲内存量。
+ `dgraph_memory_inuse_bytes`      | 总内存使用量（堆使用量和堆栈使用量之和）以字节为单位。
+ `dgraph_memory_proc_bytes`       | Dgraph进程的总内存使用量（以字节为单位）。在Linux/macOS上，此度量标准等同于驻留集大小。在Windows上，此度量标准等同于[Go的runtime.ReadMemStats](https://golang.org/pkg/runtime/#ReadMemStats)。
 
-### LRU Cache Metrics
+### LRU 缓存指标
 
-The LRU cache metrics let you track on how well the posting list cache is being used.
+通过LRU缓存指标，您可以跟踪发布列表缓存的使用情况。
 
-You can track `dgraph_lru_capacity_bytes`, `dgraph_lru_evicted_total`, and `dgraph_max_list_bytes`
-(see the [Data Metrics]({{< relref "#data-metrics" >}})) to determine if the cache size should be
-adjusted. A high number of evictions can indicate a large posting list that repeatedly is inserted
-and evicted from the cache due to insufficient sizing. The LRU cache size can be tuned with the option
-`--lru_mb`.
+You can track `dgraph_lru_capacity_bytes`, `dgraph_lru_evicted_total`, and `dgraph_max_list_bytes` (see the [Data Metrics]({{< relref "#data-metrics" >}})) to determine if the cache size should be adjusted. A high number of evictions can indicate a large posting list that repeatedly is inserted and evicted from the cache due to insufficient sizing. The LRU cache size can be tuned with the option `--lru_mb`.
+您可以跟踪`dgraph_lru_capacity_bytes`，`dgraph_lru_evicted_total`和`dgraph_max_list_bytes`（参见[数据指标](＃数据指标)）以确定是否应调整缓存大小。大量驱逐可能表示由于大小不足而重复插入并从缓存中逐出的大型发布列表。可以使用选项`--lru_mb`调整LRU高速缓存大小。
 
- Metrics                     | Description
+ 指标                     | 描述
  -------                     | -----------
- `dgraph_lru_hits_total`     | Total number of cache hits for posting lists in Dgraph.
- `dgraph_lru_miss_total`     | Total number of cache misses for posting lists in Dgraph.
- `dgraph_lru_race_total`     | Total number of cache races when getting posting lists in Dgraph.
- `dgraph_lru_evicted_total`  | Total number of posting lists evicted from LRU cache.
- `dgraph_lru_capacity_bytes` | Current size of the LRU cache. The max value should be close to the size specified by `--lru_mb`.
- `dgraph_lru_keys_total`     | Total number of keys in the LRU cache.
- `dgraph_lru_size_bytes`     | Size in bytes of the LRU cache.
+ `dgraph_lru_hits_total`     | 在Dgraph中发布列表的缓存命中总数。
+ `dgraph_lru_miss_total`     | 在Dgraph中发布列表的缓存未命中总数。
+ `dgraph_lru_race_total`     | 在Dgraph中获取发布列表时的缓存竞赛总数。
+ `dgraph_lru_evicted_total`  | 从LRU缓存中收回的投递列表总数。
+ `dgraph_lru_capacity_bytes` | LRU缓存的当前大小。最大值应该接近`--lru_mb`指定的大小。
+ `dgraph_lru_keys_total`     | LRU缓存中的密钥总数。
+ `dgraph_lru_size_bytes`     | LRU缓存的大小（以字节为单位）。
 
-### Data Metrics
+### 数据指标
 
-The data metrics let you track the [posting list]({{< ref "/design-concepts/index.md#posting-list"
->}}) store.
+通过该数据，您可以跟踪[投递列表](/design-concepts/index.md#posting-list)存储。
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `dgraph_max_list_bytes`          | Max posting list size in bytes.
- `dgraph_max_list_length`         | The largest number of postings stored in a posting list seen so far.
- `dgraph_posting_writes_total`    | Total number of posting list writes to disk.
- `dgraph_read_bytes_total`        | Total bytes read from Dgraph.
+ `dgraph_max_list_bytes`          | 最大投递列表大小（字节）。
+ `dgraph_max_list_length`         | 到目前为止，投递列表中的投递最多数量。
+ `dgraph_posting_writes_total`    | 投递列表写入磁盘的总数。
+ `dgraph_read_bytes_total`        | 从Dgraph读取的总字节数。
 
-### Activity Metrics
+### 活动指标
 
-The activity metrics let you track the mutations, queries, and proposals of an Dgraph instance.
+通过活动指标，您可以跟踪Dgraph实例的mutation，query和proposal。
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `dgraph_goroutines_total`        | Total number of Goroutines currently running in Dgraph.
- `dgraph_active_mutations_total`  | Total number of mutations currently running.
- `dgraph_pending_proposals_total` | Total pending Raft proposals.
- `dgraph_pending_queries_total`   | Total number of queries in progress.
- `dgraph_num_queries_total`       | Total number of queries run in Dgraph.
+ `dgraph_goroutines_total`        | 目前在Dgraph中运行的Goroutines总数。
+ `dgraph_active_mutations_total`  | 当前正在运行的mutation总数。
+ `dgraph_pending_proposals_total` | 总悬而未决的Raft提案。所有待执行的Raft proposal。
+ `dgraph_pending_queries_total`   | 正在进行的query总数。
+ `dgraph_num_queries_total`       | 在Dgraph中运行的查询总数。
 
-### Health Metrics
+### 健康指标
 
-The health metrics let you track to check the availability of an Dgraph Alpha instance.
+通过健康指标，您可以跟踪以检查Dgraph Alpha实例的可用性。
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `dgraph_alpha_health_status`     | **Only applicable to Dgraph Alpha**. Value is 1 when the Alpha is ready to accept requests; otherwise 0.
+ `dgraph_alpha_health_status`     | **仅适用于Dgraph Alpha**。 当Alpha准备好接受请求时，值为1; 否则为0。
 
-### Go Metrics
+### Go 指标
 
-Go's built-in metrics may also be useful to measure for memory usage and garbage collection time.
+Go的内置指标也可用于衡量内存使用和垃圾收集时间。
 
- Metrics                        | Description
+ 指标                        | 描述
  -------                        | -----------
- `go_memstats_gc_cpu_fraction`  | The fraction of this program's available CPU time used by the GC since the program started.
- `go_memstats_heap_idle_bytes`  | Number of heap bytes waiting to be used.
- `go_memstats_heap_inuse_bytes` | Number of heap bytes that are in use.
+ `go_memstats_gc_cpu_fraction`  | 自程序启动以来GC使用的该程序可用CPU时间的一小部分。
+ `go_memstats_heap_idle_bytes`  | 等待使用的堆字节数。
+ `go_memstats_heap_inuse_bytes` | 正在使用的堆字节数。
 
-### Unused Metrics
+### 没有过的指标
 
- Metrics                          | Description
+ 指标                          | 描述
  -------                          | -----------
- `dgraph_dirtymap_keys_total`     | Unused.
- `dgraph_posting_reads_total`     | Unused.
+ `dgraph_dirtymap_keys_total`     | 没用过。
+ `dgraph_posting_reads_total`     | 没用过。
 
-## Dgraph Administration
+## Dgraph管理
 
-Each Dgraph Alpha exposes administrative operations over HTTP to export data and to perform a clean shutdown.
+每个Dgraph Alpha都通过HTTP公开管理操作以导出数据并执行干净退出。
 
-### Whitelist Admin Operations
+### 白名单管理员操作
 
-By default, admin operations can only be initiated from the machine on which the Dgraph Alpha runs.
-You can use the `--whitelist` option to specify whitelisted IP addresses and ranges for hosts from which admin operations can be initiated.
+默认情况下，只能从运行Dgraph Alpha的计算机启动管理操作。您可以使用`--whitelist`选项为可以启动管理操作的主机指定列入白名单的IP地址和范围。
 
 ```sh
 dgraph alpha --whitelist 172.17.0.0:172.20.0.0,192.168.1.1 --lru_mb <one-third RAM> ...
 ```
-This would allow admin operations from hosts with IP between `172.17.0.0` and `172.20.0.0` along with
-the server which has IP address as `192.168.1.1`.
 
-### Secure Alter Operations
+这将允许来自IP为172.17.0.0和172.20.0.0的主机以及IP地址为192.168.1.1的服务器进行管理操作。
 
-Clients can use alter operations to apply schema updates and drop particular or all predicates from the database.
-By default, all clients are allowed to perform alter operations.
-You can configure Dgraph to only allow alter operations when the client provides a specific token.
-This can be used to prevent clients from making unintended or accidental schema updates or predicate drops.
+### Alter操作安全
 
-You can specify the auth token with the `--auth_token` option for each Dgraph Alpha in the cluster.
-Clients must include the same auth token to make alter requests.
+客户端可以使用alter操作来应用架构更新，并从数据库中删除特定或所有谓词。默认情况下，允许所有客户端执行alter操作。您可以将Dgraph配置为仅在客户端提供特定令牌时允许更改操作。这可用于防止客户端进行意外或意外的架构更新或谓词丢弃。
+
+您可以为群集中的每个Dgraph Alpha指定带有`--auth_token`选项的身份验证令牌。客户端必须包含相同的身份验证令牌才能生成alter请求。
 
 ```sh
-$ dgraph alpha --lru_mb=2048 --auth_token=<authtokenstring>
+dgraph alpha --lru_mb=2048 --auth_token=<authtokenstring>
 ```
 
 ```sh
@@ -1527,96 +1449,85 @@ $ curl -H 'X-Dgraph-AuthToken: <authtokenstring>' localhost:8180/alter -d '{ "dr
 # Success. Token matches.
 ```
 
-{{% notice "note" %}}
-To fully secure alter operations in the cluster, the auth token must be set for every Alpha.
-{{% /notice %}}
+**注意** *要完全保护群集中的alter操作，必须为每个Alpha设置身份验证令牌。*
 
+### 导出数据
 
-### Export Database
-
-An export of all nodes is started by locally accessing the export endpoint of any Alpha in the cluster.
+通过本地访问群集中任何Alpha的导出端点来启动所有节点的导出。
 
 ```sh
-$ curl localhost:8080/admin/export
+curl localhost:8080/admin/export
 ```
-{{% notice "warning" %}}By default, this won't work if called from outside the server where the Dgraph Alpha is running.
-You can specify a list or range of whitelisted IP addresses from which export or other admin operations
-can be initiated using the `--whitelist` flag on `dgraph alpha`.
-{{% /notice %}}
 
-This also works from a browser, provided the HTTP GET is being run from the same server where the Dgraph alpha instance is running.
+**注意** *默认情况下，如果从运行Dgraph Alpha的服务器外部调用，则无效。 您可以使用`dgraph alpha`上的`--whitelist`标志指定列表或列入白名单的IP地址，从中可以启动导出或其他管理操作。*
 
+这也适用于浏览器，前提是HTTP GET是从运行Dgraph alpha实例的同一服务器运行的。
 
-{{% notice "note" %}}An export file would be created on only the server which is the leader for a group
-and not on followers.{{% /notice %}}
+**注意** *将仅在作为组的领导者而不是关注者的服务器上创建导出文件。*
 
-This triggers an export of all the groups spread across the entire cluster. Each Alpha leader for a group writes output as a gzipped RDF file to the export directory specified on startup by `--export`. If any of the groups fail, the entire export process is considered failed and an error is returned.
+这会触发导出遍布整个群集的所有组。组的每个Alpha领导者将输出作为gzip压缩RDF文件写入由`--export`启动时指定的导出目录。如果任何组失败，则认为整个导出过程失败并返回错误。
 
-{{% notice "note" %}}It is up to the user to retrieve the right export files from the Alphas in the cluster. Dgraph does not copy files to the Alpha that initiated the export.{{% /notice %}}
+**注意** *用户可以从群集中的Alpha中检索正确的导出文件。Dgraph不会将文件复制到启动导出的Alpha。*
 
-### Shutdown Database
+### 关掉数据库
 
-A clean exit of a single Dgraph node is initiated by running the following command on that node.
-{{% notice "warning" %}}This won't work if called from outside the server where Dgraph is running.
-{{% /notice %}}
+通过在该节点上运行以下命令来启动单个Dgraph节点的干净退出。
+**警告** *如果从运行Dgraph的服务器外部调用，则无效。*
 
 ```sh
-$ curl localhost:8080/admin/shutdown
+ curl localhost:8080/admin/shutdown
 ```
 
-This stops the Alpha on which the command is executed and not the entire cluster.
+这将停止执行命令的Alpha，而不是整个群集。
 
-### Delete database
+### 删除数据库
 
-Individual triples, patterns of triples and predicates can be deleted as described in the [query languge docs](/query-language#delete).
+可以删除单个三元组，三元组和谓词的模式，如[query languge docs](/query-language＃delete)中所述。
 
-To drop all data, you could send a `DropAll` request via `/alter` endpoint.
+要删除所有数据，您可以向`/alter`端点发送`DropAll`请求。
 
-Alternatively, you could:
+或者，您可以：
 
-* [stop Dgraph]({{< relref "#shutdown" >}}) and wait for all writes to complete,
-* delete (maybe do an export first) the `p` and `w` directories, then
-* restart Dgraph.
+- [停止Dgraph](#shutdown)等待所有写入完成，然后删除（可能需要先导出）`p`和`w`目录，然后重启Dgraph。
 
-### Upgrade Database
+### 升级数据库
 
-Doing periodic exports is always a good idea. This is particularly useful if you wish to upgrade Dgraph or reconfigure the sharding of a cluster. The following are the right steps safely export and restart.
+定期导出总是一个好主意。 如果您希望升级Dgraph或重新配置群集的分片，这将特别有用。以下是安全导出和重启的正确步骤。
 
-- Start an [export]({{< relref "#export">}})
-- Ensure it's successful
-- Bring down the cluster
-- Run Dgraph using new data directories.
-- Reload the data via [bulk loader]({{< relref "#Bulk Loader" >}}).
-- If all looks good, you can delete the old directories (export serves as an insurance)
+- 开始[导出](#export)
+- 确保成功
+- 停下集群
+- 使用新数据目录运行Dgraph。
+- 通过[bulk loader]("#Bulk Loader")重新加载数据。
+- 如果一切看起来都不错，你可以删除旧目录（导出用作保险）
 
-These steps are necessary because Dgraph's underlying data format could have changed, and reloading the export avoids encoding incompatibilities.
+这些步骤是必要的，因为Dgraph的基础数据格式可能已更改，并且重新加载导出可避免编码不兼容性。
 
-### Post Installation
+### 安装后
 
-Now that Dgraph is up and running, to understand how to add and query data to Dgraph, follow [Query Language Spec](/query-language). Also, have a look at [Frequently asked questions](/faq).
+现在Dgraph已启动并运行，要了解如何向Dgraph添加和查询数据，请参考[查询语言规范](/query-language)。 另外，看看[常见问题](/faq)。
 
-## Troubleshooting
+## 故障排除
 
-Here are some problems that you may encounter and some solutions to try.
+以下是您可能遇到的一些问题以及尝试的一些解决方案。
 
-#### Running OOM (out of memory)
+#### Running OOM (内存不足)
 
-During bulk loading of data, Dgraph can consume more memory than usual, due to high volume of writes. That's generally when you see the OOM crashes.
+在bulk loading期间，由于写入量很大，Dgraph会比平时消耗更多内存。通常当你看到OOM崩溃。
+台式机和笔记本电脑上推荐的最小RAM为16GB。 Dgraph最多可以占用7-8 GB，默认设置为`--lru_mb`设置为4096; 所以剩下8GB的桌面应用程序应该让你的机器保持嗡嗡声。
 
-The recommended minimum RAM to run on desktops and laptops is 16GB. Dgraph can take up to 7-8 GB with the default setting `--lru_mb` set to 4096; so having the rest 8GB for desktop applications should keep your machine humming along.
+在EC2/GCEE实例上，建议的最小值为8GB。 建议将`--lru_mb`设置为RAM大小的三分之一。
 
-On EC2/GCE instances, the recommended minimum is 8GB. It's recommended to set `--lru_mb` to one-third of RAM size.
-
-You could also decrease memory usage of Dgraph by setting `--badger.vlog=disk`.
+您还可以通过设置`--badger.vlog=disk`来减少Dgraph的内存使用量。
 
 #### Too many open files
 
-If you see an log error messages saying `too many open files`, you should increase the per-process file descriptors limit.
+如果您看到日志错误消息显示`too many open files`，则应增加每进程文件描述符限制。
 
-During normal operations, Dgraph must be able to open many files. Your operating system may set by default a open file descriptor limit lower than what's needed for a database such as Dgraph.
+在正常操作期间，Dgraph必须能够打开许多文件。默认情况下，您的操作系统可能会设置一个低于数据库（如Dgraph）所需的打开文件描述符限制。
 
-On Linux and Mac, you can check the file descriptor limit with `ulimit -n -H` for the hard limit and `ulimit -n -S` for the soft limit. The soft limit should be set high enough for Dgraph to run properly. A soft limit of 65535 is a good lower bound for a production setup. You can adjust the limit as needed.
+在Linux和Mac上，您可以使用`ulimit -n -H`检查文件描述符限制的硬限制，并使用`ulimit -n -S`检查软限制。软限制应设置得足够高，以使Dgraph正常运行。软限制65535是生产设置的良好下限。您可以根据需要调整限制。
 
-## See Also
+## 也可以看看
 
-* [Product Roadmap to v1.0](https://github.com/dgraph-io/dgraph/issues/1)
+- [Product Roadmap to v1.0](https://github.com/dgraph-io/dgraph/issues/1)
