@@ -1,4 +1,3 @@
-
 Dgraph的 GraphQL+- 基于Facebook的[GraphQL](https://facebook.github.io/graphql/)。GraphQL不是为Graph数据库开发的，但它的图形式查询语法，模式验证和子图形状响应使其成为一种很好的语言选择。我们修改了语言以更好地支持图形操作，添加和删除功能以最适合图形数据库。我们称这种简化的，功能丰富的语言为“GraphQL+- ”。
 
 GraphQL+-正在开发中。我们正在添加更多功能，我们可能会进一步简化现有功能。
@@ -7,7 +6,7 @@ GraphQL+-正在开发中。我们正在添加更多功能，我们可能会进�
 
 本文档是Dgraph查询参考资料。这不是一个教程。它被设计为已经知道如何在GraphQL+-中编写查询的用户的参考，但需要检查语法，索引或函数等。
 
-{{% notice "note" %}}如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 - https://tour.dgraph.io {{% /notice %}}
+**注意** *如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 * - https://tour.dgraph.io
 
 
 ### 运行示例
@@ -90,8 +89,8 @@ GraphQL+- 查询根据搜索条件查找节点，匹配图中的模式并返回�
 }
 ```
 
+**注意** *如果你的谓词有特殊字符，那么你应该在查询中询问它时用尖括号包装它。 例如 `<first:name>`*
 
-{{% notice "note" %}} 如果你的谓词有特殊字符，那么你应该在查询中询问它时用尖括号包装它。 例如 `<first:name>`{{% /notice %}}
 
 ### 扩展图形边缘
 
@@ -151,40 +150,41 @@ Query Example: 查询在“Blade Runner”中扮演的演员和角色。 查询�
 }
 ```
 
-### Language Support
+### 语言支持
 
-{{% notice "note" %}}A `@lang` directive must be specified in the schema to query or mutate
-predicates with language tags.{{% /notice %}}
+**注意** *这 `@lang` 指令 必须明确指定对应schema 的 query 或者 mutate
+的谓语后面跟随的特定的语言标记.*
 
-Dgraph supports UTF-8 strings.
+Dgraph 支持 UTF-8 字符.
 
-In a query, for a string valued edge `edge`, the syntax
+在一个查询中, 对于一个字符类型的 `edge`, 语法如下
 ```
 edge@lang1:...:langN
 ```
-specifies the preference order for returned languages, with the following rules.
+按照如下规则，依据指定的顺序与语言返回
 
-* At most one result will be returned.
-* The preference list is considered left to right: if a value in given language is not found, the next language from the list is considered.
-* If there are no values in any of the specified languages, no value is returned.
-* A final `.` means that a value without a specified language is returned or if there is no value without language, a value in ''some'' language is returned.
+* 最多一个返回.
+* 列表返回顺序，优先级从左到右: 一个没找到就往下找，找到就返回.
+* 这个列表都没匹配到，就不返回.
+* 最后一个 `.`意味着没有指定语言或者对应的值没有匹配到特定的语言, 某个被匹配到的语言会返回.
 
-For example:
+举例如下:
 
-- `name`   => Look for an untagged string; return nothing if no untagged value exits.
-- `name@.` => Look for an untagged string, then any language.
-- `name@en` => Look for `en` tagged string; return nothing if no `en` tagged string exists.
-- `name@en:.` => Look for `en`, then untagged, then any language.
-- `name@en:pl` => Look for `en`, then `pl`, otherwise nothing.
-- `name@en:pl:.` => Look for `en`, then `pl`, then untagged, then any language.
-
-
-{{% notice "note" %}}In functions, language lists are not allowed. Single language, `.` notation and attribute name without language tag works as described above.{{% /notice %}}
-
-{{% notice "note" %}}In case of full text search functions (`alloftext`, `anyoftext`), when no language is specified, default (English) Full Text Search tokenizer is used.{{% /notice %}}
+- `name`   => 查找标识值为空的语言; 如果标识值不存在，什么都不返回.
+- `name@.` => 查找标识值为空的语言,然后查找任意一种语言.
+- `name@en` => 查找标识值为 `en`的语言; 如果标识值 `en` 没匹配到，什么都不返回.
+- `name@en:.` =>  查找标识值为 `en`的语言, 然后是未标识的语言, 最后是任意一种语言.
+- `name@en:pl` => 查找标识值为 `en`的语言, 然后是 `pl`, 没有匹配到,什么都不返回.
+- `name@en:pl:.` => 查找标识值为`en`的语言, 然后是`pl`的语言, 接着找未标识的语言, 最后是任意一种语言.
 
 
-Query Example: Some of Bollywood director and actor Farhan Akhtar's movies have a name stored in Russian as well as Hindi and English, others do not.
+**注意** *在函数中,不支持多种语言.只能查找一种语言, `.` 符号 和 属性名也不支持多语言*
+
+
+**注意** *在全文搜索函数中(`alloftext`, `anyoftext`), 没有指定特定语言的标识值，默认使用英文标识器tokenizer*
+
+
+查询案例: 查找演员 Farhan Akhtar's 导演的电影 按照下面三种语言分类 俄语 印度语 英语 显示,其他语言不显示.
 
 ```
 {
@@ -205,32 +205,32 @@ Query Example: Some of Bollywood director and actor Farhan Akhtar's movies have 
 
 
 
-## Functions
+## 函数
 
-{{% notice "note" %}}Functions can only be applied to [indexed]({{< relref "#indexing">}}) predicates.{{% /notice %}}
+**注意** *函数只能被应用在已经建立索引的谓词上*
 
-Functions allow filtering based on properties of nodes or variables.  Functions can be applied in the query root or in filters.
+函数允许基于节点或变量的属性进行筛选。函数可以应用于查询根或过滤器中。
 
-For functions on string valued predicates, if no language preference is given, the function is applied to all languages and strings without a language tag; if a language preference is given, the function is applied only to strings of the given language.
-
-
-### Term matching
+对于字符串值谓词上的函数，如果没有提供语言首选项，则将该函数应用于所有没有语言标记的语言和字符串;如果给定了语言首选项，则该函数仅应用于给定语言的字符串.
 
 
-#### allofterms
-
-Syntax Example: `allofterms(predicate, "space-separated term list")`
-
-Schema Types: `string`
-
-Index Required: `term`
+### 词匹配
 
 
-Matches strings that have all specified terms in any order; case insensitive.
+#### 所有的词 allofterms 
 
-##### Usage at root
+语法: `allofterms(predicate, "space-separated term list")`
 
-Query Example: All nodes that have `name` containing terms `indiana` and `jones`, returning the english name and genre in english.
+Schema 类型: `string`
+
+索引 要求: `term`
+
+
+匹配以任何顺序包含所有指定项的字符串;不区分大小写.
+
+##### 在根节点使用 Usage at root
+
+查询案例: 在全部节点中查找 名字`name` 包含词`indiana` 和 `jones`, 返回 英语名字 和英语电影类型.
 
 ```
 {
@@ -243,9 +243,9 @@ Query Example: All nodes that have `name` containing terms `indiana` and `jones`
 }
 ```
 
-##### Usage as Filter
+##### 使用过滤器
 
-Query Example: All Steven Spielberg films that contain the words `indiana` and `jones`.  The `@filter(has(director.film))` removes nodes with name Steven Spielberg that aren't the director --- the data also contains a character in a film called Steven Spielberg.
+查询案例: 所有史蒂文·斯皮尔伯格的电影中 `indiana` and `jones`这两个词.  这个过滤器`@filter(has(director.film))` 删除不是Steven Spielberg导演的节点 --- 这些数据还包括一部名为史蒂文·斯皮尔伯格(Steven Spielberg)的电影中的一个角色.
 
 ```
 {
@@ -259,7 +259,7 @@ Query Example: All Steven Spielberg films that contain the words `indiana` and `
 ```
 
 
-#### anyofterms
+#### 任意一个词 anyofterms
 
 
 Syntax Example: `anyofterms(predicate, "space-separated term list")`
@@ -431,13 +431,13 @@ Schema Types: `int`, `float`, `bool`, `string`, `dateTime`
 
 Index Required: An index is required for the `eq(predicate, ...)` forms (see table below).  For `count(predicate)` at the query root, the `@count` index is required. For variables the values have been calculated as part of the query, so no index is required.
 
-| Type       | Index Options |
-|:-----------|:--------------|
-| `int`      | `int`         |
-| `float`    | `float`       |
-| `bool`     | `bool`        |
+| Type       | Index Options   |
+| :--------- | :-------------- |
+| `int`      | `int`           |
+| `float`    | `float`         |
+| `bool`     | `bool`          |
 | `string`   | `exact`, `hash` |
-| `dateTime` | `dateTime`    |
+| `dateTime` | `dateTime`      |
 
 Test for equality of a predicate or variable to a value or find in a list of values.
 
@@ -494,7 +494,7 @@ Schema Types: `int`, `float`, `string`, `dateTime`
 Index required: An index is required for the `IE(predicate, ...)` forms (see table below).  For `count(predicate)` at the query root, the `@count` index is required. For variables the values have been calculated as part of the query, so no index is required.
 
 | Type       | Index Options |
-|:-----------|:--------------|
+| :--------- | :------------ |
 | `int`      | `int`         |
 | `float`    | `float`       |
 | `string`   | `exact`       |
@@ -1433,10 +1433,10 @@ For `AG` replaced with
 
 Schema Types:
 
-| Aggregation       | Schema Types |
-|:-----------|:--------------|
-| `min` / `max`     | `int`, `float`, `string`, `dateTime`, `default`         |
-| `sum` / `avg`    | `int`, `float`       |
+| Aggregation   | Schema Types                                    |
+| :------------ | :---------------------------------------------- |
+| `min` / `max` | `int`, `float`, `string`, `dateTime`, `default` |
+| `sum` / `avg` | `int`, `float`                                  |
 
 Aggregation can only be applied to [value variables]({{< relref "#value-variables">}}).  An index is not required (the values have already been found and stored in the value variable mapping).
 
@@ -1611,16 +1611,16 @@ Math statements must be enclosed within `math( <exp> )` and must be stored to a 
 
 The supported operators are as follows:
 
-| Operators                       | Types accepted                                 | What it does                                                   |
-| :------------:                  | :--------------:                               | :------------------------:                                     |
-| `+` `-` `*` `/` `%`             | `int`, `float`                                     | performs the corresponding operation                           |
-| `min` `max`                     | All types except `geo`, `bool`  (binary functions) | selects the min/max value among the two                        |
-| `<` `>` `<=` `>=` `==` `!=`     | All types except `geo`, `bool`                     | Returns true or false based on the values                      |
-| `floor` `ceil` `ln` `exp` `sqrt` | `int`, `float` (unary function)                    | performs the corresponding operation                           |
-| `since`                         | `dateTime`                                 | Returns the number of seconds in float from the time specified |
-| `pow(a, b)`                     | `int`, `float`                                     | Returns `a to the power b`                                     |
-| `logbase(a,b)`                  | `int`, `float`                                     | Returns `log(a)` to the base `b`                               |
-| `cond(a, b, c)`                 | first operand must be a boolean                | selects `b` if `a` is true else `c`                            |
+|            Operators             |                   Types accepted                   |                         What it does                         |
+| :------------------------------: | :------------------------------------------------: | :----------------------------------------------------------: |
+|       `+` `-` `*` `/` `%`        |                   `int`, `float`                   |             performs the corresponding operation             |
+|           `min` `max`            | All types except `geo`, `bool`  (binary functions) |           selects the min/max value among the two            |
+|   `<` `>` `<=` `>=` `==` `!=`    |           All types except `geo`, `bool`           |          Returns true or false based on the values           |
+| `floor` `ceil` `ln` `exp` `sqrt` |          `int`, `float` (unary function)           |             performs the corresponding operation             |
+|             `since`              |                     `dateTime`                     | Returns the number of seconds in float from the time specified |
+|           `pow(a, b)`            |                   `int`, `float`                   |                  Returns `a to the power b`                  |
+|          `logbase(a,b)`          |                   `int`, `float`                   |               Returns `log(a)` to the base `b`               |
+|         `cond(a, b, c)`          |          first operand must be a boolean           |             selects `b` if `a` is true else `c`              |
 
 
 Query Example:  Form a score for each of Steven Spielberg's movies as the sum of number of actors, number of genres and number of countries.  List the top five such movies in order of decreasing score.
@@ -1940,16 +1940,16 @@ Dgraph supports scalar types and the UID type.
 
 For all triples with a predicate of scalar types the object is a literal.
 
-| Dgraph Type | Go type |
-| ------------|:--------|
-|  `default`  | string  |
-|  `int`      | int64   |
-|  `float`    | float   |
-|  `string`   | string  |
-|  `bool`     | bool    |
-|  `dateTime` | time.Time (RFC3339 format [Optional timezone] eg: 2006-01-02T15:04:05.999999999+10:00 or 2006-01-02T15:04:05.999999999)    |
-|  `geo`      | [go-geom](https://github.com/twpayne/go-geom)    |
-|  `password` | string (encrypted) |
+| Dgraph Type | Go type                                                      |
+| ----------- | :----------------------------------------------------------- |
+| `default`   | string                                                       |
+| `int`       | int64                                                        |
+| `float`     | float                                                        |
+| `string`    | string                                                       |
+| `bool`      | bool                                                         |
+| `dateTime`  | time.Time (RFC3339 format [Optional timezone] eg: 2006-01-02T15:04:05.999999999+10:00 or 2006-01-02T15:04:05.999999999) |
+| `geo`       | [go-geom](https://github.com/twpayne/go-geom)                |
+| `password`  | string (encrypted)                                           |
 
 
 {{% notice "note" %}}Dgraph supports date and time formats for `dateTime` scalar type only if they
@@ -1961,8 +1961,8 @@ convert your values to RFC 3339 format before sending them to Dgraph.{{% /notice
 The `uid` type denotes a node-node edge; internally each node is represented as a `uint64` id.
 
 | Dgraph Type | Go type |
-| ------------|:--------|
-|  `uid`      | uint64  |
+| ----------- | :------ |
+| `uid`       | uint64  |
 
 
 ### Adding or Modifying Schema
@@ -2099,12 +2099,12 @@ Types `string` and `dateTime` have a number of indices.
 #### String Indices
 The indices available for strings are as follows.
 
-| Dgraph function            | Required index / tokenizer             | Notes |
-| :-----------------------   | :------------                          | :---  |
+| Dgraph function            | Required index / tokenizer             | Notes                                                        |
+| :------------------------- | :------------------------------------- | :----------------------------------------------------------- |
 | `eq`                       | `hash`, `exact`, `term`, or `fulltext` | The most performant index for `eq` is `hash`. Only use `term` or `fulltext` if you also require term or full text search. If you're already using `term`, there is no need to use `hash` or `exact` as well. |
-| `le`, `ge`, `lt`, `gt`     | `exact`                                | Allows faster sorting.                                   |
-| `allofterms`, `anyofterms` | `term`                                 | Allows searching by a term in a sentence.                |
-| `alloftext`, `anyoftext`   | `fulltext`                             | Matching with language specific stemming and stopwords.  |
+| `le`, `ge`, `lt`, `gt`     | `exact`                                | Allows faster sorting.                                       |
+| `allofterms`, `anyofterms` | `term`                                 | Allows searching by a term in a sentence.                    |
+| `alloftext`, `anyoftext`   | `fulltext`                             | Matching with language specific stemming and stopwords.      |
 | `regexp`                   | `trigram`                              | Regular expression matching. Can also be used for equality checking. |
 
 {{% notice "warning" %}}
@@ -2118,12 +2118,12 @@ that your application needs.
 
 The indices available for `dateTime` are as follows.
 
-| Index name / Tokenizer   | Part of date indexed                                      |
-| :----------- | :------------------------------------------------------------------ |
-| `year`      | index on year (default)                                        |
-| `month`       | index on year and month                                         |
-| `day`       | index on year, month and day                                      |
-| `hour`       | index on year, month, day and hour                               |
+| Index name / Tokenizer | Part of date indexed               |
+| :--------------------- | :--------------------------------- |
+| `year`                 | index on year (default)            |
+| `month`                | index on year and month            |
+| `day`                  | index on year, month and day       |
+| `hour`                 | index on year, month, day and hour |
 
 The choices of `dateTime` index allow selecting the precision of the index.  Applications, such as the movies examples in these docs, that require searching over dates but have relatively few nodes per year may prefer the `year` tokenizer; applications that are dependent on fine grained date searches, such as real-time sensor readings, may prefer the `hour` index.
 
@@ -2947,10 +2947,10 @@ my_predicate: string @index(foo) .
 
 There are two functions that can use custom indexes:
 
- Mode | Behaviour
---------|-------
- `anyof` | Returns nodes that match on *any* of the tokens generated
- `allof` | Returns nodes that match on *all* of the tokens generated
+| Mode    | Behaviour                                                 |
+| ------- | --------------------------------------------------------- |
+| `anyof` | Returns nodes that match on *any* of the tokens generated |
+| `allof` | Returns nodes that match on *all* of the tokens generated |
 
 The functions can be used either at the query root or in filters.
 
