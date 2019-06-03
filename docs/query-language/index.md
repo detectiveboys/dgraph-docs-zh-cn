@@ -262,18 +262,18 @@ Schema 类型: `string`
 #### 任意一个词 anyofterms
 
 
-Syntax Example: `anyofterms(predicate, "space-separated term list")`
+语法: `anyofterms(predicate, "space-separated term list")`
 
-Schema Types: `string`
+Schema 类型: `string`
 
-Index Required: `term`
+索引 要求: `term`
 
 
-Matches strings that have any of the specified terms in any order; case insensitive.
+匹配具有任意顺序指定项的字符串;不区分大小写.
 
-##### Usage at root
+##### 在根节点使用 Usage at root
 
-Query Example: All nodes that have a `name` containing either `poison` or `peacock`.  Many of the returned nodes are movies, but people like Joan Peacock also meet the search terms because without a [cascade directive]({{< relref "#cascade-directive">}}) the query doesn't require a genre.
+查询案例: 所有节点名字`name`包含 `poison` 或者 `peacock`. 返回的许多节点是影片, 但是像琼·皮科克(Joan Peacock)这样的人也符合搜索条件,因为级联指令没有指定查询需要类型。
 
 ```
 {
@@ -289,7 +289,7 @@ Query Example: All nodes that have a `name` containing either `poison` or `peaco
 
 ##### Usage as filter
 
-Query Example: All Steven Spielberg movies that contain `war` or `spies`.  The `@filter(has(director.film))` removes nodes with name Steven Spielberg that aren't the director --- the data also contains a character in a film called Steven Spielberg.
+查询案例:  所有史蒂文·斯皮尔伯格的电影都包含战争或间谍 `war` or `spies`。过滤器 `@filter(has(director.film))`过滤掉名为Steven Spielberg的节点，但这些这些节点不是导演———这些数据包含一个名为Steven Spielberg的电影中的角色。
 
 ```
 {
@@ -303,19 +303,19 @@ Query Example: All Steven Spielberg movies that contain `war` or `spies`.  The `
 ```
 
 
-### Regular Expressions
+### 正则表达式
 
 
-Syntax Examples: `regexp(predicate, /regular-expression/)` or case insensitive `regexp(predicate, /regular-expression/i)`
+语法: `regexp(predicate, /regular-expression/)` 或不区分大小写 `regexp(predicate, /regular-expression/i)`
 
-Schema Types: `string`
+Schema 类型: `string`
 
-Index Required: `trigram`
+索引 要求: `trigram`
 
 
-Matches strings by regular expression.  The regular expression language is that of [go regular expressions](https://golang.org/pkg/regexp/syntax/).
+通过正则表达式匹配字符串。正则表达式语言是[go语言的正则表达式](https://golang.org/pkg/regexp/syntax/).
 
-Query Example: At root, match nodes with `Steven Sp` at the start of `name`, followed by any characters.  For each such matched uid, match the films containing `ryan`.  Note the difference with `allofterms`, which would match only `ryan` but regular expression search will also match within terms, such as `bryan`.
+查询案例: 从根节点开始，将节点与名称开头为 `Steven Sp`匹配，后面跟着任何字符。对于每个匹配的uid，匹配包含 `ryan`的影片。注意与 `allofterms`函数的不同, `allofterms`函数 只匹配`ryan`但是正则表达式会所有包含`ryan`, 例如 `bryan`.
 
 ```
 {
@@ -329,46 +329,46 @@ Query Example: At root, match nodes with `Steven Sp` at the start of `name`, fol
 ```
 
 
-#### Technical details
+####  技术细节
 
-A Trigram is a substring of three continuous runes. For example, `Dgraph` has trigrams `Dgr`, `gra`, `rap`, `aph`.
+一个三元组是三个连续符文的子串。例如 `Dgraph` 的三元组有 `Dgr`, `gra`, `rap`, `aph`。
 
-To ensure efficiency of regular expression matching, Dgraph uses [trigram indexing](https://swtch.com/~rsc/regexp/regexp4.html).  That is, Dgraph converts the regular expression to a trigram query, uses the trigram index and trigram query to find possible matches and applies the full regular expression search only to the possibles.
+为保证正则表达式匹配的效率, Dgraph使用三元组索引[trigram indexing](https://swtch.com/~rsc/regexp/regexp4.html).也就是说，Dgraph将正则表达式转换为三元组查询，使用三元组索引和三元组查询查找可能的匹配项，并仅对可能的项应用完整的正则表达式搜索。
 
-#### Writing Efficient Regular Expressions and Limitations
+#### 编写有效的正则表达式和限制条件
 
-Keep the following in mind when designing regular expression queries.
+当你设计正则表达式查询语句是把如下建议记在脑中
 
-- At least one trigram must be matched by the regular expression (patterns shorter than 3 runes are not supported).  That is, Dgraph requires regular expressions that can be converted to a trigram query.
-- The number of alternative trigrams matched by the regular expression should be as small as possible  (`[a-zA-Z][a-zA-Z][0-9]` is not a good idea).  Many possible matches means the full regular expression is checked against many strings; where as, if the expression enforces more trigrams to match, Dgraph can make better use of the index and check the full regular expression against a smaller set of possible matches.
-- Thus, the regular expression should be as precise as possible.  Matching longer strings means more required trigrams, which helps to effectively use the index.
-- If repeat specifications (`*`, `+`, `?`, `{n,m}`) are used, the entire regular expression must not match the _empty_ string or _any_ string: for example, `*` may be used like `[Aa]bcd*` but not like `(abcd)*` or `(abcd)|((defg)*)`
-- Repeat specifications after bracket expressions (e.g. `[fgh]{7}`, `[0-9]+` or `[a-z]{3,5}`) are often considered as matching any string because they match too many trigrams.
-- If the partial result (for subset of trigrams) exceeds 1000000 uids during index scan, the query is stopped to prohibit expensive queries.
-
-
-### Full Text Search
-
-Syntax Examples: `alloftext(predicate, "space-separated text")` and `anyoftext(predicate, "space-separated text")`
-
-Schema Types: `string`
-
-Index Required: `fulltext`
+- 至少一个三元组必须与正则表达式匹配 (不支持正则模式少于三个字符的)。也就是说, Dgraph 要求查询的正则表达式要能被转换为一个三元组.
+- 正则表达式匹配的备选三元组的数量应该尽可能少(`[a-zA-Z][a-zA-Z][0-9]` 这样的正则不是一个好选择)。许多可能的匹配意味着对要对许多字符串检查完整的正则表达式; 然而,如果正则表达式强制匹配更多的三元组，Dgraph 最好地使用索引，并根据更小的可能匹配集代替检查完整的正则表达式。
+- 因此，正则表达式应该尽可能精确。匹配较长的字符串意味着需要更多的三元组，这有助于有效地使用索引。
+- 如果使用重复的正则符号(`*`, `+`, `?`, `{n,m}`), 整个正则表达式必须不匹配空字符串或任意字符串，例如, `*` 可以这样使用`[Aa]bcd*` 但不能这样 `(abcd)*` 或者这样 `(abcd)|((defg)*)`
+- 重复的正则符号在括号表达式后面(例如. `[fgh]{7}`, `[0-9]+` or `[a-z]{3,5}`) 通常被认为匹配任意字符串因为他们匹配太多元组。
+- 如果部分结果(对于三元组的子集) 超过 1000000 uids 在索引扫描时,这条查询由于过于查询代价过于昂贵阻止被禁止。
 
 
-Apply full text search with stemming and stop words to find strings matching all or any of the given text.
+### 全文检索
 
-The following steps are applied during index generation and to process full text search arguments:
+语法:  `alloftext(predicate, "space-separated text")` 和 `anyoftext(predicate, "space-separated text")`
 
-1. Tokenization (according to Unicode word boundaries).
-1. Conversion to lowercase.
-1. Unicode-normalization (to [Normalization Form KC](http://unicode.org/reports/tr15/#Norm_Forms)).
-1. Stemming using language-specific stemmer (if supported by language).
-1. Stop words removal (if supported by language).
+Schema 类型: `string`
 
-Dgraph uses [bleve](https://github.com/blevesearch/bleve) for its full text search indexing. See also the bleve language specific [stop word lists](https://github.com/blevesearch/bleve/tree/master/analysis/lang).
+索引 要求:  `fulltext`
 
-Following table contains all supported languages, corresponding country-codes, stemming and stop words filtering support.
+
+应用词干分析和停止词的全文检索来查找匹配所有或任何给定文本的字符串。
+
+在索引生成和处理全文搜索参数时，应用以下步骤:
+
+1. 标记化(根据Unicode单词边界)。
+1. 转换为小写的。
+1. 单点标准化(以KC形式标准化)(to [Normalization Form KC](http://unicode.org/reports/tr15/#Norm_Forms)).
+1. 使用特定于语言的词干分析器进行词干分析(如果有语言支持)。
+1. 停止词删除(如果有语言支持)。
+
+Dgraph使用[bleve](https://github.com/blevesearch/bleve)作为全文搜索索引。参见bleve语言特定的[停止单词列表](https://github.com/blevesearch/bleve/tree/master/analysis/lang)。
+
+下表包含所有支持的语言，对应的国家代码，词干提取和停止过滤支持。
 
 |  Language  | Country Code | Stemming | Stop words |
 | :--------: | :----------: | :------: | :--------: |
@@ -404,7 +404,7 @@ Following table contains all supported languages, corresponding country-codes, s
 |  Turkish   |      tr      | &#10003; |  &#10003;  |
 
 
-Query Example: All names that have `run`, `running`, etc and `man`.  Stop word removal eliminates `the` and `maybe`
+查询案例: 所有名字有`run`, `running`, 等词 和 `man`。All names that have `run`, `running`,。消除停止字 `the` 和 `maybe`
 
 ```
 {
