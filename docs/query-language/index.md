@@ -981,10 +981,10 @@ Schema 类型: `geo`
 * `predicate (first: N, after: UID) { ... }`
 * `predicate @filter(...) (first: N, after: UID) { ... }`
 
-Another way to get results after skipping over some results is to use the default UID ordering and skip directly past a node specified by UID.  For example, a first query could be of the form `predicate (after: 0x0, first: N)`, or just `predicate (first: N)`, with subsequent queries of the form `predicate(after: <uid of last entity in last result>, first: N)`.
+另一种方法得到跳过某些结果的返回结果后可以使用默认的UID排序，并直接跳过由UID指定的节点。例如，第一个查询可以是这种形式`predicate (after: 0x0, first: N)`,或者 `predicate (first: N)`, 使用表单的后续查询 `predicate(after: <uid of last entity in last result>, first: N)`.
 
 
-Query Example: The first five of Baz Luhrmann's films, sorted by UID order.
+查询示例 :巴兹·鲁曼电影的前五部，按UID顺序排列。
 
 ```
 {
@@ -998,7 +998,7 @@ Query Example: The first five of Baz Luhrmann's films, sorted by UID order.
 }
 ```
 
-The fifth movie is the Australian movie classic Strictly Ballroom.  It has UID `0x264ce8`.  The results after Strictly Ballroom can now be obtained with `after`.
+第五部电影是澳大利亚经典电影《舞动奇迹》。它的UID是0x8116e4。 在《舞动奇迹》的后一项可以使用`after`获得。
 
 ```
 {
@@ -1013,18 +1013,18 @@ The fifth movie is the Australian movie classic Strictly Ballroom.  It has UID `
 ```
 
 
-## Count
+## 计算
 
-Syntax Examples:
+语法 例子:
 
 * `count(predicate)`
 * `count(uid)`
 
-The form `count(predicate)` counts how many `predicate` edges lead out of a node.
+这个方式 `count(predicate)` 可以计算有多少 `predicate` 边从节点引出。
 
-The form `count(uid)` counts the number of UIDs matched in the enclosing block.
+这个方式  `count(uid)` 可以计算有多少 UIDs 匹配在封闭块中。
 
-Query Example: The number of films acted in by each actor with `Orlando` in their name.
+查询示例 : 以“奥兰多”`Orlando`为名字的演员出演的电影数量。
 
 ```
 {
@@ -1035,9 +1035,9 @@ Query Example: The number of films acted in by each actor with `Orlando` in thei
 }
 ```
 
-Count can be used at root and [aliased]({{< relref "#alias">}}).
+计算可以在根目录下使用并别名。
 
-Query Example: Count of directors who have directed more than five films.  When used at the query root, the [count index]({{< relref "#count-index">}}) is required.
+查询示例 : 计算已执导五部以上影片的导演人数。在查询根上使用时，count需要索引。
 
 ```
 {
@@ -1048,9 +1048,9 @@ Query Example: Count of directors who have directed more than five films.  When 
 ```
 
 
-Count can be assigned to a [value variable]({{< relref "#value-variables">}}).
+Count可以赋值给值变量。
 
-Query Example: The actors of Ang Lee's "Eat Drink Man Woman" ordered by the number of movies acted in.
+查询示例 : 李安的《吃喝男女》的演员们按出演电影的数量排序。
 
 ```
 {
@@ -1071,9 +1071,9 @@ Query Example: The actors of Ang Lee's "Eat Drink Man Woman" ordered by the numb
 ```
 
 
-## Sorting
+## 排序
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ..., orderasc: predicate)`
 * `q(func: ..., orderdesc: val(varName))`
@@ -1081,16 +1081,16 @@ Syntax Examples:
 * `predicate @filter(...) (orderasc: N) { ... }`
 * `q(func: ..., orderasc: predicate1, orderdesc: predicate2)`
 
-Sortable Types: `int`, `float`, `String`, `dateTime`, `id`, `default`
+可排序的类型: `int`, `float`, `String`, `dateTime`, `id`, `default`
 
-Results can be sorted in ascending, `orderasc` or decending `orderdesc` order by a predicate or variable.
+结果可以通过谓词或变量按升序(orderasc)或降序(orderdesc)排序。
 
-For sorting on predicates with [sortable indices]({{< relref "#sortable-indices">}}), Dgraph sorts on the values and with the index in parallel and returns whichever result is computed first.
+对于使用可排序索引对谓词排序，Dgraph对值和索引并行排序，并返回最先计算的结果。
 
-Sorted queries retrieve up to 1000 results by default. This can be changed with [first]({{< relref "#first">}}).
+默认情况下，排序查询最多检索1000个结果。这可以使用first改变。
 
 
-Query Example: French director Jean-Pierre Jeunet's movies sorted by release date.
+查询示例 : 法国导演让-皮埃尔·让内的电影按上映日期排序。
 
 ```
 {
@@ -1105,9 +1105,9 @@ Query Example: French director Jean-Pierre Jeunet's movies sorted by release dat
 }
 ```
 
-Sorting can be performed at root and on value variables.
+排序可以在根变量和值变量上执行。
 
-Query Example: All genres sorted alphabetically and the five movies in each genre with the most genres.
+查询示例 : 所有电影类型按字母顺序排列，返回每类中属于最多类型的前5部电影。
 
 ```
 {
@@ -1127,11 +1127,9 @@ Query Example: All genres sorted alphabetically and the five movies in each genr
 }
 ```
 
-Sorting can also be performed by multiple predicates as shown below. If the values are equal for the
-first predicate, then they are sorted by the second predicate and so on.
+排序还可以由多个谓词执行，如下所示，第一个谓词的值相等，然后根据第二个谓词排序，依此类推。
 
-Query Example: Find all nodes which have type Person, sort them by their first_name and among those
-that have the same first_name sort them by last_name in descending order.
+找到所有具有Person类型的节点，按它们的firstname对它们排序，在具有相同firstname的节点中按lastname降序对它们排序。
 
 ```
 {
@@ -1142,15 +1140,15 @@ that have the same first_name sort them by last_name in descending order.
 }
 ```
 
-## Multiple Query Blocks
+## 多个查询块
 
-Inside a single query, multiple query blocks are allowed.  The result is all blocks with corresponding block names.
+在单个查询中，允许使用多个查询块。返回结果是具有一致块名称的所有块。
 
-Multiple query blocks are executed in parallel.
+多个查询块会并行执行。
 
-The blocks need not be related in any way.
+这些块不需要以任何方式关联。
 
-Query Example: All of Angelina Jolie's films, with genres, and Peter Jackson's films since 2008.
+查询示例 :所有安吉丽娜·朱莉(Angelina Jolie)的各种类型的电影, 彼得杰克逊导演的电影自2008年以后的电影。
 
 ```
 {
@@ -1176,9 +1174,9 @@ Query Example: All of Angelina Jolie's films, with genres, and Peter Jackson's f
 ```
 
 
-If queries contain some overlap in answers, the result sets are still independent
+如果查询在答案中包含一些重叠，则结果集仍然是独立的。
 
-Query Example: The movies Mackenzie Crook has acted in and the movies Jack Davenport has acted in.  The results sets overlap because both have acted in the Pirates of the Caribbean movies, but the results are independent and both contain the full answers sets.
+查询示例 : 麦肯齐·克鲁克演过的电影，杰克·达文波特演过的电影。结果集重叠，因为它们都在《加勒比海盗》电影中扮演过角色，但查询返回结果是独立的，并且都包含完整的答案集。
 
 ```
 {
@@ -1211,11 +1209,11 @@ Query Example: The movies Mackenzie Crook has acted in and the movies Jack Daven
 ```
 
 
-### Var Blocks
+### 声明作用域 Var Blocks
 
-Var blocks start with the keyword `var` and are not returned in the query results.
+声明作用域以关键字 `var` 开头不会在查询结果中返回。
 
-Query Example: Angelina Jolie's movies ordered by genre.
+查询示例 : 安吉丽娜·朱莉的电影按类型排序。
 
 ```
 {
@@ -1238,30 +1236,31 @@ Query Example: Angelina Jolie's movies ordered by genre.
 ```
 
 
-## Query Variables
+## 查询变量
 
-Syntax Examples:
+语法 例子:
 
 * `varName as q(func: ...) { ... }`
 * `varName as var(func: ...) { ... }`
 * `varName as predicate { ... }`
 * `varName as predicate @filter(...) { ... }`
 
-Types : `uid`
+类型 : `uid`
 
-Nodes (UID's) matched at one place in a query can be stored in a variable and used elsewhere.  Query variables can be used in other query blocks or in a child node of the defining block.
+在查询的某个位置匹配的节点(UID)可以存储在变量中，并在其他地方使用。查询变量可用于其他查询块或定义块的子节点。
 
-Query variables do not affect the semantics of the query at the point of definition.  Query variables are evaluated to all nodes matched by the defining block.
+查询变量在定义时不影响查询的语义。查询变量被计算到定义块匹配的所有节点。
 
-In general, query blocks are executed in parallel, but variables impose an evaluation order on some blocks.  Cycles induced by variable dependence are not permitted.
+通常，查询块是并行执行的，但是变量对某些块施加了一个计算顺序。不允许由变量依赖引起的循环。
 
-If a variable is defined, it must be used elsewhere in the query.
+如果定义了一个变量，那么它必须在查询的其他地方使用。
 
-A query variable is used by extracting the UIDs in it with `uid(var-name)`.
+一个查询变量通过使用`uid(var-name)`提取其中的uid。
 
-The syntax `func: uid(A,B)` or `@filter(uid(A,B))` means the union of UIDs for variables `A` and `B`.
+语法`func: uid(A,B)` 或者 `@filter(uid(A,B))`  是对`A` 和 `B` 的变量UIDs的联合.
 
-Query Example: The movies of Angelia Jolie and Brad Pitt where both have acted on movies in the same genre.  Note that `B` and `D` match all genres for all movies, not genres per movie.
+查询示例 : 安吉丽娜·朱莉和布拉德·皮特的电影，他们都曾出演过同一类型的电影。
+注意，“B”和“D”匹配所有电影的所有类型，而不是每部电影的类型。
 ```
 {
  var(func:allofterms(name@en, "angelina jolie")) {
@@ -1290,7 +1289,7 @@ Query Example: The movies of Angelia Jolie and Brad Pitt where both have acted o
 ```
 
 
-## Value Variables
+## 值变量
 
 Syntax Examples:
 
