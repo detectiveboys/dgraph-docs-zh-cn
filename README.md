@@ -4,17 +4,17 @@
 
 | Page   |   Progress   | Dog  | Start |  Change    |
 | :-----------------: | :-------------: | :-----------: | :------: |  :--------:  |
-| [首页](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: ![Home](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)  | 2018-11-29      |       -       |
-| [快速开始](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: ![Get Started](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)   |  2018-11-29   | -         |
-| [查询语言](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)  |:uk: ![Query Language](http://progressed.io/bar/10) :cn:  | [JustinRong](https://github.com/JustinRong)   | - | - |
-| [GraphQL+- 小技巧](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: ![GraphQL+- Tips and Tricks](http://progressed.io/bar/0) :cn:  |    | -   |      -        |
-| [Mutations](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)      |:uk: ![Mutations](http://progressed.io/bar/0) :cn:  | -       | -   |      -        |
-| [客户端](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: ![Clients](http://progressed.io/bar/100) :cn:  | [Valdanito](https://github.com/Valdanitooooo)  | 2018-12-01 |      -        |
-| [集群部署](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/deploy/index.md)                  |:uk: ![Deploy](http://progressed.io/bar/100) :cn:   | [Valdanito](https://github.com/Valdanitooooo)  | 2018-12-09   |      -        |
-| [常见问题](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/faq/index.md)                  |:uk: ![FAQ](http://progressed.io/bar/0) :cn:  | - | -      |      -        |
-| [具体问题指引](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)    |:uk: ![How To Guides](http://progressed.io/bar/0) :cn:  | -       | -      |      -        |
-| [设计理念](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/design-concepts/index.md)        |:uk: ![Design Concepts](http://progressed.io/bar/0) :cn: | -   | -      | -         |
-| [与同类产品比较](https://github.com/Valdanitooooo/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) |:uk: ![Dgraph Compared to Other](http://progressed.io/bar/100) :cn: | [Valdanito](https://github.com/Valdanitooooo)     | 2018-12-01     | -         |
+| [首页](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/detectiveboys)  | 2018-11-29      |       -       |
+| [快速开始](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/detectiveboys)   |  2018-11-29   | -         |
+| [查询语言](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)  |:uk: :sunny: :cloud: :cloud: :cloud: :cloud: :cn:  | [JustinRong](https://github.com/JustinRong)   | - | - |
+| [GraphQL+- 小技巧](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  |    | -   |      -        |
+| [Mutations](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)      |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  | -       | -   |      -        |
+| [客户端](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  | [Valdanito](https://github.com/detectiveboys)  | 2018-12-01 |      -        |
+| [集群部署](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/deploy/index.md)                  |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:   | [Valdanito](https://github.com/detectiveboys)  | 2018-12-09   |      -        |
+| [常见问题](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/faq/index.md)                  |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  | - | -      |      -        |
+| [具体问题指引](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/howto/index.md)    |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  | -       | -      |      -        |
+| [设计理念](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/design-concepts/index.md)        |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn: | -   | -      | -         |
+| [与同类产品比较](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/dgraph-compared-to-other-databases/index.md) |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/detectiveboys)     | 2018-12-01     | -         |
 
 ## 翻译风格
 
@@ -59,7 +59,7 @@
 - clone项目源码
 
     ```bash
-    git clone git@github.com:Valdanitooooo/dgraph-docs-zh-cn.git
+    git clone git@github.com:detectiveboys/dgraph-docs-zh-cn.git
     ```
 
 - 方式一：本机运行（需要node环境）
