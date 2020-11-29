@@ -7,7 +7,7 @@
 | [首页](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/detectiveboys)  | 2018-11-29      |       -       |
 | [快速开始](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/detectiveboys)   |  2018-11-29   | -         |
 | [查询语言](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)  |:uk: :sunny: :cloud: :cloud: :cloud: :cloud: :cn:  | [JustinRong](https://github.com/JustinRong)   | - | - |
-| [GraphQL+- 小技巧](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  |    | -   |      -        |
+| [GraphQL+- 小技巧](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  |    | -   |      -        |
 | [Mutations](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)      |:uk: :cloud: :cloud: :cloud: :cloud: :cloud: :cn:  | -       | -   |      -        |
 | [客户端](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  | [Valdanito](https://github.com/detectiveboys)  | 2018-12-01 |      -        |
 | [集群部署](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/deploy/index.md)                  |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:   | [Valdanito](https://github.com/detectiveboys)  | 2018-12-09   |      -        |

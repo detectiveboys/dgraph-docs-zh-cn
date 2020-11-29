@@ -1,9 +1,9 @@
 
-## Get Sample Data
+## 获取样本数据
 
-Use the `has` function to get some sample nodes.
+使用 `has`函数获取一些样本节点。
 
-```
+```graphql
 {
   result(func: has(director.film), first: 10) {
     uid
@@ -12,14 +12,11 @@ Use the `has` function to get some sample nodes.
 }
 ```
 
+## 统计连接节点数
 
-## Count number of connecting nodes
+使用`expand(_all_)` 展开节点的边，然后将展开的uid分配给变量。现在可以使用该变量迭代唯一的相邻节点。然后使用`count(uid)`来计算变量块中的节点数。
 
-Use `expand(_all_)` to expand the nodes' edges, then assign them to a variable.
-The variable can now be used to iterate over the unique neighboring nodes.
-Then use `count(uid)` to count the number of nodes in a block.
-
-```
+```graphql
 {
   uids(func: has(director.film), first: 1) {
     uid
@@ -32,19 +29,19 @@ Then use `count(uid)` to count the number of nodes in a block.
 }
 ```
 
-## Search on non-indexed predicates
+## 搜索无索引谓词
 
-Use the `has` function among the value variables to search on non-indexed predicates.
+在值变量中使用`has`函数搜索无索引的谓词。
 
-```
+```graphql
 {
   var(func: has(festival.date_founded)) {
     p as festival.date_founded
   }
   query(func: eq(val(p), "1961-01-01T00:00:00Z")) {
       uid
-      name@en 
-      name@ru 
+      name@en
+      name@ru
       name@pl
       festival.date_founded
       festival.focus { name@en }
