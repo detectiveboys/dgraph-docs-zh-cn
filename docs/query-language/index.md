@@ -1,4 +1,3 @@
-
 Dgraph的 GraphQL+- 基于Facebook的[GraphQL](https://facebook.github.io/graphql/)。GraphQL不是为Graph数据库开发的，但它的图形式查询语法，模式验证和子图形状响应使其成为一种很好的语言选择。我们修改了语言以更好地支持图形操作，添加和删除功能以最适合图形数据库。我们称这种简化的，功能丰富的语言为“GraphQL+- ”。
 
 GraphQL+-正在开发中。我们正在添加更多功能，我们可能会进一步简化现有功能。
@@ -7,7 +6,7 @@ GraphQL+-正在开发中。我们正在添加更多功能，我们可能会进�
 
 本文档是Dgraph查询参考资料。这不是一个教程。它被设计为已经知道如何在GraphQL+-中编写查询的用户的参考，但需要检查语法，索引或函数等。
 
-{{% notice "note" %}}如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 - https://tour.dgraph.io {{% /notice %}}
+**注意** *如果您是Dgraph的新手并想学习如何使用Dgraph和GraphQL+-，请浏览一下 * - https://tour.dgraph.io
 
 
 ### 运行示例
@@ -90,8 +89,8 @@ GraphQL+- 查询根据搜索条件查找节点，匹配图中的模式并返回�
 }
 ```
 
+**注意** *如果你的谓词有特殊字符，那么你应该在查询中询问它时用尖括号包装它。 例如 `<first:name>`*
 
-{{% notice "note" %}} 如果你的谓词有特殊字符，那么你应该在查询中询问它时用尖括号包装它。 例如 `<first:name>`{{% /notice %}}
 
 ### 扩展图形边缘
 
@@ -151,40 +150,41 @@ Query Example: 查询在“Blade Runner”中扮演的演员和角色。 查询�
 }
 ```
 
-### Language Support
+### 语言支持
 
-{{% notice "note" %}}A `@lang` directive must be specified in the schema to query or mutate
-predicates with language tags.{{% /notice %}}
+**注意** *这 `@lang` 指令 必须明确指定对应schema 的 query 或者 mutate
+的谓语后面跟随的特定的语言标记.*
 
-Dgraph supports UTF-8 strings.
+Dgraph 支持 UTF-8 字符.
 
-In a query, for a string valued edge `edge`, the syntax
+在一个查询中, 对于一个字符类型的 `edge`, 语法如下
 ```
 edge@lang1:...:langN
 ```
-specifies the preference order for returned languages, with the following rules.
+按照如下规则，依据指定的顺序与语言返回
 
-* At most one result will be returned.
-* The preference list is considered left to right: if a value in given language is not found, the next language from the list is considered.
-* If there are no values in any of the specified languages, no value is returned.
-* A final `.` means that a value without a specified language is returned or if there is no value without language, a value in ''some'' language is returned.
+* 最多一个返回.
+* 列表返回顺序，优先级从左到右: 一个没找到就往下找，找到就返回.
+* 这个列表都没匹配到，就不返回.
+* 最后一个 `.`意味着没有指定语言或者对应的值没有匹配到特定的语言, 某个被匹配到的语言会返回.
 
-For example:
+举例如下:
 
-- `name`   => Look for an untagged string; return nothing if no untagged value exits.
-- `name@.` => Look for an untagged string, then any language.
-- `name@en` => Look for `en` tagged string; return nothing if no `en` tagged string exists.
-- `name@en:.` => Look for `en`, then untagged, then any language.
-- `name@en:pl` => Look for `en`, then `pl`, otherwise nothing.
-- `name@en:pl:.` => Look for `en`, then `pl`, then untagged, then any language.
-
-
-{{% notice "note" %}}In functions, language lists are not allowed. Single language, `.` notation and attribute name without language tag works as described above.{{% /notice %}}
-
-{{% notice "note" %}}In case of full text search functions (`alloftext`, `anyoftext`), when no language is specified, default (English) Full Text Search tokenizer is used.{{% /notice %}}
+- `name`   => 查找标识值为空的语言; 如果标识值不存在，什么都不返回.
+- `name@.` => 查找标识值为空的语言,然后查找任意一种语言.
+- `name@en` => 查找标识值为 `en`的语言; 如果标识值 `en` 没匹配到，什么都不返回.
+- `name@en:.` =>  查找标识值为 `en`的语言, 然后是未标识的语言, 最后是任意一种语言.
+- `name@en:pl` => 查找标识值为 `en`的语言, 然后是 `pl`, 没有匹配到,什么都不返回.
+- `name@en:pl:.` => 查找标识值为`en`的语言, 然后是`pl`的语言, 接着找未标识的语言, 最后是任意一种语言.
 
 
-Query Example: Some of Bollywood director and actor Farhan Akhtar's movies have a name stored in Russian as well as Hindi and English, others do not.
+**注意** *在函数中,不支持多种语言.只能查找一种语言, `.` 符号 和 属性名也不支持多语言*
+
+
+**注意** *在全文搜索函数中(`alloftext`, `anyoftext`), 没有指定特定语言的标识值，默认使用英文标识器tokenizer*
+
+
+查询案例: 查找演员 Farhan Akhtar's 导演的电影 按照下面三种语言分类 俄语 印度语 英语 显示,其他语言不显示.
 
 ```
 {
@@ -205,32 +205,32 @@ Query Example: Some of Bollywood director and actor Farhan Akhtar's movies have 
 
 
 
-## Functions
+## 函数
 
-{{% notice "note" %}}Functions can only be applied to [indexed]({{< relref "#indexing">}}) predicates.{{% /notice %}}
+**注意** *函数只能被应用在已经建立索引的谓词上*
 
-Functions allow filtering based on properties of nodes or variables.  Functions can be applied in the query root or in filters.
+函数允许基于节点或变量的属性进行筛选。函数可以应用于查询根或过滤器中。
 
-For functions on string valued predicates, if no language preference is given, the function is applied to all languages and strings without a language tag; if a language preference is given, the function is applied only to strings of the given language.
-
-
-### Term matching
+对于字符串值谓词上的函数，如果没有提供语言首选项，则将该函数应用于所有没有语言标记的语言和字符串;如果给定了语言首选项，则该函数仅应用于给定语言的字符串.
 
 
-#### allofterms
-
-Syntax Example: `allofterms(predicate, "space-separated term list")`
-
-Schema Types: `string`
-
-Index Required: `term`
+### 词匹配
 
 
-Matches strings that have all specified terms in any order; case insensitive.
+#### 所有的词 allofterms 
 
-##### Usage at root
+语法: `allofterms(predicate, "space-separated term list")`
 
-Query Example: All nodes that have `name` containing terms `indiana` and `jones`, returning the english name and genre in english.
+Schema 类型: `string`
+
+索引 要求: `term`
+
+
+匹配以任何顺序包含所有指定项的字符串;不区分大小写.
+
+##### 在根节点使用 Usage at root
+
+查询案例: 在全部节点中查找 名字`name` 包含词`indiana` 和 `jones`, 返回 英语名字 和英语电影类型.
 
 ```
 {
@@ -243,9 +243,9 @@ Query Example: All nodes that have `name` containing terms `indiana` and `jones`
 }
 ```
 
-##### Usage as Filter
+##### 使用过滤器
 
-Query Example: All Steven Spielberg films that contain the words `indiana` and `jones`.  The `@filter(has(director.film))` removes nodes with name Steven Spielberg that aren't the director --- the data also contains a character in a film called Steven Spielberg.
+查询案例: 所有史蒂文·斯皮尔伯格的电影中 `indiana` and `jones`这两个词.  这个过滤器`@filter(has(director.film))` 删除不是Steven Spielberg导演的节点 --- 这些数据还包括一部名为史蒂文·斯皮尔伯格(Steven Spielberg)的电影中的一个角色.
 
 ```
 {
@@ -259,21 +259,21 @@ Query Example: All Steven Spielberg films that contain the words `indiana` and `
 ```
 
 
-#### anyofterms
+#### 任意一个词 anyofterms
 
 
-Syntax Example: `anyofterms(predicate, "space-separated term list")`
+语法: `anyofterms(predicate, "space-separated term list")`
 
-Schema Types: `string`
+Schema 类型: `string`
 
-Index Required: `term`
+索引 要求: `term`
 
 
-Matches strings that have any of the specified terms in any order; case insensitive.
+匹配具有任意顺序指定项的字符串;不区分大小写.
 
-##### Usage at root
+##### 在根节点使用 Usage at root
 
-Query Example: All nodes that have a `name` containing either `poison` or `peacock`.  Many of the returned nodes are movies, but people like Joan Peacock also meet the search terms because without a [cascade directive]({{< relref "#cascade-directive">}}) the query doesn't require a genre.
+查询案例: 所有节点名字`name`包含 `poison` 或者 `peacock`. 返回的许多节点是影片, 但是像琼·皮科克(Joan Peacock)这样的人也符合搜索条件,因为级联指令没有指定查询需要类型。
 
 ```
 {
@@ -289,7 +289,7 @@ Query Example: All nodes that have a `name` containing either `poison` or `peaco
 
 ##### Usage as filter
 
-Query Example: All Steven Spielberg movies that contain `war` or `spies`.  The `@filter(has(director.film))` removes nodes with name Steven Spielberg that aren't the director --- the data also contains a character in a film called Steven Spielberg.
+查询案例:  所有史蒂文·斯皮尔伯格的电影都包含战争或间谍 `war` or `spies`。过滤器 `@filter(has(director.film))`过滤掉名为Steven Spielberg的节点，但这些这些节点不是导演———这些数据包含一个名为Steven Spielberg的电影中的角色。
 
 ```
 {
@@ -303,19 +303,19 @@ Query Example: All Steven Spielberg movies that contain `war` or `spies`.  The `
 ```
 
 
-### Regular Expressions
+### 正则表达式
 
 
-Syntax Examples: `regexp(predicate, /regular-expression/)` or case insensitive `regexp(predicate, /regular-expression/i)`
+语法: `regexp(predicate, /regular-expression/)` 或不区分大小写 `regexp(predicate, /regular-expression/i)`
 
-Schema Types: `string`
+Schema 类型: `string`
 
-Index Required: `trigram`
+索引 要求: `trigram`
 
 
-Matches strings by regular expression.  The regular expression language is that of [go regular expressions](https://golang.org/pkg/regexp/syntax/).
+通过正则表达式匹配字符串。正则表达式语言是[go语言的正则表达式](https://golang.org/pkg/regexp/syntax/).
 
-Query Example: At root, match nodes with `Steven Sp` at the start of `name`, followed by any characters.  For each such matched uid, match the films containing `ryan`.  Note the difference with `allofterms`, which would match only `ryan` but regular expression search will also match within terms, such as `bryan`.
+查询案例: 从根节点开始，将节点与名称开头为 `Steven Sp`匹配，后面跟着任何字符。对于每个匹配的uid，匹配包含 `ryan`的影片。注意与 `allofterms`函数的不同, `allofterms`函数 只匹配`ryan`但是正则表达式会所有包含`ryan`, 例如 `bryan`.
 
 ```
 {
@@ -329,46 +329,46 @@ Query Example: At root, match nodes with `Steven Sp` at the start of `name`, fol
 ```
 
 
-#### Technical details
+####  技术细节
 
-A Trigram is a substring of three continuous runes. For example, `Dgraph` has trigrams `Dgr`, `gra`, `rap`, `aph`.
+一个三元组是三个连续符文的子串。例如 `Dgraph` 的三元组有 `Dgr`, `gra`, `rap`, `aph`。
 
-To ensure efficiency of regular expression matching, Dgraph uses [trigram indexing](https://swtch.com/~rsc/regexp/regexp4.html).  That is, Dgraph converts the regular expression to a trigram query, uses the trigram index and trigram query to find possible matches and applies the full regular expression search only to the possibles.
+为保证正则表达式匹配的效率, Dgraph使用三元组索引[trigram indexing](https://swtch.com/~rsc/regexp/regexp4.html).也就是说，Dgraph将正则表达式转换为三元组查询，使用三元组索引和三元组查询查找可能的匹配项，并仅对可能的项应用完整的正则表达式搜索。
 
-#### Writing Efficient Regular Expressions and Limitations
+#### 编写有效的正则表达式和限制条件
 
-Keep the following in mind when designing regular expression queries.
+当你设计正则表达式查询语句是把如下建议记在脑中
 
-- At least one trigram must be matched by the regular expression (patterns shorter than 3 runes are not supported).  That is, Dgraph requires regular expressions that can be converted to a trigram query.
-- The number of alternative trigrams matched by the regular expression should be as small as possible  (`[a-zA-Z][a-zA-Z][0-9]` is not a good idea).  Many possible matches means the full regular expression is checked against many strings; where as, if the expression enforces more trigrams to match, Dgraph can make better use of the index and check the full regular expression against a smaller set of possible matches.
-- Thus, the regular expression should be as precise as possible.  Matching longer strings means more required trigrams, which helps to effectively use the index.
-- If repeat specifications (`*`, `+`, `?`, `{n,m}`) are used, the entire regular expression must not match the _empty_ string or _any_ string: for example, `*` may be used like `[Aa]bcd*` but not like `(abcd)*` or `(abcd)|((defg)*)`
-- Repeat specifications after bracket expressions (e.g. `[fgh]{7}`, `[0-9]+` or `[a-z]{3,5}`) are often considered as matching any string because they match too many trigrams.
-- If the partial result (for subset of trigrams) exceeds 1000000 uids during index scan, the query is stopped to prohibit expensive queries.
-
-
-### Full Text Search
-
-Syntax Examples: `alloftext(predicate, "space-separated text")` and `anyoftext(predicate, "space-separated text")`
-
-Schema Types: `string`
-
-Index Required: `fulltext`
+- 至少一个三元组必须与正则表达式匹配 (不支持正则模式少于三个字符的)。也就是说, Dgraph 要求查询的正则表达式要能被转换为一个三元组.
+- 正则表达式匹配的备选三元组的数量应该尽可能少(`[a-zA-Z][a-zA-Z][0-9]` 这样的正则不是一个好选择)。许多可能的匹配意味着对要对许多字符串检查完整的正则表达式; 然而,如果正则表达式强制匹配更多的三元组，Dgraph 最好地使用索引，并根据更小的可能匹配集代替检查完整的正则表达式。
+- 因此，正则表达式应该尽可能精确。匹配较长的字符串意味着需要更多的三元组，这有助于有效地使用索引。
+- 如果使用重复的正则符号(`*`, `+`, `?`, `{n,m}`), 整个正则表达式必须不匹配空字符串或任意字符串，例如, `*` 可以这样使用`[Aa]bcd*` 但不能这样 `(abcd)*` 或者这样 `(abcd)|((defg)*)`
+- 重复的正则符号在括号表达式后面(例如. `[fgh]{7}`, `[0-9]+` or `[a-z]{3,5}`) 通常被认为匹配任意字符串因为他们匹配太多元组。
+- 如果部分结果(对于三元组的子集) 超过 1000000 uids 在索引扫描时,这条查询由于过于查询代价过于昂贵阻止被禁止。
 
 
-Apply full text search with stemming and stop words to find strings matching all or any of the given text.
+### 全文检索
 
-The following steps are applied during index generation and to process full text search arguments:
+语法:  `alloftext(predicate, "space-separated text")` 和 `anyoftext(predicate, "space-separated text")`
 
-1. Tokenization (according to Unicode word boundaries).
-1. Conversion to lowercase.
-1. Unicode-normalization (to [Normalization Form KC](http://unicode.org/reports/tr15/#Norm_Forms)).
-1. Stemming using language-specific stemmer (if supported by language).
-1. Stop words removal (if supported by language).
+Schema 类型: `string`
 
-Dgraph uses [bleve](https://github.com/blevesearch/bleve) for its full text search indexing. See also the bleve language specific [stop word lists](https://github.com/blevesearch/bleve/tree/master/analysis/lang).
+索引 要求:  `fulltext`
 
-Following table contains all supported languages, corresponding country-codes, stemming and stop words filtering support.
+
+应用词干分析和停止词的全文检索来查找匹配所有或任何给定文本的字符串。
+
+在索引生成和处理全文搜索参数时，应用以下步骤:
+
+1. 标记化(根据Unicode单词边界)。
+1. 转换为小写的。
+1. 单点标准化(以KC形式标准化)(to [Normalization Form KC](http://unicode.org/reports/tr15/#Norm_Forms)).
+1. 使用特定于语言的词干分析器进行词干分析(如果有语言支持)。
+1. 停止词删除(如果有语言支持)。
+
+Dgraph使用[bleve](https://github.com/blevesearch/bleve)作为全文搜索索引。参见bleve语言特定的[停止单词列表](https://github.com/blevesearch/bleve/tree/master/analysis/lang)。
+
+下表包含所有支持的语言，对应的国家代码，词干提取和停止过滤支持。
 
 |  Language  | Country Code | Stemming | Stop words |
 | :--------: | :----------: | :------: | :--------: |
@@ -404,7 +404,7 @@ Following table contains all supported languages, corresponding country-codes, s
 |  Turkish   |      tr      | &#10003; |  &#10003;  |
 
 
-Query Example: All names that have `run`, `running`, etc and `man`.  Stop word removal eliminates `the` and `maybe`
+查询案例: 所有名字有`run`, `running`, 等词 和 `man`。消除停止字 `the` 和 `maybe`
 
 ```
 {
@@ -415,11 +415,11 @@ Query Example: All names that have `run`, `running`, etc and `man`.  Stop word r
 ```
 
 
-### Inequality
+### 不等式
 
-#### equal to
+#### 等于
 
-Syntax Examples:
+语法例子:
 
 * `eq(predicate, value)`
 * `eq(val(varName), value)`
@@ -427,23 +427,23 @@ Syntax Examples:
 * `eq(count(predicate), value)`
 * `eq(predicate, [val1, val2, ..., valN])`
 
-Schema Types: `int`, `float`, `bool`, `string`, `dateTime`
+Schema 类型: `int`, `float`, `bool`, `string`, `dateTime`
 
-Index Required: An index is required for the `eq(predicate, ...)` forms (see table below).  For `count(predicate)` at the query root, the `@count` index is required. For variables the values have been calculated as part of the query, so no index is required.
+索引 要求:  `eq(predicate, ...)`  需要一个索引 (请参阅下面的表)。 对于在查询根 `count(predicate)`,需要`@count`上有索引.对于变量，值是作为查询的一部分计算的，因此不需要索引。
 
-| Type       | Index Options |
-|:-----------|:--------------|
-| `int`      | `int`         |
-| `float`    | `float`       |
-| `bool`     | `bool`        |
+| Type       | Index Options   |
+| :--------- | :-------------- |
+| `int`      | `int`           |
+| `float`    | `float`         |
+| `bool`     | `bool`          |
 | `string`   | `exact`, `hash` |
-| `dateTime` | `dateTime`    |
+| `dateTime` | `dateTime`      |
 
-Test for equality of a predicate or variable to a value or find in a list of values.
+测试谓词或变量的值是否相等或能否与列表中的值对应。
 
-The boolean constants are `true` and `false`, so with `eq` this becomes, for example, `eq(boolPred, true)`.
+布尔常量是 `true` and `false`, 因此对于 `eq` , 就变成了, `eq(boolPred, true)`.
 
-Query Example: Movies with exactly thirteen genres.
+查询示例: 恰好属于有13种类型的电影.
 
 ```
 {
@@ -457,7 +457,7 @@ Query Example: Movies with exactly thirteen genres.
 ```
 
 
-Query Example: Directors called Steven who have directed 1,2 or 3 movies.
+查询示例: 名字叫史蒂文且执导过1部、2部或3部电影。
 
 ```
 {
@@ -473,35 +473,35 @@ Query Example: Directors called Steven who have directed 1,2 or 3 movies.
 ```
 
 
-#### less than, less than or equal to, greater than and greater than or equal to
+#### 小于，小于或等于，大于，大于或等于
 
-Syntax Examples: for inequality `IE`
+语法示例:不等式 `IE`
 
 * `IE(predicate, value)`
 * `IE(val(varName), value)`
 * `IE(predicate, val(varName))`
 * `IE(count(predicate), value)`
 
-With `IE` replaced by
+`IE` 可以替换成下面这些
 
-* `le` less than or equal to
-* `lt` less than
-* `ge` greater than or equal to
-* `gt` greather than
+* `le`  小于或等于
+* `lt` 小于
+* `ge` 大于或等于
+* `gt` 大于
 
-Schema Types: `int`, `float`, `string`, `dateTime`
+Schema 类型: `int`, `float`, `string`, `dateTime`
 
-Index required: An index is required for the `IE(predicate, ...)` forms (see table below).  For `count(predicate)` at the query root, the `@count` index is required. For variables the values have been calculated as part of the query, so no index is required.
+索引 要求: `IE(predicate, ...)` 需要一个索引 (请参阅下面的表)。 对于在查询根 `count(predicate)`,需要`@count`上有索引.对于变量，值是作为查询的一部分计算的，因此不需要索引。
 
 | Type       | Index Options |
-|:-----------|:--------------|
+| :--------- | :------------ |
 | `int`      | `int`         |
 | `float`    | `float`       |
 | `string`   | `exact`       |
 | `dateTime` | `dateTime`    |
 
 
-Query Example: Ridley Scott movies released before 1980.
+查询示例: 1980年以前上映的雷德利·斯科特电影。
 
 ```
 {
@@ -516,7 +516,7 @@ Query Example: Ridley Scott movies released before 1980.
 ```
 
 
-Query Example: Movies with directors with `Steven` in `name` and have directed more than `100` actors.
+查询示例:电影导演名字含有 `Steven` 同时指导超过100名演员。
 
 ```
 {
@@ -536,7 +536,7 @@ Query Example: Movies with directors with `Steven` in `name` and have directed m
 
 
 
-Query Example: A movie in each genre that has over 30000 movies.  Because there is no order specified on genres, the order will be by UID.  The [count index]({{< relref "#count-index">}}) records the number of edges out of nodes and makes such queries more .
+查询示例:每类电影超过30000部。因为这边没有指定电影种类返回按照什么顺序排序 将使用UID排序。count 索引记录节点外的边数，并进行更多的查询。
 
 ```
 {
@@ -549,8 +549,7 @@ Query Example: A movie in each genre that has over 30000 movies.  Because there 
 }
 ```
 
-Query Example: Directors called Steven and their movies which have `initial_release_date` greater
-than that of the movie Minority Report.
+查询示例:查找名字为斯蒂芬·斯皮尔伯格导演的电影，同时要求initial_release_date大于（大于就是晚于）电影《少数派报告》的initial_release_date(首次发布日期)。
 
 ```
 {
@@ -571,20 +570,21 @@ than that of the movie Minority Report.
 
 ### uid
 
-Syntax Examples:
+语法示例:
 
 * `q(func: uid(<uid>)) `
 * `predicate @filter(uid(<uid1>, ..., <uidn>))`
-* `predicate @filter(uid(a))` for variable `a`
-* `q(func: uid(a,b))` for variables `a` and `b`
+* `predicate @filter(uid(a))` 使用变量 `a`
+* `q(func: uid(a,b))` 使用变量 `a` 和 `b`
 
 
-Filters nodes at the current query level to only nodes in the given set of UIDs.
+将当前查询级别的节点过滤到给定uid集中的节点。
 
-For query variable `a`, `uid(a)` represents the set of UIDs stored in `a`.  For value variable `b`, `uid(b)` represents the UIDs from the UID to value map.  With two or more variables, `uid(a,b,...)` represents the union of all the variables.
+对于查询变量 `a`, `uid(a)`表示存储在 `a` 其中的一组uid。 对于值变量 `b`, `uid(b)` 表示从UID到值映射的UID.  有两个或两个以上的变量, `uid(a,b,...)`表示所有变量的并集。
 
+`uid(<uid>)`, 像标识函数一样, 即使节点没有任何边, 也会返回请求的 UID。
 
-Query Example: If the UID of a node is known, values for the node can be read directly.  The films of Priyanka Chopra by known UID
+查询示例: 如果已知节点的UID，则可以直接读取该节点的值。如已知电影普里扬卡·乔普的UID 为 0x878110，可以通过UID直接查
 
 ```
 {
@@ -601,7 +601,7 @@ Query Example: If the UID of a node is known, values for the node can be read di
 
 
 
-Query Example: The films of Taraji Henson by genre.
+查询示例: 塔拉吉·汉森的电影按类型划分
 ```
 {
   var(func: allofterms(name@en, "Taraji Henson")) {
@@ -623,7 +623,7 @@ Query Example: The films of Taraji Henson by genre.
 
 
 
-Query Example: Taraji Henson films ordered by numer of genres, with genres listed in order of how many films Taraji has made in each genre.
+查询示例: 塔拉吉·汉森的电影按类型划分然后排序，最后统计每种类型电影的。
 ```
 {
   var(func: allofterms(name@en, "Taraji Henson")) {
@@ -650,21 +650,20 @@ Query Example: Taraji Henson films ordered by numer of genres, with genres liste
 ### uid_in
 
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ...) @filter(uid_in(predicate, <uid>)`
 * `predicate1 @filter(uid_in(predicate2, <uid>)`
 
-Schema Types: UID
+Schema 类型: UID
 
-Index Required: none
+索引 要求: 无
 
-While the `uid` function filters nodes at the current level based on UID, function `uid_in` allows looking ahead along an edge to check that it leads to a particular UID.  This can often save an extra query block and avoids returning the edge.
+ `uid` 函数则根据uid过滤当前级别的节点,函数 `uid_in` 允许沿着边缘向前查看，以检查它是否指向特定的UID。这通常可以保存一个额外的查询块，并避免返回边缘。
 
-`uid_in` cannot be used at root, it accepts one UID constant as its argument (not a variable).
+`uid_in` 不能在根节点下使用，它接受一个UID常量作为参数(而不是变量)。
 
-
-Query Example: The collaborations of Marc Caro and Jean-Pierre Jeunet (UID 0x6777ba).  If the UID of Jean-Pierre Jeunet is known, querying this way removes the need to have a block extracting his UID into a variable and the extra edge traversal and filter for `~director.film`.
+查询示例: Marc Caro和Jean-PierreJeunet(UID 0x6777ba)的合作。如果Jean-Pierre Jeunet的UID是已知的, 通过这种`~director.film`方式进行查询，就不需要一个块将其UID提取到变量中，也不需要额外的边缘遍历和过滤器 .
 ```
 {
   caro(func: eq(name@en, "Marc Caro")) {
@@ -679,13 +678,13 @@ Query Example: The collaborations of Marc Caro and Jean-Pierre Jeunet (UID 0x677
 
 ### has
 
-Syntax Examples: `has(predicate)`
+语法 例子: `has(predicate)`
 
-Schema Types: all
+Schema 类型: all
 
-Determines if a node has a particular predicate.
+确定节点是否具有特定谓词。
 
-Query Example: First five directors and all their movies that have a release date recorded.  Directors have directed at least one film --- equivalent semantics to `gt(count(director.film), 0)`.
+查询示例: 前五位导演和他们所有的电影都有上映日期的记录。导演至少导演过一部电影——相当于 `gt(count(director.film), 0)`.
 ```
 {
   me(func: has(director.film), first: 5) {
@@ -698,20 +697,22 @@ Query Example: First five directors and all their movies that have a release dat
 }
 ```
 
-### Geolocation
+### 定位
 
-{{% notice "note" %}} As of now we only support indexing Point, Polygon and MultiPolygon [geometry types](https://github.com/twpayne/go-geom#geometry-types).{{% /notice %}}
+**注意** *到目前为止，我们只支持索引点、多边形和多边形集合类型。*
 
-Note that for geo queries, any polygon with holes is replace with the outer loop, ignoring holes.  Also, as for version 0.7.7 polygon containment checks are approximate.
 
-#### Mutations
+注意，对于定位查询，任何带有孔的多边形都将被替换为外部循环，忽略孔洞。另外，对于0.7.7版本，多边形包含检查是近似的。
 
-To make use of the geo functions you would need an index on your predicate.
+
+#### Mutations（变化）
+
+要使用geo函数，谓词上需要一个索引。
 ```
 loc: geo @index(geo) .
 ```
 
-Here is how you would add a `Point`.
+下面是如何添加一个点
 
 ```
 {
@@ -722,7 +723,7 @@ Here is how you would add a `Point`.
 }
 ```
 
-Here is how you would associate a `Polygon` with a node. Adding a `MultiPolygon` is also similar.
+下面是如何将“多边形”与节点关联。添加一个“多边形集合”也是类似的。
 
 ```
 {
@@ -733,21 +734,21 @@ Here is how you would associate a `Polygon` with a node. Adding a `MultiPolygon`
 }
 ```
 
-The above examples have been picked from our [SF Tourism](https://github.com/dgraph-io/benchmarks/blob/master/data/sf.tourism.gz?raw=true) dataset.
+上面的例子是从我们的[SF旅游](https://github.com/dgraph-io/benchmarks/blob/master/data/sf.tourism.gz?raw=true)数据集中挑选出来的。
 
-#### Query
+#### 查询
 
-##### near
+##### 接近
 
-Syntax Example: `near(predicate, [long, lat], distance)`
+语法 例子: `near(predicate, [long, lat], distance)`
 
-Schema Types: `geo`
+Schema 类型: `geo`
 
-Index Required: `geo`
+索引 要求: `geo`
 
-Matches all entities where the location given by `predicate` is within `distance` metres of geojson coordinate `[long, lat]`.
+匹配'谓词'所给出的位置在`distance`米的geojson`[long,lat]`坐标的所有实体。
 
-Query Example: Tourist destinations within 1 kilometer of a point in Golden Gate Park, San Fransico.
+查询示例: 旅游景点在1公里内的一个点在旧金山的金门公园。
 
 ```
 {
@@ -758,17 +759,17 @@ Query Example: Tourist destinations within 1 kilometer of a point in Golden Gate
 ```
 
 
-##### within
+##### 在…之内
 
-Syntax Example: `within(predicate, [[[long1, lat1], ..., [longN, latN]]])`
+语法 例子: `within(predicate, [[[long1, lat1], ..., [longN, latN]]])`
 
-Schema Types: `geo`
+Schema 类型: `geo`
 
-Index Required: `geo`
+索引 要求: `geo`
 
-Matches all entities where the location given by `predicate` lies within the polygon specified by the geojson coordinate array.
+匹配“谓词”给出的位置位于geojson坐标数组指定的多边形中的所有实体。
 
-Query Example: Tourist destinations within the specified area of Golden Gate Park, San Fransico.
+查询示例: 旧金山金门公园指定区域内的旅游景点。
 
 ```
 {
@@ -779,17 +780,17 @@ Query Example: Tourist destinations within the specified area of Golden Gate Par
 ```
 
 
-##### contains
+##### 包含
 
-Syntax Examples: `contains(predicate, [long, lat])` or `contains(predicate, [[long1, lat1], ..., [longN, latN]])`
+语法 例子: `contains(predicate, [long, lat])` or `contains(predicate, [[long1, lat1], ..., [longN, latN]])`
 
-Schema Types: `geo`
+Schema 类型: `geo`
 
-Index Required: `geo`
+索引 要求: `geo`
 
-Matches all entities where the polygon describing the location given by `predicate` contains geojson coordinate `[long, lat]` or given geojson polygon.
+匹配“谓词”给出的坐标的多边形`[long, lat]`或给定的geojson多边形的所有实体
 
-Query Example : All entities that contain a point in the flamingo enclosure of San Fransico Zoo.
+查询示例 :所有实体中包含一个点在火烈鸟围场的旧金山动物园。
 ```
 {
   tourist(func: contains(loc, [ -122.50326097011566, 37.73353615592843 ] )) {
@@ -799,15 +800,15 @@ Query Example : All entities that contain a point in the flamingo enclosure of S
 ```
 
 
-##### intersects
+##### 交叉
 
-Syntax Example: `intersects(predicate, [[[long1, lat1], ..., [longN, latN]]])`
+语法 例子: `intersects(predicate, [[[long1, lat1], ..., [longN, latN]]])`
 
-Schema Types: `geo`
+Schema 类型: `geo`
 
-Index Required: `geo`
+索引 要求: `geo`
 
-Matches all entities where the polygon describing the location given by `predicate` intersects the given geojson polygon.
+匹配"谓词"给定位置的多边形与给定geojson多边形相交的所有实体。
 
 
 ```
@@ -820,15 +821,15 @@ Matches all entities where the polygon describing the location given by `predica
 
 
 
-## Connecting Filters
+## 连接过滤器
 
-Within `@filter` multiple functions can be used with boolean connectives.
+在`@filter`中，多个函数可以与布尔连接词一起使用。
 
 ### AND, OR and NOT
 
-Connectives `AND`, `OR` and `NOT` join filters and can be built into arbitrarily complex filters, such as `(NOT A OR B) AND (C AND NOT (D OR E))`.  Note that, `NOT` binds more tightly than `AND` which binds more tightly than `OR`.
+连接词 `AND`, `OR` 和 `NOT` 连接过滤器，可以构建到任意复杂的过滤器中, 比如 `(NOT A OR B) AND (C AND NOT (D OR E))`。 注意, `NOT`与 `AND` 绑定比 `NOT` 与 `OR` 更紧密。
 
-Query Example : All Steven Spielberg movies that contain either both "indiana" and "jones" OR both "jurassic" and "park".
+查询示例 :所有史蒂文斯皮尔伯格电影包含'印第安纳'和'琼斯'或“侏罗纪”和“公园”。
 
 ```
 {
@@ -843,9 +844,9 @@ Query Example : All Steven Spielberg movies that contain either both "indiana" a
 ```
 
 
-## Alias
+## 别名
 
-Syntax Examples:
+语法 例子:
 
 * `aliasName : predicate`
 * `aliasName : predicate { ... }`
@@ -853,11 +854,10 @@ Syntax Examples:
 * `aliasName : count(predicate)`
 * `aliasName : max(val(varName))`
 
-An alias provides an alternate name in results.  Predicates, variables and aggregates can be aliased by prefixing with the alias name and `:`.  Aliases do not have to be different to the original predicate name, but, within a block, an alias must be distinct from predicate names and other aliases returned in the same block.  Aliases can be used to return the same predicate multiple times within a block.
+别名可以结果中提供另一个名称。谓词，变量和聚合可以通过添加`:`来添加别名。别名不必与原始谓词名不同，但是，在一个作用域内， 别名必须与同一作用域中返回的谓词名和其他别名不同。别名可用于在一个作用域内多次返回相同的谓词。
 
+查询示例 : 名称与“Steven”相匹配的导演，他们的UID，英文名，每部电影的平均演员人数，每部电影的总数量以及每部电影的英文和法文名称。
 
-
-Query Example: Directors with `name` matching term `Steven`, their UID, english name, average number of actors per movie, total number of films and the name of each film in english and french.
 ```
 {
   ID as var(func: allofterms(name@en, "Steven")) @filter(has(director.film)) {
@@ -883,28 +883,27 @@ Query Example: Directors with `name` matching term `Steven`, their UID, english 
 ```
 
 
-## Pagination
+## 分页
 
-Pagination allows returning only a portion, rather than the whole, result set.  This can be useful for top-k style queries as well as to reduce the size of the result set for client side processing or to allow paged access to results.
+分页允许只返回部分结果集，而不是返回整个结果集。这对于top-k风格的查询非常有用同时也减小结果集的大小对于 客户端处理或允许分页访问结果。for client side processing or to allow paged access to results.
 
-Pagination is often used with [sorting]({{< relref "#sorting">}}).
+分页通常用于排序。
 
-{{% notice "note" %}}Without a sort order specified, the results are sorted by `uid`, which is assigned randomly. So the ordering, while deterministic, might not be what you expected.{{% /notice  %}}
+**注意** *在没有指定排序顺序的情况下，结果按“uid”进行排序，uid是随机分配的。因此，虽然顺序是确定的，但可能不是您所期望的。*
 
 ### First
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ..., first: N)`
 * `predicate (first: N) { ... }`
 * `predicate @filter(...) (first: N) { ... }`
 
-For positive `N`, `first: N` retrieves the first `N` results, by sorted or UID order.
+对于正数`N`， '`first: N`根据排序或UID顺序检索第一个`N`结果。
 
-For negative `N`, `first: N` retrieves the last `N` results, by sorted or UID order.  Currently, negative is only supported when no order is applied.  To achieve the effect of a negative with a sort, reverse the order of the sort and use a positive `N`.
+对于负数 `N`, `first: N` 根据排序或UID顺序检索最后一个`N`结果,目前,负数只有在排序后才支持。要通过排序实现负数查找的效果，请颠倒排序的顺序后使用正数`N`
 
-
-Query Example: Last two films, by UID order, directed by Steven Spielberg and the first 3 genres, sorted alphabetically by English name, of those movies.
+查询示例 : 史蒂文斯皮尔伯格的导演和的前三种电影类型的最后两部电影，通过UID排序，按英文名称的字母顺序排序。
 
 ```
 {
@@ -922,7 +921,7 @@ Query Example: Last two films, by UID order, directed by Steven Spielberg and th
 
 
 
-Query Example: The three directors with name Steven who have directed the most actors of all directors named Steven.
+查询示例 : 所有名字含有叫史蒂文的导演中执导过最多演员的前三位导演
 
 ```
 {
@@ -944,18 +943,18 @@ Query Example: The three directors with name Steven who have directed the most a
 }
 ```
 
-### Offset
+### Offset 偏移量
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ..., offset: N)`
 * `predicate (offset: N) { ... }`
 * `predicate (first: M, offset: N) { ... }`
 * `predicate @filter(...) (offset: N) { ... }`
 
-With `offset: N` the first `N` results are not returned.  Used in combination with first, `first: M, offset: N` skips over `N` results and returns the following `M`.
+使用`offset: N`时，不会返回第一个 `N` 结果。组合使用`first: M, offset: N` ，从第`N`项后开始，返回`M`项数据,第`N`会被跳过。 
 
-Query Example: Order Hark Tsui's films by English title, skip over the first 4 and return the following 6.
+查询示例 : 徐克的电影所有按英文名排序,跳过前4条数据返回后续的6条数据。
 
 ```
 {
@@ -974,18 +973,18 @@ Query Example: Order Hark Tsui's films by English title, skip over the first 4 a
 }
 ```
 
-### After
+### 在...之后 After 
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ..., after: UID)`
 * `predicate (first: N, after: UID) { ... }`
 * `predicate @filter(...) (first: N, after: UID) { ... }`
 
-Another way to get results after skipping over some results is to use the default UID ordering and skip directly past a node specified by UID.  For example, a first query could be of the form `predicate (after: 0x0, first: N)`, or just `predicate (first: N)`, with subsequent queries of the form `predicate(after: <uid of last entity in last result>, first: N)`.
+另一种方法得到跳过某些结果的返回结果后可以使用默认的UID排序，并直接跳过由UID指定的节点。例如，第一个查询可以是这种形式`predicate (after: 0x0, first: N)`,或者 `predicate (first: N)`, 使用表单的后续查询 `predicate(after: <uid of last entity in last result>, first: N)`.
 
 
-Query Example: The first five of Baz Luhrmann's films, sorted by UID order.
+查询示例 :巴兹·鲁曼电影的前五部，按UID顺序排列。
 
 ```
 {
@@ -999,7 +998,7 @@ Query Example: The first five of Baz Luhrmann's films, sorted by UID order.
 }
 ```
 
-The fifth movie is the Australian movie classic Strictly Ballroom.  It has UID `0x264ce8`.  The results after Strictly Ballroom can now be obtained with `after`.
+第五部电影是澳大利亚经典电影《舞动奇迹》。它的UID是0x8116e4。 在《舞动奇迹》的后一项可以使用`after`获得。
 
 ```
 {
@@ -1014,18 +1013,18 @@ The fifth movie is the Australian movie classic Strictly Ballroom.  It has UID `
 ```
 
 
-## Count
+## 计算
 
-Syntax Examples:
+语法 例子:
 
 * `count(predicate)`
 * `count(uid)`
 
-The form `count(predicate)` counts how many `predicate` edges lead out of a node.
+这个方式 `count(predicate)` 可以计算有多少 `predicate` 边从节点引出。
 
-The form `count(uid)` counts the number of UIDs matched in the enclosing block.
+这个方式  `count(uid)` 可以计算有多少 UIDs 匹配在封闭块中。
 
-Query Example: The number of films acted in by each actor with `Orlando` in their name.
+查询示例 : 以“奥兰多”`Orlando`为名字的演员出演的电影数量。
 
 ```
 {
@@ -1036,9 +1035,9 @@ Query Example: The number of films acted in by each actor with `Orlando` in thei
 }
 ```
 
-Count can be used at root and [aliased]({{< relref "#alias">}}).
+计算可以在根目录下使用并别名。
 
-Query Example: Count of directors who have directed more than five films.  When used at the query root, the [count index]({{< relref "#count-index">}}) is required.
+查询示例 : 计算已执导五部以上影片的导演人数。在查询根上使用时，count需要索引。
 
 ```
 {
@@ -1049,9 +1048,9 @@ Query Example: Count of directors who have directed more than five films.  When 
 ```
 
 
-Count can be assigned to a [value variable]({{< relref "#value-variables">}}).
+Count可以赋值给值变量。
 
-Query Example: The actors of Ang Lee's "Eat Drink Man Woman" ordered by the number of movies acted in.
+查询示例 : 李安的《吃喝男女》的演员们按出演电影的数量排序。
 
 ```
 {
@@ -1072,9 +1071,9 @@ Query Example: The actors of Ang Lee's "Eat Drink Man Woman" ordered by the numb
 ```
 
 
-## Sorting
+## 排序
 
-Syntax Examples:
+语法 例子:
 
 * `q(func: ..., orderasc: predicate)`
 * `q(func: ..., orderdesc: val(varName))`
@@ -1082,16 +1081,16 @@ Syntax Examples:
 * `predicate @filter(...) (orderasc: N) { ... }`
 * `q(func: ..., orderasc: predicate1, orderdesc: predicate2)`
 
-Sortable Types: `int`, `float`, `String`, `dateTime`, `id`, `default`
+可排序的类型: `int`, `float`, `String`, `dateTime`, `id`, `default`
 
-Results can be sorted in ascending, `orderasc` or decending `orderdesc` order by a predicate or variable.
+结果可以通过谓词或变量按升序(orderasc)或降序(orderdesc)排序。
 
-For sorting on predicates with [sortable indices]({{< relref "#sortable-indices">}}), Dgraph sorts on the values and with the index in parallel and returns whichever result is computed first.
+对于使用可排序索引对谓词排序，Dgraph对值和索引并行排序，并返回最先计算的结果。
 
-Sorted queries retrieve up to 1000 results by default. This can be changed with [first]({{< relref "#first">}}).
+默认情况下，排序查询最多检索1000个结果。这可以使用first改变。
 
 
-Query Example: French director Jean-Pierre Jeunet's movies sorted by release date.
+查询示例 : 法国导演让-皮埃尔·让内的电影按上映日期排序。
 
 ```
 {
@@ -1106,9 +1105,9 @@ Query Example: French director Jean-Pierre Jeunet's movies sorted by release dat
 }
 ```
 
-Sorting can be performed at root and on value variables.
+排序可以在根变量和值变量上执行。
 
-Query Example: All genres sorted alphabetically and the five movies in each genre with the most genres.
+查询示例 : 所有电影类型按字母顺序排列，返回每类中属于最多类型的前5部电影。
 
 ```
 {
@@ -1128,11 +1127,9 @@ Query Example: All genres sorted alphabetically and the five movies in each genr
 }
 ```
 
-Sorting can also be performed by multiple predicates as shown below. If the values are equal for the
-first predicate, then they are sorted by the second predicate and so on.
+排序还可以由多个谓词执行，如下所示，第一个谓词的值相等，然后根据第二个谓词排序，依此类推。
 
-Query Example: Find all nodes which have type Person, sort them by their first_name and among those
-that have the same first_name sort them by last_name in descending order.
+找到所有具有Person类型的节点，按它们的firstname对它们排序，在具有相同firstname的节点中按lastname降序对它们排序。
 
 ```
 {
@@ -1143,15 +1140,15 @@ that have the same first_name sort them by last_name in descending order.
 }
 ```
 
-## Multiple Query Blocks
+## 多个查询块
 
-Inside a single query, multiple query blocks are allowed.  The result is all blocks with corresponding block names.
+在单个查询中，允许使用多个查询块。返回结果是具有一致块名称的所有块。
 
-Multiple query blocks are executed in parallel.
+多个查询块会并行执行。
 
-The blocks need not be related in any way.
+这些块不需要以任何方式关联。
 
-Query Example: All of Angelina Jolie's films, with genres, and Peter Jackson's films since 2008.
+查询示例 :所有安吉丽娜·朱莉(Angelina Jolie)的各种类型的电影, 彼得杰克逊导演的电影自2008年以后的电影。
 
 ```
 {
@@ -1177,9 +1174,9 @@ Query Example: All of Angelina Jolie's films, with genres, and Peter Jackson's f
 ```
 
 
-If queries contain some overlap in answers, the result sets are still independent
+如果查询在答案中包含一些重叠，则结果集仍然是独立的。
 
-Query Example: The movies Mackenzie Crook has acted in and the movies Jack Davenport has acted in.  The results sets overlap because both have acted in the Pirates of the Caribbean movies, but the results are independent and both contain the full answers sets.
+查询示例 : 麦肯齐·克鲁克演过的电影，杰克·达文波特演过的电影。结果集重叠，因为它们都在《加勒比海盗》电影中扮演过角色，但查询返回结果是独立的，并且都包含完整的答案集。
 
 ```
 {
@@ -1212,11 +1209,11 @@ Query Example: The movies Mackenzie Crook has acted in and the movies Jack Daven
 ```
 
 
-### Var Blocks
+### 声明作用域 Var Blocks
 
-Var blocks start with the keyword `var` and are not returned in the query results.
+声明作用域以关键字 `var` 开头不会在查询结果中返回。
 
-Query Example: Angelina Jolie's movies ordered by genre.
+查询示例 : 安吉丽娜·朱莉的电影按类型排序。
 
 ```
 {
@@ -1239,30 +1236,31 @@ Query Example: Angelina Jolie's movies ordered by genre.
 ```
 
 
-## Query Variables
+## 查询变量
 
-Syntax Examples:
+语法 例子:
 
 * `varName as q(func: ...) { ... }`
 * `varName as var(func: ...) { ... }`
 * `varName as predicate { ... }`
 * `varName as predicate @filter(...) { ... }`
 
-Types : `uid`
+类型 : `uid`
 
-Nodes (UID's) matched at one place in a query can be stored in a variable and used elsewhere.  Query variables can be used in other query blocks or in a child node of the defining block.
+在查询的某个位置匹配的节点(UID)可以存储在变量中，并在其他地方使用。查询变量可用于其他查询块或定义块的子节点。
 
-Query variables do not affect the semantics of the query at the point of definition.  Query variables are evaluated to all nodes matched by the defining block.
+查询变量在定义时不影响查询的语义。查询变量被计算到定义块匹配的所有节点。
 
-In general, query blocks are executed in parallel, but variables impose an evaluation order on some blocks.  Cycles induced by variable dependence are not permitted.
+通常，查询块是并行执行的，但是变量对某些块施加了一个计算顺序。不允许由变量依赖引起的循环。
 
-If a variable is defined, it must be used elsewhere in the query.
+如果定义了一个变量，那么它必须在查询的其他地方使用。
 
-A query variable is used by extracting the UIDs in it with `uid(var-name)`.
+一个查询变量通过使用`uid(var-name)`提取其中的uid。
 
-The syntax `func: uid(A,B)` or `@filter(uid(A,B))` means the union of UIDs for variables `A` and `B`.
+语法`func: uid(A,B)` 或者 `@filter(uid(A,B))`  是对`A` 和 `B` 的变量UIDs的联合.
 
-Query Example: The movies of Angelia Jolie and Brad Pitt where both have acted on movies in the same genre.  Note that `B` and `D` match all genres for all movies, not genres per movie.
+查询示例 : 安吉丽娜·朱莉和布拉德·皮特的电影，他们都曾出演过同一类型的电影。
+注意，“B”和“D”匹配所有电影的所有类型，而不是每部电影的类型。
 ```
 {
  var(func:allofterms(name@en, "angelina jolie")) {
@@ -1291,7 +1289,7 @@ Query Example: The movies of Angelia Jolie and Brad Pitt where both have acted o
 ```
 
 
-## Value Variables
+## 值变量
 
 Syntax Examples:
 
@@ -1433,10 +1431,10 @@ For `AG` replaced with
 
 Schema Types:
 
-| Aggregation       | Schema Types |
-|:-----------|:--------------|
-| `min` / `max`     | `int`, `float`, `string`, `dateTime`, `default`         |
-| `sum` / `avg`    | `int`, `float`       |
+| Aggregation   | Schema Types                                    |
+| :------------ | :---------------------------------------------- |
+| `min` / `max` | `int`, `float`, `string`, `dateTime`, `default` |
+| `sum` / `avg` | `int`, `float`                                  |
 
 Aggregation can only be applied to [value variables]({{< relref "#value-variables">}}).  An index is not required (the values have already been found and stored in the value variable mapping).
 
@@ -1611,16 +1609,16 @@ Math statements must be enclosed within `math( <exp> )` and must be stored to a 
 
 The supported operators are as follows:
 
-| Operators                       | Types accepted                                 | What it does                                                   |
-| :------------:                  | :--------------:                               | :------------------------:                                     |
-| `+` `-` `*` `/` `%`             | `int`, `float`                                     | performs the corresponding operation                           |
-| `min` `max`                     | All types except `geo`, `bool`  (binary functions) | selects the min/max value among the two                        |
-| `<` `>` `<=` `>=` `==` `!=`     | All types except `geo`, `bool`                     | Returns true or false based on the values                      |
-| `floor` `ceil` `ln` `exp` `sqrt` | `int`, `float` (unary function)                    | performs the corresponding operation                           |
-| `since`                         | `dateTime`                                 | Returns the number of seconds in float from the time specified |
-| `pow(a, b)`                     | `int`, `float`                                     | Returns `a to the power b`                                     |
-| `logbase(a,b)`                  | `int`, `float`                                     | Returns `log(a)` to the base `b`                               |
-| `cond(a, b, c)`                 | first operand must be a boolean                | selects `b` if `a` is true else `c`                            |
+|            Operators             |                   Types accepted                   |                         What it does                         |
+| :------------------------------: | :------------------------------------------------: | :----------------------------------------------------------: |
+|       `+` `-` `*` `/` `%`        |                   `int`, `float`                   |             performs the corresponding operation             |
+|           `min` `max`            | All types except `geo`, `bool`  (binary functions) |           selects the min/max value among the two            |
+|   `<` `>` `<=` `>=` `==` `!=`    |           All types except `geo`, `bool`           |          Returns true or false based on the values           |
+| `floor` `ceil` `ln` `exp` `sqrt` |          `int`, `float` (unary function)           |             performs the corresponding operation             |
+|             `since`              |                     `dateTime`                     | Returns the number of seconds in float from the time specified |
+|           `pow(a, b)`            |                   `int`, `float`                   |                  Returns `a to the power b`                  |
+|          `logbase(a,b)`          |                   `int`, `float`                   |               Returns `log(a)` to the base `b`               |
+|         `cond(a, b, c)`          |          first operand must be a boolean           |             selects `b` if `a` is true else `c`              |
 
 
 Query Example:  Form a score for each of Steven Spielberg's movies as the sum of number of actors, number of genres and number of countries.  List the top five such movies in order of decreasing score.
@@ -1940,16 +1938,16 @@ Dgraph supports scalar types and the UID type.
 
 For all triples with a predicate of scalar types the object is a literal.
 
-| Dgraph Type | Go type |
-| ------------|:--------|
-|  `default`  | string  |
-|  `int`      | int64   |
-|  `float`    | float   |
-|  `string`   | string  |
-|  `bool`     | bool    |
-|  `dateTime` | time.Time (RFC3339 format [Optional timezone] eg: 2006-01-02T15:04:05.999999999+10:00 or 2006-01-02T15:04:05.999999999)    |
-|  `geo`      | [go-geom](https://github.com/twpayne/go-geom)    |
-|  `password` | string (encrypted) |
+| Dgraph Type | Go type                                                      |
+| ----------- | :----------------------------------------------------------- |
+| `default`   | string                                                       |
+| `int`       | int64                                                        |
+| `float`     | float                                                        |
+| `string`    | string                                                       |
+| `bool`      | bool                                                         |
+| `dateTime`  | time.Time (RFC3339 format [Optional timezone] eg: 2006-01-02T15:04:05.999999999+10:00 or 2006-01-02T15:04:05.999999999) |
+| `geo`       | [go-geom](https://github.com/twpayne/go-geom)                |
+| `password`  | string (encrypted)                                           |
 
 
 {{% notice "note" %}}Dgraph supports date and time formats for `dateTime` scalar type only if they
@@ -1961,8 +1959,8 @@ convert your values to RFC 3339 format before sending them to Dgraph.{{% /notice
 The `uid` type denotes a node-node edge; internally each node is represented as a `uint64` id.
 
 | Dgraph Type | Go type |
-| ------------|:--------|
-|  `uid`      | uint64  |
+| ----------- | :------ |
+| `uid`       | uint64  |
 
 
 ### Adding or Modifying Schema
@@ -2099,12 +2097,12 @@ Types `string` and `dateTime` have a number of indices.
 #### String Indices
 The indices available for strings are as follows.
 
-| Dgraph function            | Required index / tokenizer             | Notes |
-| :-----------------------   | :------------                          | :---  |
+| Dgraph function            | Required index / tokenizer             | Notes                                                        |
+| :------------------------- | :------------------------------------- | :----------------------------------------------------------- |
 | `eq`                       | `hash`, `exact`, `term`, or `fulltext` | The most performant index for `eq` is `hash`. Only use `term` or `fulltext` if you also require term or full text search. If you're already using `term`, there is no need to use `hash` or `exact` as well. |
-| `le`, `ge`, `lt`, `gt`     | `exact`                                | Allows faster sorting.                                   |
-| `allofterms`, `anyofterms` | `term`                                 | Allows searching by a term in a sentence.                |
-| `alloftext`, `anyoftext`   | `fulltext`                             | Matching with language specific stemming and stopwords.  |
+| `le`, `ge`, `lt`, `gt`     | `exact`                                | Allows faster sorting.                                       |
+| `allofterms`, `anyofterms` | `term`                                 | Allows searching by a term in a sentence.                    |
+| `alloftext`, `anyoftext`   | `fulltext`                             | Matching with language specific stemming and stopwords.      |
 | `regexp`                   | `trigram`                              | Regular expression matching. Can also be used for equality checking. |
 
 {{% notice "warning" %}}
@@ -2118,12 +2116,12 @@ that your application needs.
 
 The indices available for `dateTime` are as follows.
 
-| Index name / Tokenizer   | Part of date indexed                                      |
-| :----------- | :------------------------------------------------------------------ |
-| `year`      | index on year (default)                                        |
-| `month`       | index on year and month                                         |
-| `day`       | index on year, month and day                                      |
-| `hour`       | index on year, month, day and hour                               |
+| Index name / Tokenizer | Part of date indexed               |
+| :--------------------- | :--------------------------------- |
+| `year`                 | index on year (default)            |
+| `month`                | index on year and month            |
+| `day`                  | index on year, month and day       |
+| `hour`                 | index on year, month, day and hour |
 
 The choices of `dateTime` index allow selecting the precision of the index.  Applications, such as the movies examples in these docs, that require searching over dates but have relatively few nodes per year may prefer the `year` tokenizer; applications that are dependent on fine grained date searches, such as real-time sensor readings, may prefer the `hour` index.
 
@@ -2947,10 +2945,10 @@ my_predicate: string @index(foo) .
 
 There are two functions that can use custom indexes:
 
- Mode | Behaviour
---------|-------
- `anyof` | Returns nodes that match on *any* of the tokens generated
- `allof` | Returns nodes that match on *all* of the tokens generated
+| Mode    | Behaviour                                                 |
+| ------- | --------------------------------------------------------- |
+| `anyof` | Returns nodes that match on *any* of the tokens generated |
+| `allof` | Returns nodes that match on *all* of the tokens generated |
 
 The functions can be used either at the query root or in filters.
 
