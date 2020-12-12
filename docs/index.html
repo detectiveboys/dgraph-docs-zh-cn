@@ -56,7 +56,21 @@
         }
       },
       formatUpdated: '{MM}/{DD} {HH}:{mm}',
-      plugins: []
+      plugins: [],
+      copyCode: {
+        buttonText: {
+          '/': '点击复制',
+          '/en/': 'Copy to clipboard'
+        },
+        errorText: {
+          '/': '错误!',
+          '/en/': 'Error!'
+        },
+        successText: {
+          '/': '已复制!',
+          '/en/': 'Copied!'
+        }
+      }
     }
     
   </script>
@@ -70,6 +84,7 @@
   <script src="//unpkg.com/prismjs/components/prism-json.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-markdown.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-nginx.min.js"></script>
+  <script src="//unpkg.com/docsify-copy-code@2.1.1"></script>
   <script src="//cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
 </body>
 <script >

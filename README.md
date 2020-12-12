@@ -15,11 +15,11 @@ https://detectiveboys.github.io/dgraph-docs-zh-cn
 
 ## 翻译进度
 
-| Page   |   Progress   | Dog  | Finish |
+| Page   |   Progress   | Dogs  | Finish |
 | :-----------------: | :-------------: | :-----------: | :------: |
 | [首页](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/home/index.md)      | :uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/valdanitooooo)  | 2018-11-29      |
 | [快速开始](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/get-started/index.md) |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn: | [Valdanito](https://github.com/valdanitooooo)   |  2018-11-29   |
-| [查询语言](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)  |:uk: :sunny: :sunny: :cloud: :cloud: :cloud: :cn:  | [JustinRong](https://github.com/JustinRong) [zhenghaoyang](https://github.com/zhenghaoyang)  | - |
+| [查询语言](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/query-language/index.md)  |:uk: :sunny: :sunny: :cloud: :cloud: :cloud: :cn:  | [JustinRong](https://github.com/JustinRong), [zhenghaoyang](https://github.com/zhenghaoyang)  | - |
 | [GraphQL+- 小技巧](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/tips/index.md)      |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  |  [Valdanito](https://github.com/valdanitooooo)  | 2020-11-29 |
 | [Mutations](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/mutations/index.md)      |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  | [Valdanito](https://github.com/valdanitooooo)       | 2020-12-12 |
 | [客户端](https://github.com/detectiveboys/dgraph-docs-zh-cn/blob/master/docs/clients/index.md)   |:uk: :sunny: :sunny: :sunny: :sunny: :sunny: :cn:  | [Valdanito](https://github.com/valdanitooooo)  | 2018-12-01 |
