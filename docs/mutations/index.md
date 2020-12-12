@@ -16,7 +16,7 @@
 
 每个三元组具有以下形式
 
-```
+```turtle
 <subject> <predicate> <object> .
 ```
 

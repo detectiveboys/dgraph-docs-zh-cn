@@ -45,6 +45,10 @@ https://detectiveboys.github.io/dgraph-docs-zh-cn
 
     json数据：```json
 
+    shell语句：```sh/bash
+
+    rdf数据：```turtle
+
 - 将一些原有的标记替换掉
 
     如{{% notice "note" %}}、{{% notice "tip" %}} 、{{% notice "warning" %}} 等，这些dgraph文档原有的标记markdown无法直接解释，替换成如下格式：
